@@ -1,0 +1,51 @@
+name: "Problem / Ошибка"
+description: "Something does not work — installer, game or server / Что-то не работает — установщик, игра или сервер"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please write in English or Russian. / Спасибо! Можно писать по-английски или по-русски.
+  - type: dropdown
+    id: where
+    attributes:
+      label: "Where is the problem? / Где проблема?"
+      options:
+        - "Installer / Установщик"
+        - "In the game / В игре"
+        - "Server / Сервер"
+        - "Other / Другое"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: "What happened? / Что случилось?"
+      description: "What you did, what you expected and what you saw instead. / Что делали, что ожидали и что получилось."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: "Coop Control version / Версия Coop Control"
+      description: "Menu J → Settings → About, the installer's first line, or the release name. / Меню J → Настройки → «О дополнении», первая строка установщика или название выпуска."
+      placeholder: "0.3.0"
+  - type: dropdown
+    id: platform
+    attributes:
+      label: "Game / Игра"
+      options:
+        - "Rockstar Games Launcher"
+        - "Steam"
+        - "Epic Games"
+        - "VK Play"
+        - "Other / Другое"
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs / Журналы"
+      description: |
+        Drag files here. / Перетащите файлы сюда.
+        - Installer / установщик: `install-log.txt` next to Install.exe / рядом с Install.exe
+        - Game / игра: `scripts/RageCoop/Data/RageCoop.Client.log` in the GTA folder / в папке GTA
+        - Server / сервер: copy the text from the server window / скопируйте текст из окна сервера

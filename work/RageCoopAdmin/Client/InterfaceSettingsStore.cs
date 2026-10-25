@@ -1,0 +1,151 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
+using CoopControl.Shared;
+
+namespace RageCoopAdmin.Client;
+
+internal sealed class InterfaceSettingsStore
+{
+    private const long MaximumFileBytes = 16 * 1024;
+    private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(InterfaceSettings));
+    private readonly string _path;
+
+    internal InterfaceSettingsStore(string dataFolder)
+    {
+        if (string.IsNullOrWhiteSpace(dataFolder))
+        {
+            throw new ArgumentException("The resource data folder is required.", nameof(dataFolder));
+        }
+
+        _path = Path.Combine(dataFolder, "interface.xml");
+    }
+
+    internal InterfaceSettings Load() => LoadCore();
+
+    private InterfaceSettings LoadCore()
+    {
+        if (!File.Exists(_path))
+        {
+            return new InterfaceSettings();
+        }
+
+        using var stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete);
+        if (stream.Length > MaximumFileBytes)
+        {
+            throw new InvalidDataException("The interface settings file is too large.");
+        }
+
+        using XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings
+        {
+            DtdProcessing = DtdProcessing.Prohibit,
+            XmlResolver = null,
+            MaxCharactersInDocument = MaximumFileBytes
+        });
+        reader.MoveToContent();
+        // Before v4, an omitted version was interpreted as v3 by the serializer's default.
+        bool unversioned = reader.GetAttribute("version") == null;
+        if (Serializer.Deserialize(reader) is not InterfaceSettings settings)
+        {
+            throw new InvalidDataException("The interface settings format is invalid.");
+        }
+
+        if (unversioned)
+        {
+            settings.Version = 3;
+        }
+
+        if (settings.Version >= 1 && settings.Version <= 3)
+        {
+            ValidateChoices(settings, maximumChoice: 2);
+            if (settings.Version <= 2)
+            {
+                // Preserve the v3 migration from an impulse to held boost for older profiles.
+                settings.KeyboardBoost = true;
+            }
+
+            // Legacy I now uses K; a disabled repair binding stays disabled.
+            settings.RepairShortcut = settings.RepairShortcut == 2 ? 1 : 0;
+            settings.Version = 5;
+        }
+        else if (settings.Version == 4)
+        {
+            settings.Version = 5;
+        }
+
+        // Retired options of our own older versions are dropped; options of
+        // other versions are kept.
+        XmlElement[]? other = settings.OtherOptions?.Where(option => Array.IndexOf(RetiredOptions, option.Name) < 0).ToArray();
+        settings.OtherOptions = other is { Length: > 0 } ? other : null;
+        Validate(settings);
+        return settings;
+    }
+
+    private static readonly string[] RetiredOptions = { "MenuShortcut", "ShowPlayersHud" };
+
+    internal void Save(InterfaceSettings settings)
+    {
+        using StorageFileLock held = StorageFileLock.Acquire(_path);
+        // Options another version wrote are carried from the current file, even
+        // when callers save a fresh settings object.
+        settings.OtherOptions = LoadCore().OtherOptions;
+        SaveCore(settings);
+    }
+
+    internal InterfaceSettings Update(Action<InterfaceSettings> change)
+    {
+        using StorageFileLock held = StorageFileLock.Acquire(_path);
+        InterfaceSettings latest = LoadCore();
+        change(latest);
+        SaveCore(latest);
+        return latest;
+    }
+
+    private void SaveCore(InterfaceSettings settings)
+    {
+        Validate(settings);
+        AtomicFile.Write(_path, stream => Serializer.Serialize(stream, settings));
+    }
+
+    private static void Validate(InterfaceSettings settings)
+    {
+        if (settings.Version != 5)
+        {
+            throw new InvalidDataException("Unsupported interface settings.");
+        }
+
+        ValidateChoices(settings, maximumChoice: 1);
+        if (settings.MenuLanguage != UiLanguage.Russian && settings.MenuLanguage != UiLanguage.English)
+        {
+            throw new InvalidDataException("Unsupported menu language.");
+        }
+    }
+
+    private static void ValidateChoices(InterfaceSettings settings, int maximumChoice)
+    {
+        if (settings.RepairShortcut < 0 || settings.RepairShortcut > maximumChoice)
+        {
+            throw new InvalidDataException("Unsupported interface settings.");
+        }
+    }
+}
+
+[XmlRoot("Interface")]
+public sealed partial class InterfaceSettings
+{
+    [XmlAttribute("version")]
+    public int Version { get; set; } = 5;
+
+    // v4-v5: 0 enables K, 1 disables it. v1-v3 are converted while loading.
+    public int RepairShortcut { get; set; }
+    public bool GamepadShortcuts { get; set; } = true;
+    public bool KeyboardBoost { get; set; } = true;
+    public UiLanguage MenuLanguage { get; set; } = UiLanguage.Russian;
+    // Absent in older files, so voice chat is on until the player turns it off.
+    public bool VoiceChat { get; set; } = true;
+    // Options this build does not know, written by another version, are kept as they are.
+    [XmlAnyElement]
+    public XmlElement[]? OtherOptions { get; set; }
+}

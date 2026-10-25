@@ -1,0 +1,1770 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="~c~Назначение:~s~ " xml:space="preserve">
+    <value>~c~Best for:~s~ </value>
+  </data>
+  <data name="~c~Привод:~s~ " xml:space="preserve">
+    <value>~c~Drive:~s~ </value>
+  </data>
+  <data name="Передний" xml:space="preserve">
+    <value>Front-wheel</value>
+  </data>
+  <data name="Задний" xml:space="preserve">
+    <value>Rear-wheel</value>
+  </data>
+  <data name="Полный" xml:space="preserve">
+    <value>All-wheel</value>
+  </data>
+  <data name="~c~Передачи:~s~ " xml:space="preserve">
+    <value>~c~Gears:~s~ </value>
+  </data>
+  <data name="~n~~n~~o~Не установлена~s~~n~Установите общий набор машин и перезапустите игру." xml:space="preserve">
+    <value>~n~~n~~o~Not installed~s~~n~Install the shared vehicle pack and restart the game.</value>
+  </data>
+  <data name="Добавленные машины" xml:space="preserve">
+    <value>Add-on vehicles</value>
+  </data>
+  <data name="~o~Этой модели нет в вашей версии GTA." xml:space="preserve">
+    <value>~o~This model is not available in your version of GTA.</value>
+  </data>
+  <data name="Зафиксировать погоду" xml:space="preserve">
+    <value>Freeze weather</value>
+  </data>
+  <data name="Удерживать выбранную погоду у всех игроков. Выключите, чтобы погода снова менялась." xml:space="preserve">
+    <value>Keep the selected weather for all players. Turn off to let the weather change again.</value>
+  </data>
+  <data name="Зафиксировать время" xml:space="preserve">
+    <value>Freeze time</value>
+  </data>
+  <data name="Остановить часы у всех игроков. Выключите, чтобы время снова шло." xml:space="preserve">
+    <value>Stop the clock for all players. Turn off to let time pass again.</value>
+  </data>
+  <data name="Проезд сквозь трафик" xml:space="preserve">
+    <value>Drive through traffic</value>
+  </data>
+  <data name="Для всех игроков за рулём: проезжать сквозь машины NPC. Столкновения с игроками, пешеходами и окружением сохраняются." xml:space="preserve">
+    <value>All players can drive through NPC vehicles. Collisions with players, pedestrians and the environment remain active.</value>
+  </data>
+  <data name="~o~Мир:~s~ общие настройки недоступны для установленной версии клиента." xml:space="preserve">
+    <value>~o~World:~s~ shared settings are unavailable in this client version.</value>
+  </data>
+  <data name="~o~Мир:~s~ дождитесь подтверждения состояния сервера и повторите выбор." xml:space="preserve">
+    <value>~o~World:~s~ wait for the server to confirm its state, then try again.</value>
+  </data>
+  <data name="~o~Мир:~s~ изменение не применено. Дождитесь загрузки меню у всех игроков и повторите выбор." xml:space="preserve">
+    <value>~o~World:~s~ change not applied. Wait for all players to load the menu, then try again.</value>
+  </data>
+  <data name="Время: " xml:space="preserve">
+    <value>Time: </value>
+  </data>
+  <data name="Погода: " xml:space="preserve">
+    <value>Weather: </value>
+  </data>
+  <data name="Время зафиксировано для всех." xml:space="preserve">
+    <value>Time is frozen for everyone.</value>
+  </data>
+  <data name="Часы снова идут у всех." xml:space="preserve">
+    <value>Time is passing again for everyone.</value>
+  </data>
+  <data name="Погода зафиксирована для всех." xml:space="preserve">
+    <value>Weather is frozen for everyone.</value>
+  </data>
+  <data name="Погода снова меняется у всех." xml:space="preserve">
+    <value>Weather is changing again for everyone.</value>
+  </data>
+  <data name="Проезд сквозь трафик включён для всех." xml:space="preserve">
+    <value>Drive through traffic is on for everyone.</value>
+  </data>
+  <data name="Проезд сквозь трафик выключен для всех." xml:space="preserve">
+    <value>Drive through traffic is off for everyone.</value>
+  </data>
+  <data name="~o~Мир:~s~ " xml:space="preserve">
+    <value>~o~World:~s~ </value>
+  </data>
+  <data name="~o~Мир:~s~ сервер не подтвердил изменение. Повторите выбор." xml:space="preserve">
+    <value>~o~World:~s~ the server did not confirm the change. Try again.</value>
+  </data>
+  <data name="Сейчас" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="0 звёзд" xml:space="preserve">
+    <value>0 stars</value>
+  </data>
+  <data name="1 звезда" xml:space="preserve">
+    <value>1 star</value>
+  </data>
+  <data name="2 звезды" xml:space="preserve">
+    <value>2 stars</value>
+  </data>
+  <data name="3 звезды" xml:space="preserve">
+    <value>3 stars</value>
+  </data>
+  <data name="4 звезды" xml:space="preserve">
+    <value>4 stars</value>
+  </data>
+  <data name="5 звёзд" xml:space="preserve">
+    <value>5 stars</value>
+  </data>
+  <data name="Компактные машины" xml:space="preserve">
+    <value>Compacts</value>
+  </data>
+  <data name="Седаны" xml:space="preserve">
+    <value>Sedans</value>
+  </data>
+  <data name="Внедорожники" xml:space="preserve">
+    <value>SUVs</value>
+  </data>
+  <data name="Купе" xml:space="preserve">
+    <value>Coupes</value>
+  </data>
+  <data name="Маслкары" xml:space="preserve">
+    <value>Muscle cars</value>
+  </data>
+  <data name="Классические спорткары" xml:space="preserve">
+    <value>Sports classics</value>
+  </data>
+  <data name="Спорткары" xml:space="preserve">
+    <value>Sports cars</value>
+  </data>
+  <data name="Суперкары" xml:space="preserve">
+    <value>Supercars</value>
+  </data>
+  <data name="Мотоциклы" xml:space="preserve">
+    <value>Motorcycles</value>
+  </data>
+  <data name="Внедорожная техника" xml:space="preserve">
+    <value>Off-road</value>
+  </data>
+  <data name="Промышленная техника" xml:space="preserve">
+    <value>Industrial</value>
+  </data>
+  <data name="Служебная техника" xml:space="preserve">
+    <value>Utility</value>
+  </data>
+  <data name="Фургоны" xml:space="preserve">
+    <value>Vans</value>
+  </data>
+  <data name="Велосипеды" xml:space="preserve">
+    <value>Bicycles</value>
+  </data>
+  <data name="Лодки" xml:space="preserve">
+    <value>Boats</value>
+  </data>
+  <data name="Вертолёты" xml:space="preserve">
+    <value>Helicopters</value>
+  </data>
+  <data name="Самолёты" xml:space="preserve">
+    <value>Planes</value>
+  </data>
+  <data name="Городские службы" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="Экстренные службы" xml:space="preserve">
+    <value>Emergency</value>
+  </data>
+  <data name="Военная техника" xml:space="preserve">
+    <value>Military</value>
+  </data>
+  <data name="Коммерческий транспорт" xml:space="preserve">
+    <value>Commercial</value>
+  </data>
+  <data name="Поезда" xml:space="preserve">
+    <value>Trains</value>
+  </data>
+  <data name="Гоночные машины" xml:space="preserve">
+    <value>Open wheel</value>
+  </data>
+  <data name="Главное меню" xml:space="preserve">
+    <value>Main menu</value>
+  </data>
+  <data name="Мир" xml:space="preserve">
+    <value>World</value>
+  </data>
+  <data name="Транспорт" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="Персонаж" xml:space="preserve">
+    <value>Character</value>
+  </data>
+  <data name="Погода" xml:space="preserve">
+    <value>Weather</value>
+  </data>
+  <data name="Время" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Результаты поиска" xml:space="preserve">
+    <value>Search results</value>
+  </data>
+  <data name="Поделиться меткой" xml:space="preserve">
+    <value>Share waypoint</value>
+  </data>
+  <data name="Заменить точку на карте у всех игроков вашей меткой." xml:space="preserve">
+    <value>Replace everyone's map waypoint with yours.</value>
+  </data>
+  <data name="Починить машину" xml:space="preserve">
+    <value>Repair vehicle</value>
+  </data>
+  <data name="Починить текущий транспорт или ближайший пешком. K; на геймпаде LB + RB + ↑." xml:space="preserve">
+    <value>Repair your current vehicle, or the nearest one on foot. K; gamepad: LB + RB + ↑.</value>
+  </data>
+  <data name="Поставить на колёса" xml:space="preserve">
+    <value>Flip vehicle upright</value>
+  </data>
+  <data name="Поставить свою машину на колёса, если она перевернулась." xml:space="preserve">
+    <value>Put your vehicle back on its wheels if it has overturned.</value>
+  </data>
+  <data name="Восстановить здоровье и броню" xml:space="preserve">
+    <value>Restore health and armor</value>
+  </data>
+  <data name="Полностью восстановить здоровье и броню вашего персонажа." xml:space="preserve">
+    <value>Fully restore your character's health and armor.</value>
+  </data>
+  <data name="Мой розыск" xml:space="preserve">
+    <value>Wanted level</value>
+  </data>
+  <data name="Выберите число звёзд стрелками ←/→. Меняется только ваш розыск." xml:space="preserve">
+    <value>Choose the number of stars with ←/→. Changes only your wanted level.</value>
+  </data>
+  <data name="Без розыска" xml:space="preserve">
+    <value>Never wanted</value>
+  </data>
+  <data name="Полиция не разыскивает вашего персонажа." xml:space="preserve">
+    <value>Police will not pursue your character.</value>
+  </data>
+  <data name="Бессмертие" xml:space="preserve">
+    <value>Invincibility</value>
+  </data>
+  <data name="Ваш персонаж не получает урон." xml:space="preserve">
+    <value>Your character takes no damage.</value>
+  </data>
+  <data name="Найти транспорт" xml:space="preserve">
+    <value>Find vehicle</value>
+  </data>
+  <data name="Поиск машины по названию или коду." xml:space="preserve">
+    <value>Search for a vehicle by name or spawn code.</value>
+  </data>
+  <data name="Ввести код модели" xml:space="preserve">
+    <value>Enter spawn code</value>
+  </data>
+  <data name="Машина вне каталога, например adder." xml:space="preserve">
+    <value>Spawn a vehicle outside the catalog, for example adder.</value>
+  </data>
+  <data name="Каталог загружается…" xml:space="preserve">
+    <value>Loading catalog…</value>
+  </data>
+  <data name="Обычно занимает несколько секунд." xml:space="preserve">
+    <value>This usually takes a few seconds.</value>
+  </data>
+  <data name="Установить погоду для всех игроков." xml:space="preserve">
+    <value>Set the weather for all players.</value>
+  </data>
+  <data name="Текущее игровое время на вашем экране." xml:space="preserve">
+    <value>The current in-game time on your screen.</value>
+  </data>
+  <data name="Час" xml:space="preserve">
+    <value>Hour</value>
+  </data>
+  <data name="Листайте ←/→. Время для всех изменится после короткой паузы." xml:space="preserve">
+    <value>Use ←/→. Time changes for everyone after a short pause.</value>
+  </data>
+  <data name="Минуты" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="Рассвет" xml:space="preserve">
+    <value>Dawn</value>
+  </data>
+  <data name="Полдень" xml:space="preserve">
+    <value>Noon</value>
+  </data>
+  <data name="Закат" xml:space="preserve">
+    <value>Sunset</value>
+  </data>
+  <data name="Ночь" xml:space="preserve">
+    <value>Night</value>
+  </data>
+  <data name="Пока пусто" xml:space="preserve">
+    <value>Nothing here yet</value>
+  </data>
+  <data name="Выбрать" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Назад" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Другие модели" xml:space="preserve">
+    <value>Other models</value>
+  </data>
+  <data name="~o~Coop Control:~s~ каталог транспорта готов (" xml:space="preserve">
+    <value>~o~Coop Control:~s~ vehicle catalog ready (</value>
+  </data>
+  <data name=" моделей)." xml:space="preserve">
+    <value> models).</value>
+  </data>
+  <data name="~o~Каталог транспорта ещё загружается. Повторите поиск чуть позже." xml:space="preserve">
+    <value>~o~The vehicle catalog is still loading. Try searching again shortly.</value>
+  </data>
+  <data name="Найти машину" xml:space="preserve">
+    <value>Find vehicle</value>
+  </data>
+  <data name="Ничего не найдено" xml:space="preserve">
+    <value>No results</value>
+  </data>
+  <data name="Проверьте название или введите код модели вручную." xml:space="preserve">
+    <value>Check the name or enter the spawn code manually.</value>
+  </data>
+  <data name="Найдено больше 100 моделей" xml:space="preserve">
+    <value>More than 100 models found</value>
+  </data>
+  <data name="Показаны первые 100 обычных моделей и совпавшие добавленные машины. Уточните название, чтобы сузить поиск." xml:space="preserve">
+    <value>Showing the first 100 base models and matching add-on vehicles. Refine your search to narrow the list.</value>
+  </data>
+  <data name="Код модели — латиница, цифры, _" xml:space="preserve">
+    <value>Spawn code: Latin letters, numbers, _</value>
+  </data>
+  <data name="~r~Код модели:~s~ не больше 24 символов." xml:space="preserve">
+    <value>~r~Spawn code:~s~ no more than 24 characters.</value>
+  </data>
+  <data name="~r~Код модели:~s~ используйте только латинские буквы, цифры и _." xml:space="preserve">
+    <value>~r~Spawn code:~s~ use only Latin letters, numbers and _.</value>
+  </data>
+  <data name="~r~Код модели:~s~ такой машины нет в установленной GTA V Legacy." xml:space="preserve">
+    <value>~r~Spawn code:~s~ this vehicle is not installed in your GTA V Legacy.</value>
+  </data>
+  <data name="Установить " xml:space="preserve">
+    <value>Set </value>
+  </data>
+  <data name=" для всех игроков." xml:space="preserve">
+    <value> for all players.</value>
+  </data>
+  <data name="~o~Время:~s~ сервер не подтвердил изменение. Проверьте время и повторите выбор." xml:space="preserve">
+    <value>~o~Time:~s~ the server did not confirm the change. Check the time and try again.</value>
+  </data>
+  <data name="~r~Метка:~s~ сначала поставьте точку на карте." xml:space="preserve">
+    <value>~r~Waypoint:~s~ place a waypoint on the map first.</value>
+  </data>
+  <data name="~r~Метка:~s~ координаты вне игровой карты." xml:space="preserve">
+    <value>~r~Waypoint:~s~ the location is outside the game map.</value>
+  </data>
+  <data name="~r~Телепорт:~s~ сначала поставьте точку на карте." xml:space="preserve">
+    <value>~r~Teleport:~s~ place a waypoint on the map first.</value>
+  </data>
+  <data name="~r~Телепорт:~s~ метка вне игровой карты." xml:space="preserve">
+    <value>~r~Teleport:~s~ the waypoint is outside the game map.</value>
+  </data>
+  <data name="метки" xml:space="preserve">
+    <value>waypoint</value>
+  </data>
+  <data name="~o~Телепорт:~s~ дождитесь текущего перемещения." xml:space="preserve">
+    <value>~o~Teleport:~s~ wait for the current teleport to finish.</value>
+  </data>
+  <data name="~o~Телепорт:~s~ не получили ответ. Повторите попытку." xml:space="preserve">
+    <value>~o~Teleport:~s~ no response received. Try again.</value>
+  </data>
+  <data name="~o~Телепорт:~s~ загружаем место назначения…" xml:space="preserve">
+    <value>~o~Teleport:~s~ loading destination…</value>
+  </data>
+  <data name="место ещё не загрузилось. Попробуйте другую точку рядом." xml:space="preserve">
+    <value>the destination has not loaded yet. Try another spot nearby.</value>
+  </data>
+  <data name="персонаж сейчас недоступен." xml:space="preserve">
+    <value>your character is currently unavailable.</value>
+  </data>
+  <data name="вы пассажир. Выйдите из машины и повторите." xml:space="preserve">
+    <value>you are a passenger. Leave the vehicle and try again.</value>
+  </data>
+  <data name="эта машина не ваша. Выйдите и повторите." xml:space="preserve">
+    <value>this is not your vehicle. Leave it and try again.</value>
+  </data>
+  <data name="вы на месте." xml:space="preserve">
+    <value>you have arrived.</value>
+  </data>
+  <data name="игра не подтвердила перемещение." xml:space="preserve">
+    <value>the game did not confirm the teleport.</value>
+  </data>
+  <data name="Телепорт:~s~ " xml:space="preserve">
+    <value>Teleport:~s~ </value>
+  </data>
+  <data name="~o~Ремонт:~s~ дождитесь возрождения и повторите." xml:space="preserve">
+    <value>~o~Repair:~s~ wait to respawn, then try again.</value>
+  </data>
+  <data name="~o~Ремонт:~s~ сядьте в машину или подойдите к ней на 8 м. Если она только появилась, подождите секунду." xml:space="preserve">
+    <value>~o~Repair:~s~ enter the vehicle or get within 8 m. If it has just spawned, wait a second.</value>
+  </data>
+  <data name="~o~Ремонт:~s~ машина ещё загружается. Повторите через секунду." xml:space="preserve">
+    <value>~o~Repair:~s~ the vehicle is still loading. Try again in a second.</value>
+  </data>
+  <data name="~o~Машина:~s~ дождитесь текущего перемещения." xml:space="preserve">
+    <value>~o~Vehicle:~s~ wait for the current teleport to finish.</value>
+  </data>
+  <data name="~r~Машина:~s~ сначала дождитесь возрождения." xml:space="preserve">
+    <value>~r~Vehicle:~s~ wait to respawn first.</value>
+  </data>
+  <data name="~o~Машина:~s~ ищем вашу последнюю машину…" xml:space="preserve">
+    <value>~o~Vehicle:~s~ finding your last vehicle…</value>
+  </data>
+  <data name="~o~Машина:~s~ сервер не ответил. Повторите попытку." xml:space="preserve">
+    <value>~o~Vehicle:~s~ the server did not respond. Try again.</value>
+  </data>
+  <data name="машина не появилась рядом. Попробуйте ещё раз." xml:space="preserve">
+    <value>the vehicle did not appear nearby. Try again.</value>
+  </data>
+  <data name="сначала дождитесь возрождения." xml:space="preserve">
+    <value>wait to respawn first.</value>
+  </data>
+  <data name="машина уничтожена." xml:space="preserve">
+    <value>the vehicle has been destroyed.</value>
+  </data>
+  <data name="место водителя занято. Вы на пассажирском месте." xml:space="preserve">
+    <value>the driver's seat is occupied. You are in a passenger seat.</value>
+  </data>
+  <data name="~g~Машина:~s~ вы за рулём." xml:space="preserve">
+    <value>~g~Vehicle:~s~ you are in the driver's seat.</value>
+  </data>
+  <data name="~g~Машина:~s~ вы уже в своей машине." xml:space="preserve">
+    <value>~g~Vehicle:~s~ you are already in your vehicle.</value>
+  </data>
+  <data name="не удалось занять место водителя." xml:space="preserve">
+    <value>could not take the driver's seat.</value>
+  </data>
+  <data name="выйдите из текущей машины и повторите." xml:space="preserve">
+    <value>leave your current vehicle and try again.</value>
+  </data>
+  <data name="место водителя занято." xml:space="preserve">
+    <value>the driver's seat is occupied.</value>
+  </data>
+  <data name="не удалось добраться до машины. Попробуйте ещё раз." xml:space="preserve">
+    <value>could not reach the vehicle. Try again.</value>
+  </data>
+  <data name="машина переместилась; попробуйте ещё раз." xml:space="preserve">
+    <value>the vehicle has moved; try again.</value>
+  </data>
+  <data name="координаты машины недоступны." xml:space="preserve">
+    <value>the vehicle's location is unavailable.</value>
+  </data>
+  <data name="машине" xml:space="preserve">
+    <value>vehicle</value>
+  </data>
+  <data name="Машина: " xml:space="preserve">
+    <value>Vehicle: </value>
+  </data>
+  <data name="~o~Coop Control:~s~ " xml:space="preserve">
+    <value>~o~Coop Control:~s~ </value>
+  </data>
+  <data name="~o~Общая метка:~s~ появилась на вашей карте." xml:space="preserve">
+    <value>~o~Shared waypoint:~s~ added to your map.</value>
+  </data>
+  <data name="напарнику" xml:space="preserve">
+    <value>partner</value>
+  </data>
+  <data name="~o~Машина:~s~ " xml:space="preserve">
+    <value>~o~Vehicle:~s~ </value>
+  </data>
+  <data name="~h~Игрок~h~ погиб" xml:space="preserve">
+    <value>~h~Player~h~ died</value>
+  </data>
+  <data name="~o~Настройки:~s~ не удалось прочитать файл. Изменения будут действовать до выхода." xml:space="preserve">
+    <value>~o~Settings:~s~ could not read the file. Changes will last until you leave.</value>
+  </data>
+  <data name="Настройки" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Ремонт клавишей K" xml:space="preserve">
+    <value>Repair with K</value>
+  </data>
+  <data name="Чинить транспорт, в котором вы сидите, или ближайший пешком клавишей K. Работает при закрытом меню." xml:space="preserve">
+    <value>Press K to repair your current vehicle, or the nearest one on foot. Works when the menu is closed.</value>
+  </data>
+  <data name="Сочетания на геймпаде" xml:space="preserve">
+    <value>Gamepad shortcuts</value>
+  </data>
+  <data name="Удерживайте LB + RB: ↓ — меню, ↑ — ремонт. За рулём удерживайте A для разгона. В меню: крестовина, A — выбрать, B — назад. На PlayStation: L1 + R1 и крест." xml:space="preserve">
+    <value>Hold LB + RB: ↓ for menu, ↑ for repair. While driving, hold A to boost. In menus: D-pad to navigate, A to select, B to go back. PlayStation: L1 + R1 and cross.</value>
+  </data>
+  <data name="Ускоритель (O / A)" xml:space="preserve">
+    <value>Boost (O / A)</value>
+  </data>
+  <data name="Удерживайте O или A на геймпаде за рулём автомобиля; отпустите, чтобы прекратить разгон. A при этом пригибает, как обычно в GTA, и работает при включённых сочетаниях на геймпаде." xml:space="preserve">
+    <value>Hold O, or A on a gamepad, while driving a car; release to stop boosting. A still ducks as usual in GTA and works when gamepad shortcuts are on.</value>
+  </data>
+  <data name="~o~Настройки:~s~ не удалось сохранить. Изменения действуют до выхода." xml:space="preserve">
+    <value>~o~Settings:~s~ could not save. Changes will last until you leave.</value>
+  </data>
+  <data name="~o~Coop Control:~s~ сначала подключитесь к серверу." xml:space="preserve">
+    <value>~o~Coop Control:~s~ connect to a server first.</value>
+  </data>
+  <data name="Ввод текста" xml:space="preserve">
+    <value>Text input</value>
+  </data>
+  <data name="~r~Не удалось открыть поле ввода.~s~ Подключитесь к серверу заново." xml:space="preserve">
+    <value>~r~Could not open text input.~s~ Reconnect to the server.</value>
+  </data>
+  <data name="Открыть" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Вкл./выкл." xml:space="preserve">
+    <value>Toggle</value>
+  </data>
+  <data name="Звёзды" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="Изменить" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="Действие" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Отмена" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Свободных пассажирских мест нет" xml:space="preserve">
+    <value>No free passenger seats</value>
+  </data>
+  <data name="~o~Дождитесь текущего перемещения." xml:space="preserve">
+    <value>~o~Wait for the current teleport to finish.</value>
+  </data>
+  <data name="~o~Сначала дождитесь возрождения." xml:space="preserve">
+    <value>~o~Wait to respawn first.</value>
+  </data>
+  <data name="~o~Список игроков обновляется. Повторите действие." xml:space="preserve">
+    <value>~o~The player list is updating. Try again.</value>
+  </data>
+  <data name="~o~Игрок уже вышел. Выберите другого." xml:space="preserve">
+    <value>~o~This player has left. Choose another.</value>
+  </data>
+  <data name="Проверяем транспорт и свободные места…" xml:space="preserve">
+    <value>Checking the vehicle and available seats…</value>
+  </data>
+  <data name="Не удалось проверить места. Перемещаемся рядом с игроком" xml:space="preserve">
+    <value>Could not check the seats. Teleporting beside the player</value>
+  </data>
+  <data name="Выбрано другое перемещение" xml:space="preserve">
+    <value>Another destination was selected</value>
+  </data>
+  <data name="Перемещение отменено: персонаж недоступен" xml:space="preserve">
+    <value>Teleport canceled: character unavailable</value>
+  </data>
+  <data name="~g~Вы на пассажирском месте." xml:space="preserve">
+    <value>~g~You are in a passenger seat.</value>
+  </data>
+  <data name="Перемещение отменено: вы уже в машине" xml:space="preserve">
+    <value>Teleport canceled: you are already in a vehicle</value>
+  </data>
+  <data name="Не удалось сесть. Перемещаемся рядом с игроком" xml:space="preserve">
+    <value>Could not enter the vehicle. Teleporting beside the player</value>
+  </data>
+  <data name="Транспорт не успел загрузиться. Перемещаемся рядом с игроком" xml:space="preserve">
+    <value>The vehicle did not load in time. Teleporting beside the player</value>
+  </data>
+  <data name="Транспорт уничтожен. Перемещаемся рядом с игроком" xml:space="preserve">
+    <value>The vehicle has been destroyed. Teleporting beside the player</value>
+  </data>
+  <data name="Игрок уже вышел из транспорта. Перемещаемся рядом" xml:space="preserve">
+    <value>The player has left the vehicle. Teleporting nearby</value>
+  </data>
+  <data name="Свободных пассажирских мест нет. Перемещаемся рядом" xml:space="preserve">
+    <value>No free passenger seats. Teleporting nearby</value>
+  </data>
+  <data name="Перемещение отменено" xml:space="preserve">
+    <value>Teleport canceled</value>
+  </data>
+  <data name="Место уже занято. Перемещаемся рядом с игроком" xml:space="preserve">
+    <value>The seat is already occupied. Teleporting beside the player</value>
+  </data>
+  <data name="Взять парашют" xml:space="preserve">
+    <value>Get parachute</value>
+  </data>
+  <data name="Добавить парашют. Можно раскрыть в свободном падении." xml:space="preserve">
+    <value>Add a parachute. Open it while in free fall.</value>
+  </data>
+  <data name="Ремень безопасности" xml:space="preserve">
+    <value>Seat belt</value>
+  </data>
+  <data name="Не вылетать через лобовое стекло при аварии." xml:space="preserve">
+    <value>Stay inside the vehicle during a crash.</value>
+  </data>
+  <data name="Суперпрыжок" xml:space="preserve">
+    <value>Super jump</value>
+  </data>
+  <data name="Персонаж прыгает выше обычного." xml:space="preserve">
+    <value>Your character jumps higher than usual.</value>
+  </data>
+  <data name="Бесконечная выносливость" xml:space="preserve">
+    <value>Infinite stamina</value>
+  </data>
+  <data name="Бег не расходует выносливость." xml:space="preserve">
+    <value>Running does not use stamina.</value>
+  </data>
+  <data name="Дыхание под водой" xml:space="preserve">
+    <value>Breathe underwater</value>
+  </data>
+  <data name="Плавать под водой без урона от нехватки воздуха." xml:space="preserve">
+    <value>Swim underwater without drowning damage.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ дождитесь возрождения и повторите." xml:space="preserve">
+    <value>~o~Character:~s~ wait to respawn, then try again.</value>
+  </data>
+  <data name="~g~Персонаж:~s~ здоровье и броня восстановлены." xml:space="preserve">
+    <value>~g~Character:~s~ health and armor restored.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ сейчас не удалось полностью восстановить здоровье и броню." xml:space="preserve">
+    <value>~o~Character:~s~ could not fully restore health and armor right now.</value>
+  </data>
+  <data name="~g~Персонаж:~s~ парашют у вас." xml:space="preserve">
+    <value>~g~Character:~s~ parachute added.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ не удалось выдать парашют. Попробуйте после приземления." xml:space="preserve">
+    <value>~o~Character:~s~ could not add a parachute. Try after landing.</value>
+  </data>
+  <data name="Напарники" xml:space="preserve">
+    <value>Partners</value>
+  </data>
+  <data name="Выбрать игрока и переместиться к нему." xml:space="preserve">
+    <value>Choose a player to teleport to.</value>
+  </data>
+  <data name="Игрок уже отключился. Выберите другого напарника." xml:space="preserve">
+    <value>This player has disconnected. Choose another partner.</value>
+  </data>
+  <data name="Далеко" xml:space="preserve">
+    <value>Far away</value>
+  </data>
+  <data name="Возрождается" xml:space="preserve">
+    <value>Respawning</value>
+  </data>
+  <data name="В транспорте" xml:space="preserve">
+    <value>In a vehicle</value>
+  </data>
+  <data name="Пешком" xml:space="preserve">
+    <value>On foot</value>
+  </data>
+  <data name="Загружается" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Вы пока одни" xml:space="preserve">
+    <value>You are alone for now</value>
+  </data>
+  <data name="Напарники появятся здесь после подключения." xml:space="preserve">
+    <value>Partners will appear here when they connect.</value>
+  </data>
+  <data name="На свободное пассажирское место или рядом. За рулём своей машины — вместе с ней. " xml:space="preserve">
+    <value>Take a free passenger seat or teleport nearby. If driving your own vehicle, bring it along. </value>
+  </data>
+  <data name="Связь устанавливается." xml:space="preserve">
+    <value>Connecting.</value>
+  </data>
+  <data name="Игрок" xml:space="preserve">
+    <value>Player</value>
+  </data>
+  <data name="Печатайте на клавиатуре. Enter — сохранить, Delete/Backspace — стереть, Esc — отмена." xml:space="preserve">
+    <value>Type on your keyboard. Enter to save, Delete/Backspace to erase, Esc to cancel.</value>
+  </data>
+  <data name="Выберите язык и букву. A — добавить, B — отмена." xml:space="preserve">
+    <value>Choose an alphabet and a letter. A to add, B to cancel.</value>
+  </data>
+  <data name="←/→ — русский, английский или цифры и знаки." xml:space="preserve">
+    <value>←/→ to choose Russian, English, or numbers and symbols.</value>
+  </data>
+  <data name="←/→ — строчные или заглавные буквы." xml:space="preserve">
+    <value>←/→ to choose lowercase or uppercase letters.</value>
+  </data>
+  <data name="←/→ — выбрать букву, A — добавить." xml:space="preserve">
+    <value>←/→ to choose a letter, A to add.</value>
+  </data>
+  <data name="Стереть последнюю букву или знак." xml:space="preserve">
+    <value>Erase the last letter or symbol.</value>
+  </data>
+  <data name="Стереть весь введённый текст." xml:space="preserve">
+    <value>Erase all entered text.</value>
+  </data>
+  <data name="Пробел" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="Введите текст" xml:space="preserve">
+    <value>Enter text</value>
+  </data>
+  <data name="Язык ввода" xml:space="preserve">
+    <value>Input language</value>
+  </data>
+  <data name="Русский" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="Английский" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Цифры и знаки" xml:space="preserve">
+    <value>Numbers and symbols</value>
+  </data>
+  <data name="Регистр" xml:space="preserve">
+    <value>Letter case</value>
+  </data>
+  <data name="Строчные" xml:space="preserve">
+    <value>Lowercase</value>
+  </data>
+  <data name="Заглавные" xml:space="preserve">
+    <value>Uppercase</value>
+  </data>
+  <data name="Буква" xml:space="preserve">
+    <value>Letter</value>
+  </data>
+  <data name="Стереть букву" xml:space="preserve">
+    <value>Erase letter</value>
+  </data>
+  <data name="Очистить" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Сохранить" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Сохранить введённый текст." xml:space="preserve">
+    <value>Save the entered text.</value>
+  </data>
+  <data name="Вернуться без сохранения текста." xml:space="preserve">
+    <value>Go back without saving the text.</value>
+  </data>
+  <data name="Язык" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Добавить" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Знак" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="Не хватает места. Сотрите часть текста." xml:space="preserve">
+    <value>Not enough space. Erase some text.</value>
+  </data>
+  <data name="Этот знак нельзя использовать." xml:space="preserve">
+    <value>This symbol cannot be used.</value>
+  </data>
+  <data name="Для цифр и знаков регистр не нужен." xml:space="preserve">
+    <value>Numbers and symbols do not have a letter case.</value>
+  </data>
+  <data name="←/→ — выбрать знак, A — добавить." xml:space="preserve">
+    <value>←/→ to choose a symbol, A to add.</value>
+  </data>
+  <data name="Город" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="Пирс Дель-Перро" xml:space="preserve">
+    <value>Del Perro Pier</value>
+  </data>
+  <data name="Парк аттракционов у океана. Пешком." xml:space="preserve">
+    <value>Oceanfront amusement park. On foot.</value>
+  </data>
+  <data name="Пляжный скейт-парк" xml:space="preserve">
+    <value>Beach skate park</value>
+  </data>
+  <data name="Открытая площадка на пляже." xml:space="preserve">
+    <value>Open skate park on the beach.</value>
+  </data>
+  <data name="Миррор-Парк" xml:space="preserve">
+    <value>Mirror Park</value>
+  </data>
+  <data name="Парк у озера в восточном Лос-Сантосе." xml:space="preserve">
+    <value>Lakeside park in east Los Santos.</value>
+  </data>
+  <data name="Амфитеатр Вайнвуд" xml:space="preserve">
+    <value>Vinewood Bowl</value>
+  </data>
+  <data name="Сцена открытого амфитеатра. Пешком." xml:space="preserve">
+    <value>The stage of the open-air amphitheater. On foot.</value>
+  </data>
+  <data name="Природа и виды" xml:space="preserve">
+    <value>Nature and views</value>
+  </data>
+  <data name="Вершина Чилиад" xml:space="preserve">
+    <value>Mount Chiliad summit</value>
+  </data>
+  <data name="Смотровая точка на горе. Пешком." xml:space="preserve">
+    <value>Mountain lookout. On foot.</value>
+  </data>
+  <data name="Знак Вайнвуд" xml:space="preserve">
+    <value>Vinewood sign</value>
+  </data>
+  <data name="Склон рядом со знаменитой надписью. Пешком." xml:space="preserve">
+    <value>Hillside beside the famous sign. On foot.</value>
+  </data>
+  <data name="Плотина Лэнд-Экт" xml:space="preserve">
+    <value>Land Act Dam</value>
+  </data>
+  <data name="Смотровая площадка у плотины. Пешком." xml:space="preserve">
+    <value>Lookout by the dam. On foot.</value>
+  </data>
+  <data name="Маяк Эль-Гордо" xml:space="preserve">
+    <value>El Gordo Lighthouse</value>
+  </data>
+  <data name="Маяк на восточном побережье. Пешком." xml:space="preserve">
+    <value>Lighthouse on the east coast. On foot.</value>
+  </data>
+  <data name="За городом" xml:space="preserve">
+    <value>Countryside</value>
+  </data>
+  <data name="Виноградники Марлоу" xml:space="preserve">
+    <value>Marlowe Vineyards</value>
+  </data>
+  <data name="Холмы и виноградники." xml:space="preserve">
+    <value>Rolling hills and vineyards.</value>
+  </data>
+  <data name="Лагерь хиппи" xml:space="preserve">
+    <value>Hippie camp</value>
+  </data>
+  <data name="Раскрашенный холм в пустыне." xml:space="preserve">
+    <value>Painted hillside in the desert.</value>
+  </data>
+  <data name="Карьер" xml:space="preserve">
+    <value>Quarry</value>
+  </data>
+  <data name="Открытый карьер в восточной части карты." xml:space="preserve">
+    <value>Open quarry on the east side of the map.</value>
+  </data>
+  <data name="Радиостанция Rebel Radio" xml:space="preserve">
+    <value>Rebel Radio station</value>
+  </data>
+  <data name="Радиостанция в пустыне." xml:space="preserve">
+    <value>Radio station in the desert.</value>
+  </data>
+  <data name="Аэродромы" xml:space="preserve">
+    <value>Airfields</value>
+  </data>
+  <data name="Аэропорт Лос-Сантоса" xml:space="preserve">
+    <value>Los Santos International Airport</value>
+  </data>
+  <data name="Подъезд к терминалу аэропорта." xml:space="preserve">
+    <value>Airport terminal approach.</value>
+  </data>
+  <data name="Аэродром Сэнди-Шорс" xml:space="preserve">
+    <value>Sandy Shores Airfield</value>
+  </data>
+  <data name="Открытая территория аэродрома." xml:space="preserve">
+    <value>Open area at the airfield.</value>
+  </data>
+  <data name="Телепорты" xml:space="preserve">
+    <value>Teleports</value>
+  </data>
+  <data name="К моей метке" xml:space="preserve">
+    <value>To my waypoint</value>
+  </data>
+  <data name="Перенестись к метке на карте." xml:space="preserve">
+    <value>Teleport to your map waypoint.</value>
+  </data>
+  <data name="К моей машине" xml:space="preserve">
+    <value>To my vehicle</value>
+  </data>
+  <data name="Вернуться к целой машине и сесть за руль." xml:space="preserve">
+    <value>Return to your vehicle and take the driver's seat, if it has not been destroyed.</value>
+  </data>
+  <data name="Интересные места" xml:space="preserve">
+    <value>Places of interest</value>
+  </data>
+  <data name="~o~Телепорт:~s~ сначала дождитесь возрождения." xml:space="preserve">
+    <value>~o~Teleport:~s~ wait to respawn first.</value>
+  </data>
+  <data name="~o~Телепорт:~s~ в это место можно пешком. Выйдите из транспорта." xml:space="preserve">
+    <value>~o~Teleport:~s~ this destination is on foot only. Leave your vehicle.</value>
+  </data>
+  <data name="месту «" xml:space="preserve">
+    <value>location «</value>
+  </data>
+  <data name="Избранное" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="Добавить текущий транспорт" xml:space="preserve">
+    <value>Add current vehicle</value>
+  </data>
+  <data name="Сядьте в нужный транспорт, чтобы сохранить его модель в личном списке." xml:space="preserve">
+    <value>Enter the vehicle you want to save its model in your personal list.</value>
+  </data>
+  <data name="Личный список появится после проверки доступных моделей." xml:space="preserve">
+    <value>Your personal list will appear after available models have been checked.</value>
+  </data>
+  <data name="Модель недоступна" xml:space="preserve">
+    <value>Model unavailable</value>
+  </data>
+  <data name="~h~~n~Этой модели нет в вашей версии игры." xml:space="preserve">
+    <value>~h~~n~This model is not available in your version of the game.</value>
+  </data>
+  <data name="~o~Этой модели нет в вашей версии игры.~s~ Избранное не изменено." xml:space="preserve">
+    <value>~o~This model is not available in your version of the game.~s~ Favorites have not been changed.</value>
+  </data>
+  <data name="В каталоге или поиске выберите у модели действие «В избранное» стрелками ←/→ и подтвердите выбор." xml:space="preserve">
+    <value>In the catalog or search results, choose a model's «Add to favorites» action with ←/→ and confirm.</value>
+  </data>
+  <data name="~o~Избранное:~s~ сначала сядьте в нужный транспорт." xml:space="preserve">
+    <value>~o~Favorites:~s~ enter the vehicle you want first.</value>
+  </data>
+  <data name="~o~Избранное:~s~ эта модель уже в списке." xml:space="preserve">
+    <value>~o~Favorites:~s~ this model is already on your list.</value>
+  </data>
+  <data name="Создать" xml:space="preserve">
+    <value>Spawn</value>
+  </data>
+  <data name="В избранное" xml:space="preserve">
+    <value>Add to favorites</value>
+  </data>
+  <data name="Убрать из списка" xml:space="preserve">
+    <value>Remove from list</value>
+  </data>
+  <data name="Недоступно" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="Удалить" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="~o~Машина:~s~ дождитесь возрождения и повторите." xml:space="preserve">
+    <value>~o~Vehicle:~s~ wait to respawn, then try again.</value>
+  </data>
+  <data name="~o~Не удалось проверить появление машины. Переподключитесь к игре." xml:space="preserve">
+    <value>~o~Could not check the spawned vehicle. Reconnect to the game.</value>
+  </data>
+  <data name="~o~Машина:~s~ создаём…" xml:space="preserve">
+    <value>~o~Vehicle:~s~ spawning…</value>
+  </data>
+  <data name="~o~Создание машины отменено.~s~ Дождитесь возрождения и повторите." xml:space="preserve">
+    <value>~o~Vehicle spawn canceled.~s~ Wait to respawn, then try again.</value>
+  </data>
+  <data name="~o~Машина не появилась.~s~ Проверьте установленную модель и повторите попытку." xml:space="preserve">
+    <value>~o~The vehicle did not appear.~s~ Check that the model is installed, then try again.</value>
+  </data>
+  <data name="~g~Машина появилась рядом." xml:space="preserve">
+    <value>~g~Vehicle spawned nearby.</value>
+  </data>
+  <data name="~o~Общий тюнинг недоступен для этой версии RageCoop." xml:space="preserve">
+    <value>~o~Shared tuning is unavailable in this version of RageCoop.</value>
+  </data>
+  <data name="~o~Не удалось включить общий тюнинг." xml:space="preserve">
+    <value>~o~Could not enable shared tuning.</value>
+  </data>
+  <data name="~o~Эта версия RageCoop не поддерживает общий тюнинг и посадку через меню." xml:space="preserve">
+    <value>~o~This version of RageCoop does not support shared tuning or entering vehicles through the menu.</value>
+  </data>
+  <data name="Гараж" xml:space="preserve">
+    <value>Garage</value>
+  </data>
+  <data name="Удалить сохранённую машину?" xml:space="preserve">
+    <value>Delete saved vehicle?</value>
+  </data>
+  <data name="Вернуться к сохранённым машинам." xml:space="preserve">
+    <value>Go back to your saved vehicles.</value>
+  </data>
+  <data name="Удалить машину" xml:space="preserve">
+    <value>Delete vehicle</value>
+  </data>
+  <data name="~o~Сначала сядьте за руль своей машины." xml:space="preserve">
+    <value>~o~Take the driver's seat of your vehicle first.</value>
+  </data>
+  <data name="~o~Машина ещё не готова.~s~ Подождите секунду и повторите." xml:space="preserve">
+    <value>~o~The vehicle is not ready yet.~s~ Wait a second and try again.</value>
+  </data>
+  <data name="~o~Попросите водителя перевернуть транспорт." xml:space="preserve">
+    <value>~o~Ask the driver to flip the vehicle upright.</value>
+  </data>
+  <data name="~o~Подойдите к своей машине или сядьте за руль." xml:space="preserve">
+    <value>~o~Approach your vehicle or take the driver's seat.</value>
+  </data>
+  <data name="Сохранить текущую машину" xml:space="preserve">
+    <value>Save current vehicle</value>
+  </data>
+  <data name="Модель вместе с цветом, дисками и тюнингом. Избранное хранит только модель." xml:space="preserve">
+    <value>Save the model, colors, wheels and tuning. Favorites save only the model.</value>
+  </data>
+  <data name="Здесь будут ваши машины" xml:space="preserve">
+    <value>Your vehicles will appear here</value>
+  </data>
+  <data name="Настройте машину, сядьте за руль и сохраните её под своим названием." xml:space="preserve">
+    <value>Customize a vehicle, take the driver's seat and save it under your own name.</value>
+  </data>
+  <data name="Машина удалена из списка" xml:space="preserve">
+    <value>Vehicle removed from the list</value>
+  </data>
+  <data name="~o~Список машин изменился.~s~ Выберите машину заново." xml:space="preserve">
+    <value>~o~Your vehicle list has changed.~s~ Select the vehicle again.</value>
+  </data>
+  <data name="Название машины" xml:space="preserve">
+    <value>Vehicle name</value>
+  </data>
+  <data name="~o~Такое название уже есть или оно содержит недопустимый символ." xml:space="preserve">
+    <value>~o~This name already exists or contains an invalid character.</value>
+  </data>
+  <data name="~o~Вы сменили машину.~s~ Повторите сохранение." xml:space="preserve">
+    <value>~o~You changed vehicles.~s~ Try saving again.</value>
+  </data>
+  <data name="Список заполнен. Удалите одну из 64 сохранённых машин." xml:space="preserve">
+    <value>The list is full. Delete one of your 64 saved vehicles.</value>
+  </data>
+  <data name="Такое название уже есть. Выберите другое." xml:space="preserve">
+    <value>This name already exists. Choose another.</value>
+  </data>
+  <data name="Машина сохранена с тюнингом" xml:space="preserve">
+    <value>Vehicle saved with tuning</value>
+  </data>
+  <data name="~o~Список заполнен.~s~ Удалите одну из 64 сохранённых машин." xml:space="preserve">
+    <value>~o~The list is full.~s~ Delete one of your 64 saved vehicles.</value>
+  </data>
+  <data name="~o~Не удалось передать тюнинг другим игрокам.~s~ Повторите изменение." xml:space="preserve">
+    <value>~o~Could not share tuning with other players.~s~ Try making the change again.</value>
+  </data>
+  <data name="~o~Эту конфигурацию пока нельзя сохранить." xml:space="preserve">
+    <value>~o~This configuration cannot be saved yet.</value>
+  </data>
+  <data name="Оружие" xml:space="preserve">
+    <value>Weapons</value>
+  </data>
+  <data name="Пополнить все патроны" xml:space="preserve">
+    <value>Refill all ammo</value>
+  </data>
+  <data name="Заполнить боезапас оружия, которое у вас уже есть." xml:space="preserve">
+    <value>Refill ammunition for the weapons you already have.</value>
+  </data>
+  <data name="Бесконечные патроны" xml:space="preserve">
+    <value>Infinite ammo</value>
+  </data>
+  <data name="Боезапас не заканчивается. Перезарядка остаётся." xml:space="preserve">
+    <value>Ammunition does not run out. Reloading is still required.</value>
+  </data>
+  <data name="Без перезарядки" xml:space="preserve">
+    <value>No reload</value>
+  </data>
+  <data name="Оружие стреляет без смены магазина." xml:space="preserve">
+    <value>Fire without changing magazines.</value>
+  </data>
+  <data name="Список оружия загружается…" xml:space="preserve">
+    <value>Loading weapons…</value>
+  </data>
+  <data name="Покажем только оружие из вашей версии игры." xml:space="preserve">
+    <value>Only weapons from your version of the game will be shown.</value>
+  </data>
+  <data name="Выберите действие стрелками ←/→ и подтвердите выбор." xml:space="preserve">
+    <value>Choose an action with ←/→ and confirm.</value>
+  </data>
+  <data name="Взять" xml:space="preserve">
+    <value>Get</value>
+  </data>
+  <data name="В руки" xml:space="preserve">
+    <value>Equip</value>
+  </data>
+  <data name="Патроны" xml:space="preserve">
+    <value>Ammo</value>
+  </data>
+  <data name="Убрать" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Оружие пока недоступно" xml:space="preserve">
+    <value>Weapons unavailable</value>
+  </data>
+  <data name="Игра не предоставила список доступных моделей." xml:space="preserve">
+    <value>The game did not provide a list of available models.</value>
+  </data>
+  <data name="Ближний бой" xml:space="preserve">
+    <value>Melee</value>
+  </data>
+  <data name="Пистолеты" xml:space="preserve">
+    <value>Pistols</value>
+  </data>
+  <data name="Пистолеты-пулемёты" xml:space="preserve">
+    <value>Submachine guns</value>
+  </data>
+  <data name="Дробовики" xml:space="preserve">
+    <value>Shotguns</value>
+  </data>
+  <data name="Автоматы" xml:space="preserve">
+    <value>Assault rifles</value>
+  </data>
+  <data name="Пулемёты" xml:space="preserve">
+    <value>Machine guns</value>
+  </data>
+  <data name="Снайперские винтовки" xml:space="preserve">
+    <value>Sniper rifles</value>
+  </data>
+  <data name="Тяжёлое оружие" xml:space="preserve">
+    <value>Heavy weapons</value>
+  </data>
+  <data name="Метательное оружие" xml:space="preserve">
+    <value>Throwables</value>
+  </data>
+  <data name="Снаряжение" xml:space="preserve">
+    <value>Equipment</value>
+  </data>
+  <data name="~o~Оружие:~s~ эта модель сейчас недоступна." xml:space="preserve">
+    <value>~o~Weapons:~s~ this model is currently unavailable.</value>
+  </data>
+  <data name="~o~Оружие:~s~ сначала возьмите эту модель." xml:space="preserve">
+    <value>~o~Weapons:~s~ get this weapon first.</value>
+  </data>
+  <data name="~o~Оружие:~s~ сейчас нельзя взять эту модель в руки." xml:space="preserve">
+    <value>~o~Weapons:~s~ this weapon cannot be equipped right now.</value>
+  </data>
+  <data name="~g~Оружие:~s~ боезапас пополнен." xml:space="preserve">
+    <value>~g~Weapons:~s~ ammo refilled.</value>
+  </data>
+  <data name="~o~Оружие:~s~ дождитесь возрождения и повторите." xml:space="preserve">
+    <value>~o~Weapons:~s~ wait to respawn, then try again.</value>
+  </data>
+  <data name="~o~Оружие:~s~ сначала возьмите оружие с патронами." xml:space="preserve">
+    <value>~o~Weapons:~s~ get a weapon that uses ammunition first.</value>
+  </data>
+  <data name="Машина отремонтирована" xml:space="preserve">
+    <value>Vehicle repaired</value>
+  </data>
+  <data name="Не получили подтверждение ремонта. Повторите действие" xml:space="preserve">
+    <value>Repair was not confirmed. Try again</value>
+  </data>
+  <data name="Неверная модель машины. Выберите её заново." xml:space="preserve">
+    <value>Invalid vehicle model. Select it again.</value>
+  </data>
+  <data name="Подождите секунду перед созданием следующей машины." xml:space="preserve">
+    <value>Wait a second before spawning another vehicle.</value>
+  </data>
+  <data name="Дождитесь подключения к игре и повторите." xml:space="preserve">
+    <value>Wait until you have joined the game, then try again.</value>
+  </data>
+  <data name="Не удалось определить место для машины. Повторите попытку." xml:space="preserve">
+    <value>Could not find a place to spawn the vehicle. Try again.</value>
+  </data>
+  <data name="Машину нельзя создать за пределами карты." xml:space="preserve">
+    <value>Vehicles cannot be spawned outside the map.</value>
+  </data>
+  <data name="Не удалось создать эту модель машины. Повторите попытку." xml:space="preserve">
+    <value>Could not spawn this vehicle model. Try again.</value>
+  </data>
+  <data name="Машина больше не существует" xml:space="preserve">
+    <value>The vehicle no longer exists</value>
+  </data>
+  <data name="Подойдите ближе к машине" xml:space="preserve">
+    <value>Move closer to the vehicle</value>
+  </data>
+  <data name="Машина изменилась. Повторите ремонт" xml:space="preserve">
+    <value>The vehicle has changed. Try repairing again</value>
+  </data>
+  <data name="Машина ещё загружается. Повторите ремонт через секунду" xml:space="preserve">
+    <value>The vehicle is still loading. Try repairing again in a second</value>
+  </data>
+  <data name="Ремонт пока занят. Повторите через секунду" xml:space="preserve">
+    <value>A repair is already in progress. Try again in a second</value>
+  </data>
+  <data name="Метка за пределами карты" xml:space="preserve">
+    <value>The waypoint is outside the map</value>
+  </data>
+  <data name="Местоположение напарника недоступно" xml:space="preserve">
+    <value>Your partner's location is unavailable</value>
+  </data>
+  <data name="Игрок уже отключился. Обновите список напарников" xml:space="preserve">
+    <value>This player has disconnected. Refresh the partner list</value>
+  </data>
+  <data name="Подождите секунду и повторите попытку" xml:space="preserve">
+    <value>Wait a second and try again</value>
+  </data>
+  <data name="Сначала создайте машину в меню транспорта" xml:space="preserve">
+    <value>Spawn a vehicle from the Transport menu first</value>
+  </data>
+  <data name="Местоположение машины недоступно" xml:space="preserve">
+    <value>The vehicle's location is unavailable</value>
+  </data>
+  <data name="Игрок вышел. Перемещение отменено" xml:space="preserve">
+    <value>The player left. Teleport canceled</value>
+  </data>
+  <data name="Переворот отправлен в игру" xml:space="preserve">
+    <value>Vehicle flip requested</value>
+  </data>
+  <data name="Настройки не подходят этой машине" xml:space="preserve">
+    <value>These settings do not fit this vehicle</value>
+  </data>
+  <data name="Не удалось прочитать настройки машины. Выберите её заново." xml:space="preserve">
+    <value>Could not read the vehicle settings. Select it again.</value>
+  </data>
+  <data name="Слишком много сохранённых изменений в этой сессии. Переподключитесь." xml:space="preserve">
+    <value>Too many saved changes in this session. Reconnect.</value>
+  </data>
+  <data name="Машины больше нет рядом" xml:space="preserve">
+    <value>The vehicle is no longer nearby</value>
+  </data>
+  <data name="Сядьте за руль своей машины или подойдите к ней" xml:space="preserve">
+    <value>Take the driver's seat of your vehicle or approach it</value>
+  </data>
+  <data name="Не удалось прочитать настройки машины" xml:space="preserve">
+    <value>Could not read the vehicle settings</value>
+  </data>
+  <data name="Слишком много сохранённых изменений в этой сессии. Переподключитесь" xml:space="preserve">
+    <value>Too many saved changes in this session. Reconnect</value>
+  </data>
+  <data name="Игрок уже вышел. Выберите другого" xml:space="preserve">
+    <value>This player has left. Choose another</value>
+  </data>
+  <data name="Местоположение транспорта пока недоступно" xml:space="preserve">
+    <value>The vehicle's location is currently unavailable</value>
+  </data>
+  <data name="Превышен допустимый объём объектов. Переподключитесь к серверу." xml:space="preserve">
+    <value>The object limit was exceeded. Reconnect to the server.</value>
+  </data>
+  <data name="На этом сервере бессмертие запрещено." xml:space="preserve">
+    <value>Invincibility is not allowed on this server.</value>
+  </data>
+  <data name="Не удалось подключить персонажа. Переподключитесь к серверу." xml:space="preserve">
+    <value>Could not connect your character. Reconnect to the server.</value>
+  </data>
+  <data name="Не удалось прочитать данные игры. Переподключитесь к серверу." xml:space="preserve">
+    <value>Could not read game data. Reconnect to the server.</value>
+  </data>
+  <data name="Дождитесь загрузки обновлённого меню у всех игроков." xml:space="preserve">
+    <value>Wait for all players to load the updated menu.</value>
+  </data>
+  <data name="Общие режимы выключены: у одного из игроков не загрузилось обновлённое меню." xml:space="preserve">
+    <value>Shared modes turned off: one player did not load the updated menu.</value>
+  </data>
+  <data name="Ясно и солнечно" xml:space="preserve">
+    <value>Extra sunny</value>
+  </data>
+  <data name="Ясно" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Облачно" xml:space="preserve">
+    <value>Cloudy</value>
+  </data>
+  <data name="Смог" xml:space="preserve">
+    <value>Smog</value>
+  </data>
+  <data name="Туман" xml:space="preserve">
+    <value>Foggy</value>
+  </data>
+  <data name="Пасмурно" xml:space="preserve">
+    <value>Overcast</value>
+  </data>
+  <data name="Дождь" xml:space="preserve">
+    <value>Rain</value>
+  </data>
+  <data name="Гроза" xml:space="preserve">
+    <value>Thunderstorm</value>
+  </data>
+  <data name="Прояснение" xml:space="preserve">
+    <value>Clearing</value>
+  </data>
+  <data name="Нейтрально" xml:space="preserve">
+    <value>Neutral</value>
+  </data>
+  <data name="Снег" xml:space="preserve">
+    <value>Snow</value>
+  </data>
+  <data name="Метель" xml:space="preserve">
+    <value>Blizzard</value>
+  </data>
+  <data name="Лёгкий снег" xml:space="preserve">
+    <value>Light snow</value>
+  </data>
+  <data name="Снег на земле" xml:space="preserve">
+    <value>Snow on the ground</value>
+  </data>
+  <data name="Хэллоуин" xml:space="preserve">
+    <value>Halloween</value>
+  </data>
+  <data name="Городские поездки" xml:space="preserve">
+    <value>City driving</value>
+  </data>
+  <data name="Поездки по шоссе" xml:space="preserve">
+    <value>Highway driving</value>
+  </data>
+  <data name="Асфальт и гонки" xml:space="preserve">
+    <value>Roads and racing</value>
+  </data>
+  <data name="Спокойные поездки" xml:space="preserve">
+    <value>Relaxed cruising</value>
+  </data>
+  <data name="Город и загородные поездки" xml:space="preserve">
+    <value>City and country driving</value>
+  </data>
+  <data name="Город и поездки по шоссе" xml:space="preserve">
+    <value>City and highway driving</value>
+  </data>
+  <data name="Шоссе и гонки" xml:space="preserve">
+    <value>Highways and racing</value>
+  </data>
+  <data name="Город и бездорожье" xml:space="preserve">
+    <value>City and off-road driving</value>
+  </data>
+  <data name="Бездорожье и загородные поездки" xml:space="preserve">
+    <value>Off-road and country driving</value>
+  </data>
+  <data name="~o~Оружие:~s~ не удалось выдать «{0}»." xml:space="preserve">
+    <value>~o~Weapons:~s~ could not give you «{0}».</value>
+  </data>
+  <data name="~g~Оружие:~s~ «{0}» у вас." xml:space="preserve">
+    <value>~g~Weapons:~s~ you have «{0}».</value>
+  </data>
+  <data name="~g~Оружие:~s~ «{0}» убрано." xml:space="preserve">
+    <value>~g~Weapons:~s~ «{0}» removed.</value>
+  </data>
+  <data name="~o~Машина:~s~ {0}" xml:space="preserve">
+    <value>~o~Vehicle:~s~ {0}</value>
+  </data>
+  <data name="~o~{0}:~s~ машина не установлена. Установите общий набор добавленных машин и перезапустите игру." xml:space="preserve">
+    <value>~o~{0}:~s~ this vehicle is not installed. Install the shared add-on vehicle pack and restart the game.</value>
+  </data>
+  <data name="Язык / Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Язык меню. Названия ваших машин и язык ввода текста не меняются." xml:space="preserve">
+    <value>Menu language. Your vehicle names and text input language stay the same.</value>
+  </data>
+  <data name="К {0}" xml:space="preserve">
+    <value>To {0}</value>
+  </data>
+  <data name="Задержка: {0} мс." xml:space="preserve">
+    <value>Ping: {0} ms.</value>
+  </data>
+  <data name="{0:0.0} км" xml:space="preserve">
+    <value>{0:0.0} km</value>
+  </data>
+  <data name="{0} м" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
+  <data name="~h~{0}~h~~n~Сохранены цвет, диски и тюнинг." xml:space="preserve">
+    <value>~h~{0}~h~~n~Colors, wheels and tuning saved.</value>
+  </data>
+  <data name="Удалить «{0}»" xml:space="preserve">
+    <value>Delete “{0}”</value>
+  </data>
+  <data name="Сохранённая машина «{0}» будет удалена из гаража. Транспорт в игре останется на месте." xml:space="preserve">
+    <value>Saved vehicle “{0}” will be removed from your garage. The vehicle in the game will remain where it is.</value>
+  </data>
+  <data name="~g~Гараж этого компьютера перенесён на сервер." xml:space="preserve">
+    <value>~g~This computer's garage has been moved to the server.</value>
+  </data>
+  <data name="~o~Гараж этого компьютера перенесён не полностью.~s~ Файлы на компьютере оставлены." xml:space="preserve">
+    <value>~o~This computer's garage was not moved completely.~s~ The files on this computer are kept.</value>
+  </data>
+  <data name="~o~Гараж ещё загружается.~s~ Попробуйте через секунду." xml:space="preserve">
+    <value>~o~The garage is still loading.~s~ Try again in a second.</value>
+  </data>
+  <data name="~o~Гараж на сервере недоступен.~s~ Данные не изменены." xml:space="preserve">
+    <value>~o~The garage on the server is unavailable.~s~ Nothing was changed.</value>
+  </data>
+  <data name="Гараж загружается…" xml:space="preserve">
+    <value>Garage is loading…</value>
+  </data>
+  <data name="Сохранённые машины и избранное приходят с сервера." xml:space="preserve">
+    <value>Saved vehicles and favorites come from the server.</value>
+  </data>
+  <data name="Избранное: модель добавлена." xml:space="preserve">
+    <value>Favorites: model added.</value>
+  </data>
+  <data name="Избранное: модель убрана." xml:space="preserve">
+    <value>Favorites: model removed.</value>
+  </data>
+  <data name="Особые места" xml:space="preserve">
+    <value>Special places</value>
+  </data>
+  <data name="Скрытые места карты. Влево/вправо: только вы или вместе с напарником." xml:space="preserve">
+    <value>Hidden map places. Left/right: just you or together with your partner.</value>
+  </data>
+  <data name="Только я" xml:space="preserve">
+    <value>Just me</value>
+  </data>
+  <data name="Вместе с напарником" xml:space="preserve">
+    <value>With my partner</value>
+  </data>
+  <data name="~r~Телепорт:~s~ этого места нет в вашей версии игры." xml:space="preserve">
+    <value>~r~Teleport:~s~ this place is not in your game version.</value>
+  </data>
+  <data name="Напарник" xml:space="preserve">
+    <value>Partner</value>
+  </data>
+  <data name="Принять: {0}" xml:space="preserve">
+    <value>Accept: {0}</value>
+  </data>
+  <data name="{0} зовёт вас сюда. Приглашение действует минуту." xml:space="preserve">
+    <value>{0} invites you here. The invitation lasts one minute.</value>
+  </data>
+  <data name="~b~{0}~s~ зовёт: {1}. Принять: J → Телепорты." xml:space="preserve">
+    <value>~b~{0}~s~ invites you: {1}. Accept: J → Teleports.</value>
+  </data>
+  <data name="Подождите пару секунд перед новым приглашением" xml:space="preserve">
+    <value>Wait a couple of seconds before a new invitation</value>
+  </data>
+  <data name="Напарников на сервере нет: переносим только вас" xml:space="preserve">
+    <value>No partners on the server: teleporting only you</value>
+  </data>
+  <data name="Кайо-Перико" xml:space="preserve">
+    <value>Cayo Perico</value>
+  </data>
+  <data name="Остров из ограбления GTA Online: дороги, пляжи, особняк. Можно на машине." xml:space="preserve">
+    <value>The island from the GTA Online heist: roads, beaches, a mansion. Vehicles allowed.</value>
+  </data>
+  <data name="Северный Янктон" xml:space="preserve">
+    <value>North Yankton</value>
+  </data>
+  <data name="Заснеженный городок далеко на востоке. Карта маленькая, по краям невидимая стена. Можно на машине." xml:space="preserve">
+    <value>A snowy town far to the east. The map is small, with invisible walls at its edges. Vehicles allowed.</value>
+  </data>
+  <data name="Вернуться назад" xml:space="preserve">
+    <value>Go back</value>
+  </data>
+  <data name="Туда, откуда вы перенеслись в особое место." xml:space="preserve">
+    <value>To where you were before teleporting to a special place.</value>
+  </data>
+  <data name="~o~Телепорт:~s~ вы ещё не переносились в особое место." xml:space="preserve">
+    <value>~o~Teleport:~s~ you have not teleported to a special place yet.</value>
+  </data>
+  <data name="Авианосец на востоке" xml:space="preserve">
+    <value>Eastern aircraft carrier</value>
+  </data>
+  <data name="Палуба авианосца далеко в море к востоку от города. Пешком." xml:space="preserve">
+    <value>The deck of an aircraft carrier far out at sea east of the city. On foot.</value>
+  </data>
+  <data name="Авианосец у Занкудо" xml:space="preserve">
+    <value>Zancudo aircraft carrier</value>
+  </data>
+  <data name="Палуба авианосца у западного побережья, рядом с Форт-Занкудо. Пешком." xml:space="preserve">
+    <value>The deck of an aircraft carrier off the west coast near Fort Zancudo. On foot.</value>
+  </data>
+  <data name="Яхта у Пасифик-Блафс" xml:space="preserve">
+    <value>Pacific Bluffs yacht</value>
+  </data>
+  <data name="Большая яхта у западного побережья. Пешком." xml:space="preserve">
+    <value>A large yacht off the west coast. On foot.</value>
+  </data>
+  <data name="Яхта у Палето-Бэй" xml:space="preserve">
+    <value>Paleto Bay yacht</value>
+  </data>
+  <data name="Яхта у северного побережья. Пешком." xml:space="preserve">
+    <value>A yacht off the north coast. On foot.</value>
+  </data>
+  <data name="Грузовое судно в море" xml:space="preserve">
+    <value>Cargo ship at sea</value>
+  </data>
+  <data name="Большой грузовой корабль к югу от порта. Пешком." xml:space="preserve">
+    <value>A large cargo ship south of the port. On foot.</value>
+  </data>
+  <data name="Аэродром в холмах" xml:space="preserve">
+    <value>Hillside airstrip</value>
+  </data>
+  <data name="Скрытая взлётная полоса в холмах Тонгва. Можно на машине." xml:space="preserve">
+    <value>A hidden runway in the Tongva Hills. Vehicles allowed.</value>
+  </data>
+  <data name="Красная дорожка" xml:space="preserve">
+    <value>Red carpet</value>
+  </data>
+  <data name="Ковровая дорожка премьеры у кинотеатра в Вайнвуде. Пешком." xml:space="preserve">
+    <value>A premiere red carpet at the Vinewood theater. On foot.</value>
+  </data>
+  <data name="Загружаем карту" xml:space="preserve">
+    <value>Loading the map</value>
+  </data>
+  <data name="Авианосцы, яхты, грузовое судно и аэродром" xml:space="preserve">
+    <value>Aircraft carriers, yachts, the cargo ship and the airstrip</value>
+  </data>
+  <data name="Один раз за запуск GTA: дальше места просто стоят на карте." xml:space="preserve">
+    <value>Once per GTA launch: after that the places simply stay on the map.</value>
+  </data>
+  <data name="Загрузка карты" xml:space="preserve">
+    <value>Loading the map</value>
+  </data>
+  <data name="~o~Телепорт:~s~ дождитесь загрузки карты." xml:space="preserve">
+    <value>~o~Teleport:~s~ wait until the map has loaded.</value>
+  </data>
+  <data name="Интерьеры" xml:space="preserve">
+    <value>Interiors</value>
+  </data>
+  <data name="Интерьеры GTA Online. У каждого есть вход с улицы — значок на карте." xml:space="preserve">
+    <value>GTA Online interiors. Each has a street entrance marked on the map.</value>
+  </data>
+  <data name="Перенестись внутрь. Выход — у метки на месте появления." xml:space="preserve">
+    <value>Teleport inside. The exit is at the marker where you appear.</value>
+  </data>
+  <data name="~o~Интерьер:~s~ дождитесь загрузки карты." xml:space="preserve">
+    <value>~o~Interior:~s~ wait for the map to load.</value>
+  </data>
+  <data name="Казино" xml:space="preserve">
+    <value>Casino</value>
+  </data>
+  <data name="Апартаменты" xml:space="preserve">
+    <value>Apartments</value>
+  </data>
+  <data name="Дома" xml:space="preserve">
+    <value>Houses</value>
+  </data>
+  <data name="Офисы" xml:space="preserve">
+    <value>Offices</value>
+  </data>
+  <data name="Казино Diamond" xml:space="preserve">
+    <value>The Diamond Casino</value>
+  </data>
+  <data name="Зал казино" xml:space="preserve">
+    <value>Casino floor</value>
+  </data>
+  <data name="Пентхаус казино" xml:space="preserve">
+    <value>Casino penthouse</value>
+  </data>
+  <data name="Пентхаус 1" xml:space="preserve">
+    <value>Penthouse 1</value>
+  </data>
+  <data name="Пентхаус 2" xml:space="preserve">
+    <value>Penthouse 2</value>
+  </data>
+  <data name="Пентхаус 3" xml:space="preserve">
+    <value>Penthouse 3</value>
+  </data>
+  <data name="Апартаменты 3" xml:space="preserve">
+    <value>Apartment 3</value>
+  </data>
+  <data name="Апартаменты 30" xml:space="preserve">
+    <value>Apartment 30</value>
+  </data>
+  <data name="Апартаменты 28" xml:space="preserve">
+    <value>Apartment 28</value>
+  </data>
+  <data name="Апартаменты 7" xml:space="preserve">
+    <value>Apartment 7</value>
+  </data>
+  <data name="Апартаменты 4" xml:space="preserve">
+    <value>Apartment 4</value>
+  </data>
+  <data name="Апартаменты 2" xml:space="preserve">
+    <value>Apartment 2</value>
+  </data>
+  <data name="Апартаменты 42" xml:space="preserve">
+    <value>Apartment 42</value>
+  </data>
+  <data name="Дом" xml:space="preserve">
+    <value>House</value>
+  </data>
+  <data name="Офис CEO" xml:space="preserve">
+    <value>CEO office</value>
+  </data>
+  <data name="Яхта у порта" xml:space="preserve">
+    <value>Yacht off the port</value>
+  </data>
+  <data name="Яхта с интерьером в море к югу от порта Лос-Сантоса. Пешком." xml:space="preserve">
+    <value>A yacht with an interior at sea south of the Port of Los Santos. On foot.</value>
+  </data>
+  <data name="Яхта у Чумаша" xml:space="preserve">
+    <value>Yacht off Chumash</value>
+  </data>
+  <data name="Яхта с интерьером у западного побережья, напротив Чумаша. Пешком." xml:space="preserve">
+    <value>A yacht with an interior off the west coast, facing Chumash. On foot.</value>
+  </data>
+  <data name="Яхта на севере" xml:space="preserve">
+    <value>Northern yacht</value>
+  </data>
+  <data name="Яхта с интерьером у северо-западного берега, за Палето-Форест. Пешком." xml:space="preserve">
+    <value>A yacht with an interior off the north-west shore, past Paleto Forest. On foot.</value>
+  </data>
+  <data name="Яхта в море на западе" xml:space="preserve">
+    <value>Western sea yacht</value>
+  </data>
+  <data name="Яхта с интерьером в открытом море к западу от Пасифик-Блафс. Пешком." xml:space="preserve">
+    <value>A yacht with an interior in open sea west of Pacific Bluffs. On foot.</value>
+  </data>
+  <data name="Яхта в море на юге" xml:space="preserve">
+    <value>Southern sea yacht</value>
+  </data>
+  <data name="Яхта с интерьером в открытом море далеко к югу от города. Пешком." xml:space="preserve">
+    <value>A yacht with an interior in open sea far south of the city. On foot.</value>
+  </data>
+  <data name="Яхта у восточного авианосца" xml:space="preserve">
+    <value>Yacht by the eastern carrier</value>
+  </data>
+  <data name="Яхта с интерьером в море рядом с восточным авианосцем. Пешком." xml:space="preserve">
+    <value>A yacht with an interior at sea next to the eastern aircraft carrier. On foot.</value>
+  </data>
+  <data name="~o~Интерьер:~s~ его нет в вашей версии игры." xml:space="preserve">
+    <value>~o~Interior:~s~ it is not in your version of the game.</value>
+  </data>
+  <data name="Байкеры" xml:space="preserve">
+    <value>Bikers</value>
+  </data>
+  <data name="Бизнесы" xml:space="preserve">
+    <value>Businesses</value>
+  </data>
+  <data name="Агентства" xml:space="preserve">
+    <value>Agencies</value>
+  </data>
+  <data name="Особняки" xml:space="preserve">
+    <value>Mansions</value>
+  </data>
+  <data name="Клуб байкеров, Сэнди-Шорс" xml:space="preserve">
+    <value>Biker clubhouse, Sandy Shores</value>
+  </data>
+  <data name="Клуб байкеров, Палето-Бэй" xml:space="preserve">
+    <value>Biker clubhouse, Paleto Bay</value>
+  </data>
+  <data name="Лаборатория мета" xml:space="preserve">
+    <value>Meth lab</value>
+  </data>
+  <data name="Ферма травы" xml:space="preserve">
+    <value>Weed farm</value>
+  </data>
+  <data name="Склад кокаина" xml:space="preserve">
+    <value>Cocaine lockup</value>
+  </data>
+  <data name="Фабрика фальшивых денег" xml:space="preserve">
+    <value>Counterfeit cash factory</value>
+  </data>
+  <data name="Мастерская документов" xml:space="preserve">
+    <value>Document forgery office</value>
+  </data>
+  <data name="Бункер" xml:space="preserve">
+    <value>Bunker</value>
+  </data>
+  <data name="Ангар в аэропорту" xml:space="preserve">
+    <value>Airport hangar</value>
+  </data>
+  <data name="База Судного дня" xml:space="preserve">
+    <value>Doomsday facility</value>
+  </data>
+  <data name="Ночной клуб" xml:space="preserve">
+    <value>Nightclub</value>
+  </data>
+  <data name="Аркада" xml:space="preserve">
+    <value>Arcade</value>
+  </data>
+  <data name="Автомастерская" xml:space="preserve">
+    <value>Auto shop</value>
+  </data>
+  <data name="Офис поручителя" xml:space="preserve">
+    <value>Bail office</value>
+  </data>
+  <data name="Свалка" xml:space="preserve">
+    <value>Salvage yard</value>
+  </data>
+  <data name="Автомойка Hands On" xml:space="preserve">
+    <value>Hands On Car Wash</value>
+  </data>
+  <data name="Агентство, Рокфорд-Хиллз" xml:space="preserve">
+    <value>Agency, Rockford Hills</value>
+  </data>
+  <data name="Агентство, Хавик" xml:space="preserve">
+    <value>Agency, Hawick</value>
+  </data>
+  <data name="Агентство, Веспуччи" xml:space="preserve">
+    <value>Agency, Vespucci</value>
+  </data>
+  <data name="Агентство, Литл-Сеул" xml:space="preserve">
+    <value>Agency, Little Seoul</value>
+  </data>
+  <data name="Особняк, Вайнвуд-Хиллз" xml:space="preserve">
+    <value>Mansion, Vinewood Hills</value>
+  </data>
+  <data name="Особняк, Ричман" xml:space="preserve">
+    <value>Mansion, Richman</value>
+  </data>
+  <data name="Особняк, Тонгва" xml:space="preserve">
+    <value>Mansion, Tongva</value>
+  </data>
+  <data name="Клуб" xml:space="preserve">
+    <value>Clubhouse</value>
+  </data>
+  <data name="Лаборатория" xml:space="preserve">
+    <value>Lab</value>
+  </data>
+  <data name="Ферма" xml:space="preserve">
+    <value>Farm</value>
+  </data>
+  <data name="Склад" xml:space="preserve">
+    <value>Lockup</value>
+  </data>
+  <data name="Фабрика" xml:space="preserve">
+    <value>Factory</value>
+  </data>
+  <data name="Мастерская" xml:space="preserve">
+    <value>Workshop</value>
+  </data>
+  <data name="Ангар" xml:space="preserve">
+    <value>Hangar</value>
+  </data>
+  <data name="База" xml:space="preserve">
+    <value>Facility</value>
+  </data>
+  <data name="Офис" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="Офис агентства" xml:space="preserve">
+    <value>Agency office</value>
+  </data>
+  <data name="Особняк" xml:space="preserve">
+    <value>Mansion</value>
+  </data>
+  <data name="О дополнении" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Coop Control — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия " xml:space="preserve">
+    <value>Coop Control — an add-on for RageCoop. By Vladislav Kupyansky (vkupyansky). Contact: Telegram @skibidessa, github.com/vkupyansky. Version </value>
+  </data>
+  <data name="Студия" xml:space="preserve">
+    <value>Studio</value>
+  </data>
+  <data name="Склад, Вест-Вайнвуд" xml:space="preserve">
+    <value>Warehouse, West Vinewood</value>
+  </data>
+  <data name="Малый склад" xml:space="preserve">
+    <value>Small warehouse</value>
+  </data>
+  <data name="Склад, Дель-Перро" xml:space="preserve">
+    <value>Warehouse, Del Perro</value>
+  </data>
+  <data name="Средний склад" xml:space="preserve">
+    <value>Medium warehouse</value>
+  </data>
+  <data name="Склад, Ла-Меса" xml:space="preserve">
+    <value>Warehouse, La Mesa</value>
+  </data>
+  <data name="Большой склад" xml:space="preserve">
+    <value>Large warehouse</value>
+  </data>
+  <data name="Склад машин, Строберри" xml:space="preserve">
+    <value>Vehicle warehouse, Strawberry</value>
+  </data>
+  <data name="Мастерская внизу" xml:space="preserve">
+    <value>Workshop below</value>
+  </data>
+  <data name="Гараж на Eclipse Boulevard" xml:space="preserve">
+    <value>Eclipse Boulevard Garage</value>
+  </data>
+  <data name="Склады" xml:space="preserve">
+    <value>Warehouses</value>
+  </data>
+  <data name="Гаражи" xml:space="preserve">
+    <value>Garages</value>
+  </data>
+  <data name="Обвесы" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="Обвесы и окраска оружия в руках видны другим игрокам." xml:space="preserve">
+    <value>Other players see the attachments and colour of the weapon in your hands.</value>
+  </data>
+  <data name="Поставить или снять. Детали одного места заменяют друг друга." xml:space="preserve">
+    <value>Attach or remove. Parts for the same place replace each other.</value>
+  </data>
+  <data name="Окраска" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="Цвет оружия: стрелками ←/→." xml:space="preserve">
+    <value>Weapon colour: use ←/→.</value>
+  </data>
+  <data name="У этого оружия нет обвесов" xml:space="preserve">
+    <value>This weapon has no attachments</value>
+  </data>
+  <data name="Выберите другую модель." xml:space="preserve">
+    <value>Choose another model.</value>
+  </data>
+  <data name="Голосовой чат" xml:space="preserve">
+    <value>Voice chat</value>
+  </data>
+  <data name="Говорить — удерживайте N (кнопка «Рация» в настройках управления GTA). Вас слышат все на сервере. На Mac разрешите CrossOver доступ к микрофону." xml:space="preserve">
+    <value>Hold N to talk (the Push to Talk key in GTA's control settings). Everyone on the server hears you. On a Mac, allow CrossOver to use the microphone.</value>
+  </data>
+  <data name="Микрофон включён" xml:space="preserve">
+    <value>Microphone on</value>
+  </data>
+  <data name="~g~Возрождение:~s~ рядом с напарником." xml:space="preserve">
+    <value>~g~Respawn:~s~ next to your partner.</value>
+  </data>
+</root>

@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <PublicRelease Condition="'$(PublicRelease)' == ''">true</PublicRelease>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Product>Coop Control</Product>
+    <Authors>Vladislav Kupyansky (vkupyansky)</Authors>
+    <Company>Vladislav Kupyansky (vkupyansky)</Company>
+    <Copyright>Copyright © 2026 Vladislav Kupyansky (vkupyansky)</Copyright>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PublicRelease)' == 'true'">
+    <DefineConstants>$(DefineConstants);PUBLIC_RELEASE</DefineConstants>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)References.props" Condition="Exists('$(MSBuildThisFileDirectory)References.props')" />
+</Project>

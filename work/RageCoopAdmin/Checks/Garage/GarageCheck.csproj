@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Shared/AtomicFile.cs" Link="AtomicFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="../../Shared/VehicleAppearance.cs" Link="VehicleAppearance.cs" />
+    <Compile Include="../../Shared/Garage.cs" Link="Garage.cs" />
+    <Compile Include="../../Server/GarageStore.cs" Link="GarageStore.cs" />
+    <Compile Include="../../Server/WorldModeStore.cs" Link="WorldModeStore.cs" />
+    <Compile Include="../../Client/GarageClient.cs" Link="GarageClient.cs" />
+  </ItemGroup>
+</Project>

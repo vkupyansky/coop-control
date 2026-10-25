@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../Server/ServerBanner.cs" Link="ServerBanner.cs" />
+    <Compile Include="../../Shared/ProductInfo.cs" Link="ProductInfo.cs" />
+    <Compile Include="../../Bootstrap/ServerProcessFile.cs" Link="ServerProcessFile.cs" />
+  </ItemGroup>
+</Project>
