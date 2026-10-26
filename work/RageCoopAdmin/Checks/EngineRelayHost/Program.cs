@@ -125,7 +125,7 @@ internal static class Program
             var api = (API)Activator.CreateInstance(typeof(API), InstanceFlags, null, new object[] { server }, null)!;
             script.API = api;
             script.OnStart();
-            Type fragments = scriptAssembly.GetType("CoopControl.Shared.EngineFragmentGuard", true)!;
+            Type fragments = scriptAssembly.GetType("OGCoop.Shared.EngineFragmentGuard", true)!;
             MethodInfo fragmentTarget = (MethodInfo)fragments.GetMethod("FindFragmentTarget", BindingFlags.Static | BindingFlags.NonPublic)!.Invoke(null, null)!;
             Type peerType = typeof(Server).GetField("MainNetServer", InstanceFlags)!.FieldType;
             if (!fragmentTarget.DeclaringType!.IsAssignableFrom(peerType))

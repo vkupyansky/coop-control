@@ -56,7 +56,7 @@ internal sealed class HangWatch
             if (inFront) _stalled += elapsed;
             if (_stalled < ReportMilliseconds) return;
             _reported = true;
-            _log("Coop Control: game stopped: no frame for " + _stalled / 1000 + " s with the window in front; Coop Control step: " +
+            _log("OG Coop: game stopped: no frame for " + _stalled / 1000 + " s with the window in front; OG Coop step: " +
                 _step + "; RageCoop ticks running: " + _running());
         }
     }

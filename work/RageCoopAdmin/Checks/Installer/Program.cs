@@ -4,8 +4,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using CoopControl.Installer;
-using CoopControl.Shared;
+using OGCoop.Installer;
+using OGCoop.Shared;
 
 namespace InstallerCheck;
 
@@ -78,6 +78,14 @@ internal static class CheckProgram
         string ini = File.ReadAllText(Path.Combine(game, "ScriptHookVDotNet.ini"));
         Assert(ini.Contains("ReloadKeyBinding=None") && ini.Contains("Mine=1"), "The merged settings keep the player's own key.");
         Assert(!Directory.EnumerateFiles(game, "*.coop-new", SearchOption.AllDirectories).Any(), "No temporary file is left after an update.");
+        string former = Path.Combine(game, @"scripts\CoopControl.EarlyClient.dll");
+        Directory.CreateDirectory(Path.GetDirectoryName(former)!);
+        File.WriteAllText(former, "old early module");
+        CopyResult checkRemoval = GameFiles.Install(payload, game, apply: false);
+        Assert(checkRemoval.Removed == 1 && File.Exists(former), "Check mode reports the early module of the former name without removing it.");
+        CopyResult renamed = GameFiles.Install(payload, game, apply: true);
+        Assert(renamed.Removed == 1 && renamed.AnyChange && !File.Exists(former) && renamed.Changed.Contains(@"scripts\CoopControl.EarlyClient.dll"),
+            "Updating from before the rename removes the early module of the former name, so only one loads.");
     }
 
     private static void CheckGameFolders(string root)

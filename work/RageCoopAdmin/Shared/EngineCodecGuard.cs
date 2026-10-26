@@ -11,7 +11,7 @@ using HarmonyLib;
 using Lidgren.Network;
 using RageCoop.Core;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Both endpoints use the same installed Core. Keep its existing wire format,
 // except for the asymmetric short/Vector2/voice encodings in that build.

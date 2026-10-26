@@ -75,7 +75,7 @@ internal static class HostAbortCleanupGuard
         catch (Exception ex)
         {
             // Cleanup failures must not prevent SHVDN from aborting the host.
-            API.Logger.Warning("Coop Control: host cleanup failed: " + ex.GetType().Name);
+            API.Logger.Warning("OG Coop: host cleanup failed: " + ex.GetType().Name);
         }
     }
 }

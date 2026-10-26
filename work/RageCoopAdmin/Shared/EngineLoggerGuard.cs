@@ -8,7 +8,7 @@ using System.Threading;
 using HarmonyLib;
 using RageCoop.Core;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Buffer changes on every append and flush. Preserve the installed formatting
 // and output paths, but give all its existing monitor blocks one stable gate.

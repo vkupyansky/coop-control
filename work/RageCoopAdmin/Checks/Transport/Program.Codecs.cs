@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Math;
 using HarmonyLib;

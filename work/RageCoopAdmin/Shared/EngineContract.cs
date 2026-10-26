@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Guards patch or depend on exact installed RageCoop method bodies: an unknown
 // build is rejected instead of being rewritten by guesswork.

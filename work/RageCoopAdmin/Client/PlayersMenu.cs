@@ -6,7 +6,7 @@ using GTA;
 using GTA.UI;
 using LemonUI.Menus;
 using RageCoop.Client.Scripting;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
@@ -21,7 +21,7 @@ public sealed partial class AdminMenuScript
     private void BuildPlayersMenu()
     {
         if (_pool == null || _mainMenu == null) return;
-        _peersMenu = CreateMenu("Coop Control", "Напарники");
+        _peersMenu = CreateMenu("OG Coop", "Напарники");
         UiMenu.Description(_peersMenu, () => UiText.Get("Выбрать игрока и переместиться к нему."));
         _mainMenu.AddSubMenu(_peersMenu);
         _peersMenu.Shown += (_, _) =>
@@ -43,7 +43,7 @@ public sealed partial class AdminMenuScript
         }
         if (!players.ContainsKey(peerId))
         {
-            API.LocalChatMessage(UiText.Get("Coop Control"), UiText.Get("Игрок уже отключился. Выберите другого напарника."));
+            API.LocalChatMessage(UiText.Get("OG Coop"), UiText.Get("Игрок уже отключился. Выберите другого напарника."));
             return;
         }
         RequestPassengerTeleport(peerId);

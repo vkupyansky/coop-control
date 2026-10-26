@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CoopAdmin.Server;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoopAdmin.Client;
 
 internal static class Program
@@ -22,7 +22,10 @@ internal static class Program
             CheckServerStore(Path.Combine(directory, "server"));
             CheckClient(Path.Combine(directory, "client"));
             CheckWorldModes(Path.Combine(directory, "modes"));
-            Console.WriteLine($"Garage checks passed: {_checks}. Shared rules, server files and the client run as built; the network is a direct call.");
+            CheckCharacters(Path.Combine(directory, "server"));
+            CheckYachts(Path.Combine(directory, "server"));
+            CheckHomes(Path.Combine(directory, "server"));
+            Console.WriteLine($"Garage and character checks passed: {_checks}. Shared rules, server files and the client run as built; the network is a direct call.");
             return 0;
         }
         catch (Exception ex)
@@ -48,6 +51,242 @@ internal static class Program
         Assert(store.LoadGhostTraffic() == null, "a damaged file is reported, not read as a choice");
         File.WriteAllText(Path.Combine(directory, "world-modes.txt"), new string('x', 100));
         Assert(store.LoadGhostTraffic() == null, "an oversized file is not read");
+    }
+
+    private static CharacterLook Character(int model, int top)
+    {
+        var look = new CharacterLook { Model = model };
+        for (int slot = 0; slot < CharacterCodec.ComponentCount; slot++)
+            look.Clothes.Add(new CharacterPart { Slot = slot, Drawable = slot == 11 ? top : 0, Texture = slot == 11 ? 3 : 0 });
+        look.Props.Add(new CharacterPart { Slot = 0, Drawable = 12, Texture = 1 });
+        return look;
+    }
+
+    // Characters: the same per-name files as the garage, a strict format and
+    // the client's view of its own and the other players' characters.
+    private static void CheckCharacters(string folder)
+    {
+        CharacterLook man = Character(CharacterModels.Male, 392);
+        CharacterLook copy = CharacterCodec.Decode(CharacterCodec.Encode(man));
+        Assert(copy.Model == CharacterModels.Male && copy.Clothes.Single(part => part.Slot == 11).Drawable == 392 &&
+            copy.Props.Single().Drawable == 12, "an Online character keeps items above 255, which RageCoop's own clothes cut");
+        Assert(CharacterCodec.SameLook(man, copy) && !CharacterCodec.SameLook(man, Character(CharacterModels.Female, 392)),
+            "characters compare by their content");
+        Assert(CharacterCodec.Decode(CharacterCodec.Encode(new CharacterLook())).IsOnline == false, "the story hero choice is a character of its own");
+        MustReject(() => CharacterCodec.Encode(new CharacterLook { Model = 12345 }), "an unknown body is refused");
+        MustReject(() => CharacterCodec.Encode(new CharacterLook { Clothes = Character(CharacterModels.Male, 1).Clothes }), "a story hero carries no clothes of ours");
+        CharacterLook missing = Character(CharacterModels.Female, 1);
+        missing.Clothes.RemoveAt(4);
+        MustReject(() => CharacterCodec.Encode(missing), "every clothing slot is listed");
+        CharacterLook twice = Character(CharacterModels.Female, 1);
+        twice.Props.Add(new CharacterPart { Slot = 0, Drawable = 1 });
+        MustReject(() => CharacterCodec.Encode(twice), "an accessory slot is listed once");
+        CharacterLook wrongSlot = Character(CharacterModels.Female, 1);
+        wrongSlot.Props[0].Slot = 3;
+        MustReject(() => CharacterCodec.Encode(wrongSlot), "only GTA Online's accessory slots are accepted");
+        CharacterLook huge = Character(CharacterModels.Male, CharacterCodec.MaximumDrawable + 1);
+        MustReject(() => CharacterCodec.Encode(huge), "item numbers are bounded");
+        MustReject(() => CharacterCodec.Decode("<!DOCTYPE Character [<!ENTITY x \"y\">]><Character version=\"1\"><Model>0</Model></Character>"),
+            "a document type is refused");
+        MustReject(() => CharacterCodec.Decode("<Character version=\"2\"><Model>0</Model></Character>"), "an unknown format version is refused");
+
+        CheckCharacterHead();
+        CheckCharacterTattoos();
+
+        var store = new CharacterStore(folder);
+        Assert(store.Load("Rider") == null, "a player without a character has none, so the editor is offered");
+        store.Save("Rider", man);
+        Assert(CharacterCodec.SameLook(store.Load("RIDER"), man), "the character follows the RageCoop name regardless of letter case");
+        Assert(File.Exists(Path.Combine(folder, "characters", "rider.xml")) && File.Exists(Path.Combine(folder, "garages", "rider.xml")),
+            "the character sits next to the garage under the same name");
+        Assert(store.Load("Pilot") == null, "another player's character is separate");
+        string broken = Path.Combine(folder, "characters", "broken.xml");
+        File.WriteAllText(broken, "<Character");
+        MustReject(() => store.Load("broken"), "an unreadable character is reported");
+        Assert(File.ReadAllText(broken) == "<Character", "an unreadable character file is left untouched");
+        File.WriteAllText(Path.Combine(folder, "characters", "big.xml"), new string(' ', CharacterCodec.MaximumXmlCharacters * 4 + 1));
+        MustReject(() => store.Load("big"), "an oversized character file is not read");
+
+        var sent = new List<(int Hash, object[] Args)>();
+        var client = new CharacterLooks((hash, args) => sent.Add((hash, args)));
+        client.Request();
+        Assert(sent.Single().Hash == CharacterProtocol.Request && sent.Single().Args.Length == 0 && !client.OwnKnown,
+            "the game asks the server and offers nothing before it answers");
+        Assert(client.ApplyState(new object[] { string.Empty }) && client.OwnKnown && client.Own == null,
+            "an empty answer means no character yet");
+        Assert(client.ApplyState(new object[] { CharacterCodec.Encode(man) }) && CharacterCodec.SameLook(client.Own, man),
+            "the saved character arrives");
+        Assert(!client.ApplyState(new object[] { "<Character" }) && CharacterCodec.SameLook(client.Own, man),
+            "a damaged answer keeps what the game knew");
+        Assert(client.ApplyLook(new object[] { "Pilot", CharacterCodec.Encode(man) }, out string name) && name == "Pilot" &&
+            client.Of("pilot") != null && client.Of("Rider") == null, "another player's character is kept by name, any letter case");
+        Assert(!client.ApplyLook(new object[] { "", CharacterCodec.Encode(man) }, out _) && !client.ApplyLook(new object[] { "Pilot" }, out _),
+            "a nameless or incomplete message is ignored");
+        client.Save(Character(CharacterModels.Female, 5));
+        Assert(sent.Last().Hash == CharacterProtocol.Save && sent.Last().Args is [string saved] && CharacterCodec.Decode(saved).Model == CharacterModels.Female,
+            "saving sends the whole character");
+        client.Clear();
+        Assert(!client.OwnKnown && client.Own == null && client.Of("Pilot") == null, "leaving the server forgets every character");
+    }
+
+    // The face: GTA Online's parents, features, colours and overlays, with
+    // characters saved before the face editor still readable.
+    private static void CheckCharacterHead()
+    {
+        CharacterLook earlier = CharacterCodec.Decode(CharacterCodec.Encode(Character(CharacterModels.Male, 5)));
+        Assert(earlier.Head == null && !CharacterCodec.Encode(earlier).Contains("<Head"),
+            "a character saved before the face editor has no face of its own and keeps the default one");
+        CharacterHead man = CharacterHead.Default(CharacterModels.Male), woman = CharacterHead.Default(CharacterModels.Female);
+        Assert(man.Mother == 21 && man.Father == 0 && man.Resemblance == 80 && woman.Resemblance == 20 &&
+            man.Overlay(CharacterCodec.Eyebrows).Style == 0 && man.Overlay(1).Style == -1,
+            "a new face has Hannah and Benjamin as parents, takes after the parent of its sex and has eyebrows only");
+
+        CharacterLook look = Character(CharacterModels.Female, 7);
+        look.Head = CharacterHead.Default(CharacterModels.Female);
+        look.Head.Mother = 45;
+        look.Head.Father = 44;
+        look.Head.SetFeature(3, -10);
+        look.Head.SetFeature(19, 10);
+        look.Head.SetFeature(5, 0);
+        look.Head.SetOverlay(new CharacterOverlay { Slot = 8, Style = 4, Opacity = 60, Color = 63 });
+        look.Head.SetOverlay(new CharacterOverlay { Slot = 1, Style = -1, Opacity = 30, Color = 2 });
+        look.Head.EyeColor = 31;
+        look.Head.HairColor = 63;
+        look.Head.HairHighlight = 12;
+        CharacterLook copy = CharacterCodec.Decode(CharacterCodec.Encode(look));
+        CharacterHead head = copy.Head!;
+        Assert(head.Mother == 45 && head.Father == 44 && head.Feature(3) == -10 && head.Feature(19) == 10 && head.Feature(5) == 0 &&
+            head.Features.Count == 2 && head.EyeColor == 31 && head.HairColor == 63 && head.HairHighlight == 12,
+            "parents, features, eyes and hair colour survive saving; a zero feature is not stored");
+        Assert(head.Overlay(8).Style == 4 && head.Overlay(8).Opacity == 60 && head.Overlay(8).Color == 63 &&
+            head.Overlay(1).Style == -1 && head.Overlay(1).Opacity == 30 && head.Overlay(CharacterCodec.Eyebrows).Style == 0,
+            "overlays keep style, strength and colour, also while switched off");
+        CharacterHead edited = head.Copy();
+        edited.Overlay(8).Opacity = 10;
+        edited.SetFeature(3, 1);
+        Assert(head.Overlay(8).Opacity == 60 && head.Feature(3) == -10, "a copy of the face is edited without touching the original");
+
+        foreach ((string label, Action<CharacterHead> spoil) in new (string, Action<CharacterHead>)[]
+        {
+            ("an unknown parent is refused", spoiled => spoiled.Mother = CharacterCodec.ParentCount),
+            ("a resemblance above 100% is refused", spoiled => spoiled.Resemblance = 101),
+            ("an unknown eye colour is refused", spoiled => spoiled.EyeColor = CharacterCodec.EyeColorCount),
+            ("an unknown hair colour is refused", spoiled => spoiled.HairHighlight = -1),
+            ("a feature beyond ±10 is refused", spoiled => spoiled.Features.Add(new CharacterFeature { Index = 2, Value = 11 })),
+            ("a feature listed twice is refused", spoiled => spoiled.Features.Add(new CharacterFeature { Index = 3, Value = 1 })),
+            ("an unknown feature is refused", spoiled => spoiled.Features.Add(new CharacterFeature { Index = CharacterCodec.FeatureCount, Value = 1 })),
+            ("an unknown overlay is refused", spoiled => spoiled.Overlays.Add(new CharacterOverlay { Slot = CharacterCodec.OverlayCount, Style = 0 })),
+            ("an overlay listed twice is refused", spoiled => spoiled.Overlays.Add(new CharacterOverlay { Slot = 8, Style = 0 })),
+            ("an overlay strength above 100% is refused", spoiled => spoiled.Overlay(8).Opacity = 101),
+            ("an unknown overlay colour is refused", spoiled => spoiled.Overlay(8).Color = CharacterCodec.TintCount),
+        })
+        {
+            CharacterLook spoiledLook = CharacterCodec.Decode(CharacterCodec.Encode(look));
+            spoil(spoiledLook.Head!);
+            MustReject(() => CharacterCodec.Encode(spoiledLook), label);
+        }
+        MustReject(() => CharacterCodec.Encode(new CharacterLook { Head = CharacterHead.Default(CharacterModels.Male) }),
+            "a story hero carries no face of ours");
+    }
+
+    // Yachts: GTA Online's berths and looks, kept per name like the garage, and
+    // the game's view of its own and the other players' yachts.
+    private static void CheckYachts(string folder)
+    {
+        Assert(Yachts.Berths.Length == YachtCodec.BerthCount && Yachts.Berths.Select((berth, index) => berth.Id == index).All(ok => ok) &&
+            Yachts.Berths.Select(berth => berth.Hull).Distinct().Count() == YachtCodec.BerthCount &&
+            Yachts.Berths[0].Hull == "apa_yacht_grp01_1" && Yachts.Berths[35].Interior == "apa_yacht_grp12_3_int" &&
+            Yachts.Berths[YachtCodec.CarrierBerth].Hull == "apa_yacht_grp02_2",
+            "36 berths of GTA Online in the script's order, each with its own hull and interior");
+        Assert(Yachts.Flags.Length == YachtCodec.FlagCount && Yachts.Flags.Select(flag => flag.Model).Distinct().Count() == Yachts.Flags.Length &&
+            Yachts.Colors.Length == YachtCodec.ColorCount && Yachts.Models.Length == YachtCodec.ModelCount,
+            "every flag, colour and model of the yacht has its own entry");
+        var aquaris = new YachtLook { Model = 2, GoldRails = true, Lighting = 8 };
+        string[] parts = Yachts.Parts(aquaris).Select(part => part.Model).ToArray();
+        Assert(parts.Contains("apa_mp_apa_yacht_option3") && parts.Contains("apa_mp_apa_yacht_o3_rail_b") && parts.Contains("apa_mp_apa_y3_l2d") &&
+            parts.Contains("apa_mp_apa_yacht_option3_cole") && Yachts.Parts(new YachtLook()).All(part => !part.Model.Contains("_l")),
+            "the Aquaris with gold rails and gold Vivacious lights gets its decks, rails and lights; no lights means none");
+
+        var look = new YachtLook { Berth = 33, Model = 1, Color = 15, GoldRails = true, Lighting = 3, Flag = YachtCodec.FlagCount };
+        YachtLook copy = YachtCodec.Decode(YachtCodec.Encode(look));
+        Assert(YachtCodec.Same(look, copy) && copy.Berth == 33 && copy.Flag == YachtCodec.FlagCount && copy.GoldRails,
+            "a yacht keeps its berth, model, colour, rails, lights and flag");
+        foreach ((string label, Action<YachtLook> spoil) in new (string, Action<YachtLook>)[]
+        {
+            ("the berth beside the carrier is refused", spoiled => spoiled.Berth = YachtCodec.CarrierBerth),
+            ("an unknown berth is refused", spoiled => spoiled.Berth = YachtCodec.BerthCount),
+            ("an unknown model is refused", spoiled => spoiled.Model = YachtCodec.ModelCount),
+            ("an unknown colour is refused", spoiled => spoiled.Color = -1),
+            ("unknown lights are refused", spoiled => spoiled.Lighting = YachtCodec.LightingCount + 1),
+            ("an unknown flag is refused", spoiled => spoiled.Flag = YachtCodec.FlagCount + 1),
+        })
+        {
+            YachtLook spoiled = YachtCodec.Copy(look);
+            spoil(spoiled);
+            MustReject(() => YachtCodec.Encode(spoiled), label);
+        }
+        MustReject(() => YachtCodec.Decode("<!DOCTYPE Yacht [<!ENTITY x \"y\">]><Yacht version=\"1\"><Berth>0</Berth></Yacht>"), "a document type is refused");
+        Assert(YachtCodec.FreeBerth(3, berth => berth == 3) == 5 && YachtCodec.FreeBerth(35, berth => berth == 35) == 0 &&
+            YachtCodec.FreeBerth(0, berth => true) == -1, "the next free berth skips taken ones and the carrier's");
+
+        var store = new YachtStore(folder);
+        Assert(store.Load("Rider") == null, "a player without a yacht has none");
+        store.Save("Rider", look);
+        Assert(YachtCodec.Same(store.Load("RIDER"), look) && File.Exists(Path.Combine(folder, "yachts", "rider.xml")),
+            "the yacht follows the RageCoop name regardless of letter case, next to the garage");
+
+        var sent = new List<(int Hash, object[] Args)>();
+        var client = new YachtLooks((hash, args) => sent.Add((hash, args)));
+        client.Request();
+        Assert(sent.Single().Hash == YachtProtocol.Request && !client.OwnKnown, "the game asks the server for its yacht");
+        Assert(client.ApplyState(new object[] { string.Empty }) && client.OwnKnown && client.Own == null && !client.All().Any(),
+            "an empty answer means no yacht yet");
+        int revision = client.Revision;
+        Assert(client.ApplyLook(new object[] { "Pilot", YachtCodec.Encode(look) }) && client.TakenByOther(33) && client.Revision > revision &&
+            client.All().Single().Owner == "Pilot", "another player's yacht is put on the map and takes its berth");
+        Assert(client.ApplyLook(new object[] { "pilot", string.Empty }) && !client.All().Any() && !client.TakenByOther(33),
+            "a player who left takes the yacht along");
+        Assert(!client.ApplyLook(new object[] { "Pilot", "<Yacht" }) && !client.ApplyLook(new object[] { "", YachtCodec.Encode(look) }),
+            "a damaged or nameless yacht is ignored");
+        client.Saved(look);
+        Assert(client.All().Single().Owner.Length == 0 && client.Own!.Berth == 33, "this player's saved yacht is on the map");
+        client.Clear();
+        Assert(!client.OwnKnown && !client.All().Any(), "leaving the server forgets every yacht");
+    }
+
+    // Tattoos: GTA decoration hashes, with characters saved before them unchanged.
+    private static void CheckCharacterTattoos()
+    {
+        CharacterLook earlier = Character(CharacterModels.Male, 5);
+        string earlierXml = CharacterCodec.Encode(earlier);
+        Assert(!earlierXml.Contains("Tattoo") && CharacterCodec.Decode(earlierXml).Tattoos.Count == 0,
+            "a character without tattoos is saved as before and reads back with none");
+        CharacterLook look = Character(CharacterModels.Female, 5);
+        look.Tattoos.Add(new CharacterTattoo { Collection = unchecked((int)0xA9B4D8A1), Name = 1185713461 });
+        look.Tattoos.Add(new CharacterTattoo { Collection = 62137527, Name = -1029112321 });
+        CharacterLook copy = CharacterCodec.Decode(CharacterCodec.Encode(look));
+        Assert(copy.Tattoos.Count == 2 && copy.Tattoos[0].Collection == unchecked((int)0xA9B4D8A1) && copy.Tattoos[1].Name == -1029112321 &&
+            CharacterCodec.SameLook(look, copy) && !CharacterCodec.SameLook(look, Character(CharacterModels.Female, 5)),
+            "tattoos survive saving in their order and make the character differ");
+
+        CharacterLook twice = CharacterCodec.Decode(CharacterCodec.Encode(look));
+        twice.Tattoos.Add(new CharacterTattoo { Collection = 62137527, Name = -1029112321 });
+        MustReject(() => CharacterCodec.Encode(twice), "a tattoo listed twice is refused");
+        CharacterLook empty = CharacterCodec.Decode(CharacterCodec.Encode(look));
+        empty.Tattoos.Add(new CharacterTattoo { Collection = 62137527, Name = 0 });
+        MustReject(() => CharacterCodec.Encode(empty), "a tattoo without its item is refused");
+        CharacterLook many = Character(CharacterModels.Male, 5);
+        many.Head = CharacterHead.Default(CharacterModels.Male);
+        // The longest hashes, so the size limit is tried at its worst.
+        for (int index = 1; index <= CharacterCodec.MaximumTattoos + 1; index++)
+            many.Tattoos.Add(new CharacterTattoo { Collection = -2000000000 + index, Name = -1000000000 - index });
+        MustReject(() => CharacterCodec.Encode(many), "more than " + CharacterCodec.MaximumTattoos + " tattoos are refused");
+        many.Tattoos.RemoveAt(0);
+        Assert(CharacterCodec.Decode(CharacterCodec.Encode(many)).Tattoos.Count == CharacterCodec.MaximumTattoos,
+            CharacterCodec.MaximumTattoos + " tattoos fit the character's size limit");
+        CharacterLook hero = new CharacterLook();
+        hero.Tattoos.Add(new CharacterTattoo { Collection = 1, Name = 2 });
+        MustReject(() => CharacterCodec.Encode(hero), "a story hero carries no tattoos of ours");
     }
 
     private static VehicleAppearance Appearance()
@@ -181,8 +420,8 @@ internal static class Program
         Assert(store.Load("rider").Vehicles.Single().Name == "Ламбо" && store.Load("RiDeR").Favorites.SequenceEqual(new[] { 3 }),
             "the garage follows the RageCoop name regardless of letter case");
         Assert(store.Load("Pilot").Vehicles.Count == 0, "another player's garage is separate");
-        Assert(GarageStore.Key("Rider") == "rider" && GarageStore.Key("../x").StartsWith("user-", StringComparison.Ordinal) &&
-            GarageStore.Key(new string('a', 40)).StartsWith("user-", StringComparison.Ordinal), "unusual names become a safe file name");
+        Assert(PlayerFiles.Key("Rider") == "rider" && PlayerFiles.Key("../x").StartsWith("user-", StringComparison.Ordinal) &&
+            PlayerFiles.Key(new string('a', 40)).StartsWith("user-", StringComparison.Ordinal), "unusual names become a safe file name");
         Assert(!Directory.EnumerateFiles(Path.Combine(folder, "garages"), "*.tmp").Any(), "saving leaves no temporary files");
 
         string import = Path.Combine(folder, "garages", "import");
@@ -247,6 +486,28 @@ internal static class Program
         client.ImportLocal(folder, value => moved = value);
         Assert(moved == false && File.Exists(Path.Combine(folder, GarageClient.LegacyPresetsFile)),
             "a garage that does not fit on the server keeps its files on the computer");
+    }
+
+    // своё жильё: ключ каталога по имени RageCoop рядом с гаражом
+    private static void CheckHomes(string folder)
+    {
+        Assert(HomeCodec.IsKey(string.Empty) && HomeCodec.IsKey("eclipse_penthouse_1") && !HomeCodec.IsKey("Eclipse") && !HomeCodec.IsKey("a/b") &&
+            !HomeCodec.IsKey(new string('a', HomeCodec.MaximumKeyLength + 1)) && !HomeCodec.IsKey(null),
+            "a home is no choice or a catalog key of small letters, digits and underscores");
+        var store = new HomeStore(folder);
+        Assert(store.Load("Rider") == string.Empty, "a player who chose no home has none");
+        store.Save("Rider", "wild_oats_house");
+        string file = Path.Combine(folder, "homes", "rider.xml");
+        Assert(store.Load("RIDER") == "wild_oats_house" && File.Exists(file), "the home follows the RageCoop name regardless of letter case, next to the garage");
+        store.Save("Rider", string.Empty);
+        Assert(store.Load("Rider") == string.Empty, "choosing no home is kept as well");
+        MustReject(() => store.Save("Rider", "<Home>x</Home>"), "a key with markup is refused");
+        File.WriteAllText(file, "<!DOCTYPE Home [<!ENTITY x \"y\">]><Home>&x;</Home>");
+        MustReject(() => store.Load("Rider"), "a document type in the file is refused");
+        File.WriteAllText(file, "<Home>Wild Oats</Home>");
+        MustReject(() => store.Load("Rider"), "a file with an unknown key is refused, not replaced");
+        File.WriteAllText(file, new string('a', 300));
+        MustReject(() => store.Load("Rider"), "an oversized file is refused");
     }
 
     private static void MustReject(Action action, string label)

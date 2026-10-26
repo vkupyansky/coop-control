@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 
 namespace RageCoopAdmin.Client;
@@ -187,6 +187,8 @@ internal sealed class SpecialPlaceRuntime
     internal const float IslandLoadMargin = 600f;
     internal const float IslandKeepMargin = 900f;
     internal const long IslandLeaveMilliseconds = 1_000;
+    // The game needs a moment to plan a route after the pause map closes.
+    internal const long RouteCheckMilliseconds = 2_000;
 
     private readonly SpecialPlace[] _places;
     private readonly bool[] _active;
@@ -200,6 +202,9 @@ internal sealed class SpecialPlaceRuntime
     private bool _islandRoads;
     private bool _settled;
     private bool _onlineProbed;
+    // A waypoint over the island: when its route is checked for the log.
+    private long _routeCheckAt;
+    private bool _routeChecked;
 
     internal SpecialPlaceRuntime(SpecialPlace[] places, Action<string>? log = null)
     {
@@ -262,7 +267,7 @@ internal sealed class SpecialPlaceRuntime
         SpecialPlaceNatives.EnterOnlineMap();
         _onlineMap = true;
         NeedsOnlineMap = false;
-        _log?.Invoke("Coop Control: special places switched to the Online map.");
+        _log?.Invoke("OG Coop: special places switched to the Online map.");
     }
 
     internal void Tick(long now, Vector3? local)
@@ -320,9 +325,33 @@ internal sealed class SpecialPlaceRuntime
     }
 
     // The island minimap is drawn like an interior and must be set every frame.
-    internal void Frame()
+    // GTA draws no GPS route on an interior minimap, so while a waypoint is set
+    // the minimap stays ordinary; the pause map always shows the island.
+    internal void Frame(long now)
     {
-        if (_islandShown) SpecialPlaceNatives.DrawIslandRadarThisFrame();
+        if (!_islandShown) return;
+        bool waypoint = SpecialPlaceNatives.IsWaypointActive();
+        bool paused = SpecialPlaceNatives.IsPauseMenuActive();
+        if (!waypoint || paused) SpecialPlaceNatives.DrawIslandRadarThisFrame();
+        if (!waypoint)
+        {
+            _routeCheckAt = 0;
+            _routeChecked = false;
+            return;
+        }
+
+        if (paused || _routeChecked) return;
+        if (_routeCheckAt == 0)
+        {
+            _routeCheckAt = now + RouteCheckMilliseconds;
+            return;
+        }
+
+        if (now < _routeCheckAt) return;
+        _routeChecked = true;
+        _log?.Invoke(SpecialPlaceNatives.IsRouteFound()
+            ? "OG Coop: island waypoint: GPS route " + SpecialPlaceNatives.RouteLength() + " m."
+            : "OG Coop: island waypoint: the game found no GPS route" + (_islandRoads ? "." : "; island roads off."));
     }
 
     // Disconnect or resource stop: unload everything this resource loaded.
@@ -411,7 +440,7 @@ internal sealed class SpecialPlaceRuntime
         }
 
         int loaded = LoadedParts(id);
-        _log?.Invoke("Coop Control: special place " + place.Key + " loaded" +
+        _log?.Invoke("OG Coop: special place " + place.Key + " loaded" +
             (loaded < 0 ? "." : ": " + loaded + "/" + place.Ipls.Length + " map parts" + (_onlineMap ? " (Online map)." : ".")));
     }
 
@@ -434,7 +463,7 @@ internal sealed class SpecialPlaceRuntime
                 break;
         }
 
-        _log?.Invoke("Coop Control: special place " + place.Key + " unloaded.");
+        _log?.Invoke("OG Coop: special place " + place.Key + " unloaded.");
     }
 
     private static void RequestAll(SpecialPlace place)
@@ -448,6 +477,8 @@ internal sealed class SpecialPlaceRuntime
     {
         if (show == _islandShown) return;
         _islandShown = show;
+        _routeCheckAt = 0;
+        _routeChecked = false;
         SpecialPlaceNatives.SetIslandWater(show);
         SpecialPlaceNatives.SetIslandMap(show);
         if (show && !_islandRoads)

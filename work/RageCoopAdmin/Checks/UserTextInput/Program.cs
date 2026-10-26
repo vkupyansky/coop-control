@@ -50,7 +50,7 @@ internal static class Program
 
     private static void CheckDialog()
     {
-        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "Coop Control", string.Empty);
+        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "OG Coop", string.Empty);
         var input = new ResourceTextInput(menu);
         int calls = 0;
         string? result = null;
@@ -148,7 +148,7 @@ internal static class Program
 
     private static void CheckDialogFeedback()
     {
-        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "Coop Control", string.Empty);
+        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "OG Coop", string.Empty);
         var input = new ResourceTextInput(menu);
         input.UpdateInputMode(controller: true);
         NativeItem value = menu.Items[0];
@@ -233,7 +233,7 @@ internal static class Program
             "real ToUnicodeEx maps the GTA pause key VK_P to an ordinary letter, з with the Russian layout where the system honours it");
         Console.WriteLine(layoutHonoured ? "Requested Russian layout honoured: VK_P => з" :
             "Host types with its active input source (CrossOver on Mac): VK_P => U+" + ((int)russianP[0]).ToString("X4"));
-        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "Coop Control", string.Empty);
+        NativeMenu menu = UiMenu.Bind(new NativeMenu(), "OG Coop", string.Empty);
         var input = new ResourceTextInput(menu);
         int callbacks = 0;
         input.Begin(32, "Имя машины", _ => callbacks++);

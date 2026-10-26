@@ -20,7 +20,7 @@ internal static class ServerProcessFile
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
             // The server still runs; only the stop button cannot find it.
-            Console.Error.WriteLine("Coop Control: could not write " + path + ": " + error.Message);
+            Console.Error.WriteLine("OG Coop: could not write " + path + ": " + error.Message);
             return;
         }
 
@@ -35,7 +35,7 @@ internal static class ServerProcessFile
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
-            Console.Error.WriteLine("Coop Control: could not remove " + path + ": " + error.Message);
+            Console.Error.WriteLine("OG Coop: could not remove " + path + ": " + error.Message);
         }
     }
 }

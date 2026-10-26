@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoop.Server;
 using RageCoop.Server.Scripting;
 

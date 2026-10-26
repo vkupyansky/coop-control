@@ -29,7 +29,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        _weaponsMenu = CreateMenu("Coop Control", "Оружие");
+        _weaponsMenu = CreateMenu("OG Coop", "Оружие");
         _mainMenu.AddSubMenu(_weaponsMenu);
         _pool.Add(_weaponsMenu);
         var refill = UiMenu.Item(() => UiText.Get("Пополнить все патроны"), () => UiText.Get("Заполнить боезапас оружия, которое у вас уже есть."));
@@ -102,7 +102,7 @@ public sealed partial class AdminMenuScript
         foreach (IGrouping<string, WeaponEntry> category in _weaponCatalog.GroupBy(entry => entry.Category)
                      .OrderBy(group => Array.IndexOf(WeaponCategories, group.Key)))
         {
-            NativeMenu menu = CreateMenu("Coop Control", category.Key);
+            NativeMenu menu = CreateMenu("OG Coop", category.Key);
             _weaponsMenu.AddSubMenu(menu);
             _pool.Add(menu);
             foreach (WeaponEntry entry in category.OrderBy(entry => entry.Name, StringComparer.CurrentCultureIgnoreCase))

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using CoopAdmin.Server;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using HarmonyLib;
 using RageCoop.Server;
@@ -264,8 +264,8 @@ internal static class Program
             get
             {
                 object state = CurrentWorldSnapshot;
-                Type protocol = state.GetType().Assembly.GetType("CoopControl.Shared.WorldStateProtocol", true)!;
-                Type change = state.GetType().Assembly.GetType("CoopControl.Shared.WorldStateChange", true)!;
+                Type protocol = state.GetType().Assembly.GetType("OGCoop.Shared.WorldStateProtocol", true)!;
+                Type change = state.GetType().Assembly.GetType("OGCoop.Shared.WorldStateChange", true)!;
                 return (object[])protocol.GetMethod("Encode", Instance | BindingFlags.Static)!.Invoke(null, new object[] { state, 0, 0, true, Enum.ToObject(change, 0) })!;
             }
         }
@@ -333,7 +333,7 @@ internal static class Program
         internal void SetEnabled(bool enabled)
         {
             object state = Field(Resource, "worldState");
-            Type change = state.GetType().Assembly.GetType("CoopControl.Shared.WorldStateChange", true)!;
+            Type change = state.GetType().Assembly.GetType("OGCoop.Shared.WorldStateChange", true)!;
             string epoch = (string)state.GetType().GetProperty("Epoch", Instance)!.GetValue(state)!;
             object?[] args = { epoch, Enum.ToObject(change, 5), 0, 0, enabled, Environment.TickCount64, null };
             state.GetType().GetMethod("TryChange", Instance)!.Invoke(state, args);

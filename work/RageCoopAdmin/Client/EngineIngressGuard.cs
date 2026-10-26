@@ -9,7 +9,7 @@ using Lidgren.Network;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
 using RageCoop.Core;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 

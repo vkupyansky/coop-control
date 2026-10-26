@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Lib.Harmony" Version="2.4.3" />
     <Compile Include="../../Bootstrap/EarlySettingsGuard.cs" Link="EarlySettingsGuard.cs" />
+    <Compile Include="../../Bootstrap/RetiredResources.cs" Link="RetiredResources.cs" />
     <Reference Include="RageCoop.Server"><HintPath>$(RageCoopServerDir)/RageCoop.Server.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="RageCoop.Core"><HintPath>$(RageCoopServerDir)/RageCoop.Core.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="ScriptHookVDotNet3"><HintPath>$(RageCoopServerDir)/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>

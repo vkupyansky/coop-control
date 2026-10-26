@@ -9,7 +9,7 @@ using System.Threading;
 using HarmonyLib;
 using Lidgren.Network;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Bound the installed reassembler before it allocates or copies. Its existing
 // fragment storage, completion and application delivery remain authoritative.

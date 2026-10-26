@@ -14,7 +14,7 @@ internal static partial class Program
 {
     private const string PatchId = "friendslegacy.ragecoop.enginepacket";
     private const string CodecPatchId = "friendslegacy.ragecoop.enginecodec";
-    private static readonly MethodInfo Deserialize = CoopControl.Shared.EngineCodecGuard.FindPacketReaders().Single(method => method.DeclaringType!.Name == "VehicleSync");
+    private static readonly MethodInfo Deserialize = OGCoop.Shared.EngineCodecGuard.FindPacketReaders().Single(method => method.DeclaringType!.Name == "VehicleSync");
     private static readonly Type Packet = Deserialize.DeclaringType!;
     private static readonly Type Damage = Packet.GetProperty("DamageModel")!.PropertyType;
 
@@ -31,7 +31,7 @@ internal static partial class Program
             Assert(BrokenDoors(reused) == 5, "The unpatched deserializer reproduces stale damage after an intact full packet.");
             CheckContract();
             CheckEnvelopeReads(patched: false);
-            CoopControl.Shared.EngineCodecGuard.Install();
+            OGCoop.Shared.EngineCodecGuard.Install();
             EnginePacketGuard.Install();
             EnginePacketGuard.Install();
             Assert(Harmony.GetPatchInfo(Deserialize)?.Transpilers.Count(patch => patch.owner == CodecPatchId) == 1 &&
@@ -41,7 +41,7 @@ internal static partial class Program
             CheckEnvelopeReads(patched: true);
             EnginePacketGuard.Uninstall();
             EnginePacketGuard.Uninstall();
-            CoopControl.Shared.EngineCodecGuard.Uninstall();
+            OGCoop.Shared.EngineCodecGuard.Uninstall();
             Assert(Harmony.GetPatchInfo(Deserialize)?.Owners.Contains(CodecPatchId) != true,
                 "Resource unload removes the vehicle reader patch.");
             Read(reused, Snapshot(71, full: true, damaged: true));
@@ -55,13 +55,13 @@ internal static partial class Program
             Console.Error.WriteLine(error);
             return 1;
         }
-        finally { EnginePacketGuard.Uninstall(); CoopControl.Shared.EngineCodecGuard.Uninstall(); }
+        finally { EnginePacketGuard.Uninstall(); OGCoop.Shared.EngineCodecGuard.Uninstall(); }
     }
 
     private static void CheckContract()
     {
         List<CodeInstruction> original = PatchProcessor.GetOriginalInstructions(Deserialize);
-        List<CodeInstruction> rewritten = CoopControl.Shared.EngineCodecGuard.ResetVehicleDamageModel(original).ToList();
+        List<CodeInstruction> rewritten = OGCoop.Shared.EngineCodecGuard.ResetVehicleDamageModel(original).ToList();
         int marker = rewritten.FindIndex(code => code.operand is MethodInfo method && method.Name == "set_DamageModel");
         Assert(rewritten.Count == original.Count + 5 && marker > 0, "The patch inserts only one default damage assignment before the existing presence bit.");
         for (int index = 0; index < original.Count; index++)
@@ -73,7 +73,7 @@ internal static partial class Program
         void Rejects(List<CodeInstruction> codes, string message)
         {
             bool rejected = false;
-            try { CoopControl.Shared.EngineCodecGuard.ResetVehicleDamageModel(codes).ToArray(); }
+            try { OGCoop.Shared.EngineCodecGuard.ResetVehicleDamageModel(codes).ToArray(); }
             catch (InvalidOperationException) { rejected = true; }
             Assert(rejected, message);
         }

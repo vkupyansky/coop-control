@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 

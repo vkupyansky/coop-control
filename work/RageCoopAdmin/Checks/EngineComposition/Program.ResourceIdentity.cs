@@ -28,7 +28,7 @@ internal static partial class Program
         Type entryType = zipType.Assembly.GetType("ICSharpCode.SharpZipLib.Zip.ZipEntry", true)!;
         string root = Path.Combine(Path.GetTempPath(), "CoopResourceIdentity-" + Guid.NewGuid().ToString("N"));
         string data = Path.Combine(root, "data");
-        string canonical = Path.Combine(data, "CoopControl");
+        string canonical = Path.Combine(data, "OGCoop");
         Directory.CreateDirectory(canonical);
         var warnings = new List<string>();
         void Normalize(ClientResource resource) => normalize.Invoke(null, new object[] { resource });
@@ -60,7 +60,7 @@ internal static partial class Program
             using (SHA256 hash = SHA256.Create())
             using (Stream file = File.OpenRead(temporary))
                 digest = BitConverter.ToString(hash.ComputeHash(file)).Replace("-", string.Empty).ToLowerInvariant();
-            string name = legacy ? "CoopControl.res" : "CoopControl." + digest + ".res";
+            string name = legacy ? "OGCoop.res" : "OGCoop." + digest + ".res";
             string result = Path.Combine(root, name);
             // Invoke the actual length-only host check while only the old
             // same-size archive exists. A new digest must force a download.
@@ -77,7 +77,7 @@ internal static partial class Program
         {
             ClientResource legacy = LoadResource(Archive("old-code", legacy: true));
             Normalize(legacy);
-            Assert(legacy.Name == "CoopControl" && legacy.DataFolder == canonical, "The legacy resource keeps its original profile directory.");
+            Assert(legacy.Name == "OGCoop" && legacy.DataFolder == canonical, "The legacy resource keeps its original profile directory.");
             object settingsStore = Store("InterfaceSettingsStore", legacy);
             object settings = LoadStore(settingsStore);
             foreach (string property in OptOutSettings)
@@ -112,22 +112,42 @@ internal static partial class Program
                 (int)newSettings.GetType().GetProperty("RepairShortcut")!.GetValue(newSettings)! == 1,
                 "A same-size resource update reads the explicit opt-outs from the same canonical profile.");
 
-            string obsolete = Path.Combine(root, "CoopControl." + new string('a', 64) + ".res");
-            string malformed = Path.Combine(root, "CoopControl." + new string('g', 64) + ".res");
-            string shortHash = Path.Combine(root, "CoopControl." + new string('a', 63) + ".res");
+            string obsolete = Path.Combine(root, "OGCoop." + new string('a', 64) + ".res");
+            string malformed = Path.Combine(root, "OGCoop." + new string('g', 64) + ".res");
+            string shortHash = Path.Combine(root, "OGCoop." + new string('a', 63) + ".res");
             string other = Path.Combine(root, "OtherResource." + new string('a', 64) + ".res");
             foreach (string path in new[] { obsolete, malformed, shortHash, other }) File.WriteAllText(path, "isolated cache fixture");
             string retainedData = Path.Combine(nextAutomaticFolder, "do-not-delete.txt");
             File.WriteAllText(retainedData, "Existing data must be retained");
             Cleanup(next);
-            Assert(!File.Exists(firstPath) && !File.Exists(obsolete) && File.Exists(nextPath) && File.Exists(Path.Combine(root, "CoopControl.res")) &&
+            Assert(!File.Exists(firstPath) && !File.Exists(obsolete) && File.Exists(nextPath) && File.Exists(Path.Combine(root, "OGCoop.res")) &&
                 File.Exists(malformed) && File.Exists(shortHash) && File.Exists(other) && File.Exists(retainedData),
-                "Cleanup removes only obsolete exact CoopControl SHA256 archives and preserves the active archive, other names and nonempty data.");
+                "Cleanup removes only obsolete exact OGCoop SHA256 archives and preserves the active archive, other names and nonempty data.");
             File.Delete(retainedData);
             Cleanup(next);
             Assert(!Directory.Exists(nextAutomaticFolder) && interfaceBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "interface.xml"))) &&
                 presetBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "vehicle-presets.xml"))) && warnings.Count == 0,
                 "Cache cleanup removes an empty temporary folder without rewriting settings or saved vehicles.");
+
+            // Before the product became OG Coop the resource was CoopControl:
+            // its profile moves over once and its downloads are cache.
+            string former = Path.Combine(data, "CoopControl");
+            Directory.Move(canonical, former);
+            string formerArchive = Path.Combine(root, "CoopControl." + new string('b', 64) + ".res");
+            File.WriteAllText(formerArchive, "download of the former name");
+            Normalize(next);
+            Assert(next.DataFolder == canonical && !Directory.Exists(former) &&
+                interfaceBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "interface.xml"))),
+                "The settings folder of the former CoopControl name moves to OGCoop unchanged on the first start after the rename.");
+            Cleanup(next);
+            Assert(!File.Exists(formerArchive) && File.Exists(nextPath) && warnings.Count == 0,
+                "Downloads of the former CoopControl name are removed as cache.");
+            Directory.CreateDirectory(former);
+            File.WriteAllText(Path.Combine(former, "interface.xml"), "older copy");
+            Normalize(next);
+            Assert(interfaceBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "interface.xml"))) && Directory.Exists(former),
+                "A former folder found after the move never replaces the current profile.");
+            Directory.Delete(former, recursive: true);
 
             var foreign = new ClientResource();
             typeof(ClientResource).GetProperty("Name")!.SetValue(foreign, "OtherResource." + new string('a', 64));
@@ -136,10 +156,10 @@ internal static partial class Program
             bool rejected = false;
             try { Normalize(foreign); }
             catch (TargetInvocationException ex) when (ex.InnerException is InvalidOperationException) { rejected = true; }
-            File.WriteAllText(obsolete, "must remain outside a valid CoopControl initialization");
+            File.WriteAllText(obsolete, "must remain outside a valid OGCoop initialization");
             Cleanup(foreign);
             Assert(rejected && foreign.DataFolder == foreignFolder && File.Exists(obsolete) && warnings.Count == 1,
-                "A different resource identity cannot redirect its data or clean CoopControl archives.");
+                "A different resource identity cannot redirect its data or clean OGCoop archives.");
 
             List<CodeInstruction> initialize = PatchProcessor.GetOriginalInstructions(Resource.GetType("RageCoopAdmin.Client.AdminMenuScript", true)!.GetMethod("Initialize", Instance)!);
             int normalization = initialize.FindIndex(code => code.Calls(normalize));

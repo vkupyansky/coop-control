@@ -12,6 +12,8 @@ from unittest.mock import patch
 
 import prepare_public_release as release
 
+IMAGES = (".png", ".jpg", ".jpeg", ".webp", ".gif")
+
 
 class PublicReleaseTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -60,7 +62,7 @@ class PublicReleaseTests(unittest.TestCase):
             self.put(Path("work/PublicBaseline") / name, "public baseline source\n")
         self.create_baseline()
         for path in (
-            "EarlyClient/Release/net48/CoopControl.EarlyClient.dll",
+            "EarlyClient/Release/net48/OGCoop.EarlyClient.dll",
             "EarlyClient/Release/net48/0Harmony.dll",
             "Server/Release/net10.0/CoopAdmin.dll",
             "Bootstrap/Release/net10.0/CoopAdmin.Startup.dll",
@@ -219,10 +221,10 @@ class PublicReleaseTests(unittest.TestCase):
             set(release.DOC_NAMES)
             | set(release.SCREENSHOT_FILES)
             | {
-                "client/scripts/CoopControl.EarlyClient.dll",
+                "client/scripts/OGCoop.EarlyClient.dll",
                 "client/scripts/0Harmony.dll",
-                "server/Resources/Client/CoopControl/RageCoopAdmin.Client.dll",
-                "server/Resources/Client/CoopControl/0Harmony.dll",
+                "server/Resources/Client/OGCoop/RageCoopAdmin.Client.dll",
+                "server/Resources/Client/OGCoop/0Harmony.dll",
                 "server/Resources/Server/CoopAdmin/CoopAdmin.dll",
                 "server/Bootstrap/CoopAdmin.Startup.dll",
                 "server/Bootstrap/0Harmony.dll",
@@ -233,7 +235,7 @@ class PublicReleaseTests(unittest.TestCase):
                 "public-baseline/manifest.json",
                 "Install.exe",
                 "client/ScriptHookVDotNet.ini",
-                "reshade/CoopControl.ini",
+                "reshade/OGCoop.ini",
                 "client/ScriptHookVDotNet.asi",
                 "client/ScriptHookVDotNet2.dll",
                 "client/ScriptHookVDotNet3.dll",
@@ -322,7 +324,7 @@ class PublicReleaseTests(unittest.TestCase):
             )
             self.assertTrue({name for _, name in release.REPOSITORY_FILES} <= names)
             self.assertEqual(
-                {name for name in names if name.endswith(".png")},
+                {name for name in names if name.endswith(IMAGES)},
                 set(release.SCREENSHOT_FILES),
             )
             self.assertFalse(
@@ -387,7 +389,7 @@ class PublicReleaseTests(unittest.TestCase):
         self.put(release.PROJECT / "Shared/Example.cs", "// a1privcar7b2 is a digest; sharedcar is a shared word\n")
         self.prepare()
         self.put(
-            release.PUBLIC_BUILD / "EarlyClient/Release/net48/CoopControl.EarlyClient.dll",
+            release.PUBLIC_BUILD / "EarlyClient/Release/net48/OGCoop.EarlyClient.dll",
             "PrivateFeature".encode("utf-16-le"),
         )
         with self.assertRaisesRegex(release.ReleaseError, "private term"):
@@ -395,11 +397,12 @@ class PublicReleaseTests(unittest.TestCase):
 
     def test_gallery_is_exact_in_both_archives_and_extra_images_are_excluded(self) -> None:
         self.put(Path("publication/screenshots/private-transport.png"), b"not selected")
+        self.put(Path("publication/screenshots/unlisted-extra.jpg"), b"not selected")
         binary, source, _ = self.prepare()
         for path in (binary, source):
             with self.subTest(archive=path.name), zipfile.ZipFile(path) as archive:
                 self.assertEqual(
-                    {name for name in archive.namelist() if name.endswith(".png")},
+                    {name for name in archive.namelist() if name.endswith(IMAGES)},
                     set(release.SCREENSHOT_FILES),
                 )
                 for name in release.SCREENSHOT_FILES:
@@ -516,7 +519,7 @@ class PublicReleaseTests(unittest.TestCase):
         paths = release.prepare_release(self.root, digest, rebuilt)
         with zipfile.ZipFile(paths[0]) as archive:
             self.assertEqual(
-                archive.read("server/Resources/Client/CoopControl/RageCoopAdmin.Client.dll"),
+                archive.read("server/Resources/Client/OGCoop/RageCoopAdmin.Client.dll"),
                 rebuilt.read_bytes(),
             )
 
@@ -529,7 +532,7 @@ class PublicReleaseTests(unittest.TestCase):
         for sample in samples:
             with self.subTest(sample=sample):
                 self.put(
-                    release.PUBLIC_BUILD / "EarlyClient/Release/net48/CoopControl.EarlyClient.dll",
+                    release.PUBLIC_BUILD / "EarlyClient/Release/net48/OGCoop.EarlyClient.dll",
                     b"MZ" + b"x" * (release.CHUNK_SIZE - 5) + sample,
                 )
                 with self.assertRaises(release.ReleaseError):

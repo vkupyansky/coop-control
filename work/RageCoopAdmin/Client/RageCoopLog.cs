@@ -41,7 +41,7 @@ internal static class RageCoopLog
         object? resources = MainResources?.GetValue(null);
         resources?.GetType().GetProperty("Logger", Instance)?.SetValue(resources, resumed);
         if (resource != null) { ResourceLogger!.SetValue(resource, resumed); }
-        resumed.Info("Coop Control: RageCoop log resumed; SHVDN did not reload after the previous disconnect.");
+        resumed.Info("OG Coop: RageCoop log resumed; SHVDN did not reload after the previous disconnect.");
         return true;
     }
 }

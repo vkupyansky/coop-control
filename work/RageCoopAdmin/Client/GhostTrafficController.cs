@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 
 namespace RageCoopAdmin.Client;
@@ -60,7 +60,7 @@ internal sealed class GhostTrafficController
         if (_enabled != enabled) _scanDue = _reportDue = true;
         bool was = _enabled;
         _enabled = enabled && session > 0 && epoch.Length == 32;
-        if (was != _enabled) _log?.Invoke("Coop Control: traffic pass-through " + (_enabled ? "on" : "off"));
+        if (was != _enabled) _log?.Invoke("OG Coop: traffic pass-through " + (_enabled ? "on" : "off"));
         if (!_enabled) { ForgetVehicles(); _firstSeen.Clear(); }
     }
 
@@ -258,7 +258,7 @@ internal sealed class GhostTrafficController
                 body.Protected ? "player-used or persistent" : IsConfirmedTraffic(body) || IsRemoteNpcTraffic(body) ? "passable but not paired" :
                 body.LocalOwner ? (body.AmbientOrigin ? "awaiting server registry" : "not road traffic") :
                 "remote, parked or created, not confirmed";
-            _log!("Coop Control: solid traffic touched: id=" + body.Vehicle.Id + "; model=" + body.Vehicle.ModelHash +
+            _log!("OG Coop: solid traffic touched: id=" + body.Vehicle.Id + "; model=" + body.Vehicle.ModelHash +
                 "; owner=" + (body.LocalOwner ? "local" : "remote") + "; population=" + body.Population + "; reason=" + reason);
         }
     }

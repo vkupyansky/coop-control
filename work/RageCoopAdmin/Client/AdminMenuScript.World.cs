@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.UI;
 using LemonUI.Menus;
 using RageCoop.Client.Scripting;
@@ -96,7 +96,7 @@ public sealed partial class AdminMenuScript
             catch (Exception ex)
             {
                 _worldState.Stop();
-                Logger.Warning("Coop Control: shared world controls unavailable: " + ex.GetType().Name);
+                Logger.Warning("OG Coop: shared world controls unavailable: " + ex.GetType().Name);
                 Notification.PostTicker(UiText.Get("~o~Мир:~s~ общие настройки недоступны для установленной версии клиента."), false);
             }
             RefreshWorldControls();
@@ -108,11 +108,16 @@ public sealed partial class AdminMenuScript
             _worldState?.Stop();
             _ghostTraffic?.Stop();
             TrafficHandover.Reset();
+            PassengerPopulation.Reset();
             _timeSelection.Cancel();
             RefreshWorldControls();
         }
         _worldState?.Tick();
-        if (_worldConnected) TrafficHandover.Tick(System.Diagnostics.Stopwatch.GetTimestamp());
+        if (_worldConnected)
+        {
+            PassengerPopulation.Tick();
+            TrafficHandover.Tick(System.Diagnostics.Stopwatch.GetTimestamp());
+        }
         // Ordinary off/disconnect drains intersecting pairs without moving cars.
         _ghostTraffic?.Tick();
     }
@@ -188,13 +193,14 @@ public sealed partial class AdminMenuScript
             _worldState.Changed -= OnWorldChanged;
             _worldState.PendingExpired -= OnWorldRequestExpired;
             try { _worldState.Stop(); }
-            catch (Exception ex) { Logger.Warning("Coop Control: world cleanup failed: " + ex.GetType().Name); }
+            catch (Exception ex) { Logger.Warning("OG Coop: world cleanup failed: " + ex.GetType().Name); }
             _worldState = null;
         }
         try { _ghostTraffic?.Clear(); }
-        catch (Exception ex) { Logger.Warning("Coop Control: traffic cleanup failed: " + ex.GetType().Name); }
+        catch (Exception ex) { Logger.Warning("OG Coop: traffic cleanup failed: " + ex.GetType().Name); }
         _ghostTraffic = null;
         TrafficHandover.Reset();
+        PassengerPopulation.Reset();
         _worldActions.Clear();
     }
 }

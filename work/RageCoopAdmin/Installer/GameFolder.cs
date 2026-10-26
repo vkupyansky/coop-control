@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
-namespace CoopControl.Installer;
+namespace OGCoop.Installer;
 
 internal enum GameKind
 {

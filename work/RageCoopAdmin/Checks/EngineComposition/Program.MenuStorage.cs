@@ -245,8 +245,8 @@ internal static partial class Program
         private readonly Type _script = Resource.GetType("RageCoopAdmin.Client.AdminMenuScript", true)!;
         private readonly object _instance;
         internal readonly ObjectPool Pool;
-        private static readonly Type GarageData = Resource.GetType("CoopControl.Shared.GarageData", true)!;
-        private static readonly Type GarageCodec = Resource.GetType("CoopControl.Shared.GarageCodec", true)!;
+        private static readonly Type GarageData = Resource.GetType("OGCoop.Shared.GarageData", true)!;
+        private static readonly Type GarageCodec = Resource.GetType("OGCoop.Shared.GarageCodec", true)!;
         private readonly object _garage;
         // The server's copy; the menu sees it only through state messages.
         internal object ServerGarage;
@@ -293,7 +293,7 @@ internal static partial class Program
         internal string[] StoredPresetNames() => ServerPresets().Cast<object>().Select(Name).ToArray();
         internal object Preset(string name, int hash)
         {
-            object preset = Activator.CreateInstance(Resource.GetType("CoopControl.Shared.VehiclePreset", true)!)!;
+            object preset = Activator.CreateInstance(Resource.GetType("OGCoop.Shared.VehiclePreset", true)!)!;
             preset.GetType().GetProperty("Name")!.SetValue(preset, name);
             object appearance = preset.GetType().GetProperty("Appearance")!.GetValue(preset)!;
             appearance.GetType().GetProperty("ModelHash")!.SetValue(appearance, hash);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using OGCoop.Shared;
 using GTA;
 using GTA.Math;
 using GTA.Native;
@@ -10,6 +11,7 @@ namespace RageCoopAdmin.Client;
 public sealed partial class AdminMenuScript
 {
     private const long MapIconMilliseconds = 1_000;
+    private const int YachtSprite = 455; // radar_yacht
     private readonly Dictionary<string, Blip> _mapIcons = new Dictionary<string, Blip>();
     private UiLanguage? _mapIconLanguage;
     private bool _mapIconsForPauseMap;
@@ -54,7 +56,7 @@ public sealed partial class AdminMenuScript
 
             blip = Blip.Create(icon.At);
             blip.Sprite = (BlipSprite)icon.Sprite;
-            if (icon.Place) blip.Color = BlipColor.Orange;
+            if (icon.Place) blip.Color = icon.Color;
             // Places point the way from afar; interiors show on the minimap only nearby.
             blip.IsShortRange = !icon.Place;
             blip.Name = UiText.Get(icon.Name);
@@ -73,10 +75,23 @@ public sealed partial class AdminMenuScript
         }
 
         if (!_specialPlaces.OnlineMapEnabled) yield break;
-        foreach (InteriorBuilding building in OnlineInteriors.Buildings)
+        // Yachts: this player's in blue, the other players' in white.
+        foreach ((string owner, YachtLook look) in _yachts?.All() ?? Enumerable.Empty<(string, YachtLook)>())
         {
-            if (IsAvailable(building))
-                yield return new MapIcon("interior:" + building.Key, new Vector3(building.X, building.Y, building.Z), building.Sprite, building.Name, false);
+            YachtBerth berth = Yachts.Berths[look.Berth];
+            yield return owner.Length == 0
+                ? new MapIcon("yacht::" + look.Berth, new Vector3(berth.X, berth.Y, YachtBerth.Z), YachtSprite, "Ваша яхта", true, BlipColor.Blue)
+                : new MapIcon("yacht:" + owner + ":" + look.Berth, new Vector3(berth.X, berth.Y, YachtBerth.Z), YachtSprite, "Яхта напарника", true, BlipColor.White);
+        }
+
+        // своё жильё синим домиком, его видно издалека
+        InteriorBuilding? home = HomeInterior(_home)?.Building;
+        foreach (InteriorDoor door in OnlineInteriors.Doors)
+        {
+            if (!IsAvailable(door.Building)) continue;
+            yield return door.Building == home
+                ? new MapIcon("home:" + door.Key, door.Position, OnlineInteriors.Safehouse, "Моё жильё", true, BlipColor.Blue)
+                : new MapIcon("interior:" + door.Key, door.Position, door.Building.Sprite, door.Building.IconName, false);
         }
     }
 
@@ -101,13 +116,14 @@ public sealed partial class AdminMenuScript
 
     private readonly struct MapIcon
     {
-        internal MapIcon(string key, Vector3 at, int sprite, string name, bool place)
+        internal MapIcon(string key, Vector3 at, int sprite, string name, bool place, BlipColor color = BlipColor.Orange)
         {
             Key = key;
             At = at;
             Sprite = sprite;
             Name = name;
             Place = place;
+            Color = color;
         }
 
         internal string Key { get; }
@@ -115,5 +131,6 @@ public sealed partial class AdminMenuScript
         internal int Sprite { get; }
         internal string Name { get; }
         internal bool Place { get; }
+        internal BlipColor Color { get; }
     }
 }

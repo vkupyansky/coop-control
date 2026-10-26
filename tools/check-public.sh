@@ -42,7 +42,7 @@ for component in Client Server Bootstrap EarlyClient Installer; do
         Server) project='Server/CoopAdmin.Server.csproj' ;;
         Bootstrap) project='Bootstrap/CoopAdmin.Startup.csproj' ;;
         EarlyClient) project='EarlyClient/RageCoop.EarlyClient.csproj' ;;
-        Installer) project='Installer/CoopControl.Installer.csproj' ;;
+        Installer) project='Installer/OGCoop.Installer.csproj' ;;
     esac
     dotnet restore "$project" --locked-mode -warnaserror -p:PublicRelease=true
     dotnet build "$project" -c Release --no-restore -warnaserror -p:PublicRelease=true \

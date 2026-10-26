@@ -10,7 +10,7 @@ using System.Threading;
 using HarmonyLib;
 using RageCoop.Client;
 using RageCoop.Core;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoop.EarlyClient;
 

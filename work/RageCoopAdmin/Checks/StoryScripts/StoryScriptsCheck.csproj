@@ -11,6 +11,9 @@
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Lib.Harmony" Version="2.4.3" />
     <Compile Include="../../Client/StoryScripts.cs" Link="StoryScripts.cs" />
+    <Compile Include="../../Client/SafehouseDoors.cs" Link="SafehouseDoors.cs" />
+    <Compile Include="../../Client/HeroLink.cs" Link="HeroLink.cs" />
+    <Compile Include="../../Shared/Character.cs" Link="Character.cs" />
     <Reference Include="ScriptHookVDotNet3"><HintPath>$(RageCoopServerDir)/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
   </ItemGroup>
 </Project>

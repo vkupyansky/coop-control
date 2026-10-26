@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 using Lidgren.Network;
 

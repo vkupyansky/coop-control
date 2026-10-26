@@ -44,6 +44,15 @@ internal static class SpecialPlaceNatives
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool IsWaypointActive() => Function.Call<bool>((Hash)0x1DD1F58F493F1DA5UL); // IS_WAYPOINT_ACTIVE
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool IsPauseMenuActive() => Function.Call<bool>((Hash)0xB0034A223497FFCBUL); // IS_PAUSE_MENU_ACTIVE
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool IsRouteFound() => Function.Call<bool>((Hash)0x869DAACBBE9FA006UL); // GET_GPS_BLIP_ROUTE_FOUND
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static int RouteLength() => Function.Call<int>((Hash)0xBBB45C3CF5C8AA85UL); // GET_GPS_BLIP_ROUTE_LENGTH
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void SetPrologueRoads(bool enabled) => Function.Call((Hash)0x228E5C6AD4D74BFDUL, enabled); // SET_ALLOW_STREAM_PROLOGUE_NODES
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void SetPrologueMap(bool enabled) => Function.Call((Hash)0x9133955F1A2DA957UL, enabled); // SET_MINIMAP_IN_PROLOGUE

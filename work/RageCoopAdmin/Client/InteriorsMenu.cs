@@ -22,8 +22,11 @@ public sealed partial class AdminMenuScript
     private const float InsideLeaveDistance = 150f;
     private static readonly Color DoorColor = Color.FromArgb(150, 240, 200, 80);
     private readonly InteriorRuntime _interiors = new InteriorRuntime(OnlineInteriors.All);
-    private readonly DoorTrigger[] _doors = OnlineInteriors.Buildings.Select(_ => new DoorTrigger()).ToArray();
-    private readonly float?[] _doorGround = new float?[OnlineInteriors.Buildings.Length];
+    private InteriorPeople? _interiorPeople;
+    private readonly DoorTrigger[] _doors = OnlineInteriors.Doors.Select(_ => new DoorTrigger()).ToArray();
+    private readonly float?[] _doorGround = new float?[OnlineInteriors.Doors.Length];
+    // дверь, к которой ведёт выход: через неё вошли или ближайшая при телепорте
+    private InteriorDoor? _insideDoor;
     private readonly DoorTrigger _exitDoor = new DoorTrigger();
     private Dictionary<string, NativeMenu>? _entranceMenus;
     private OnlineInterior? _inside;
@@ -36,7 +39,7 @@ public sealed partial class AdminMenuScript
     {
         if (_pool == null) return;
         _entranceMenus = new Dictionary<string, NativeMenu>();
-        NativeMenu interiors = CreateMenu("Coop Control", "Интерьеры");
+        NativeMenu interiors = CreateMenu("OG Coop", "Интерьеры");
         UiMenu.Description(interiors, () => UiText.Get("Интерьеры GTA Online. У каждого есть вход с улицы — значок на карте."));
         teleports.AddSubMenu(interiors);
         _pool.Add(interiors);
@@ -46,7 +49,7 @@ public sealed partial class AdminMenuScript
         {
             if (building.Group != group || groupMenu == null)
             {
-                groupMenu = CreateMenu("Coop Control", building.Group);
+                groupMenu = CreateMenu("OG Coop", building.Group);
                 interiors.AddSubMenu(groupMenu);
                 _pool.Add(groupMenu);
                 group = building.Group;
@@ -59,7 +62,7 @@ public sealed partial class AdminMenuScript
 
             if (building.Interiors.Length < 2) continue;
             // Walking into a shared lobby offers its apartments, as in Online.
-            NativeMenu entrance = CreateMenu("Coop Control", building.Name);
+            NativeMenu entrance = CreateMenu("OG Coop", building.Name);
             foreach (OnlineInterior interior in building.Interiors) entrance.Add(InteriorItem(interior));
             _pool.Add(entrance);
             _entranceMenus[building.Key] = entrance;
@@ -78,7 +81,7 @@ public sealed partial class AdminMenuScript
             ? UiText.Get(interior.Building.Name)
             : UiText.Get(interior.Building.Name) + ": " + UiText.Get(interior.Name);
 
-    private void EnterInterior(OnlineInterior interior)
+    private void EnterInterior(OnlineInterior interior, InteriorDoor? door = null)
     {
         if (!_specialPlaces.OnlineMapEnabled)
         {
@@ -86,31 +89,49 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        if (!IsAvailable(interior.Building))
+        if (!IsAvailable(interior))
         {
             Notification.PostTicker(UiText.Get("~o~Интерьер:~s~ его нет в вашей версии игры."), false);
             return;
         }
 
-        if (!CanTeleportToPlace(true, out _)) return;
+        if (!CanTeleportToPlace(!interior.ByCar, out _)) return;
         _pool?.HideAll();
-        _interiors.Target(interior.Index, NowMilliseconds());
+        long now = NowMilliseconds();
+        // комнаты на острове есть, только пока остров загружен
+        if (interior.Building.Place >= 0) _specialPlaces.Target(interior.Building.Place, now);
+        _interiors.Target(interior.Index, now);
         _inside = interior;
+        _insideDoor = door ?? NearestDoor(interior.Building, LocalPlayerPosition());
         _exitGround = null;
         _exitDoor.Disarm();
         BeginTeleport(interior.X, interior.Y, interior.Z, "интерьеру «" + interior.Name + "»", timeoutSeconds: PlaceTeleportSeconds, loadScene: true);
+        if (_pendingTeleport != null)
+        {
+            _pendingTeleport.Interior = interior.Index;
+            _pendingTeleport.FloorKnown = true;
+        }
     }
 
-    private void ExitInterior(OnlineInterior interior)
+    // arrived выполняется у двери, когда выход удался
+    private bool ExitInterior(OnlineInterior interior, Action? arrived = null)
     {
-        if (!CanTeleportToPlace(true, out _)) return;
-        InteriorBuilding building = interior.Building;
-        int index = Array.IndexOf(OnlineInteriors.Buildings, building);
+        if (!CanTeleportToPlace(!interior.ByCar, out _)) return false;
+        InteriorDoor door = _insideDoor is InteriorDoor used && used.Building == interior.Building ? used : interior.Building.Doors[0];
+        int index = Array.IndexOf(OnlineInteriors.Doors, door);
         _inside = null;
+        _insideDoor = null;
         _doors[index].Disarm();
-        float ground = _doorGround[index] ?? building.Z;
-        BeginTeleport(building.X, building.Y, ground + 1f, "выходу", timeoutSeconds: PlaceTeleportSeconds, loadScene: true);
+        float ground = _doorGround[index] ?? door.Position.Z;
+        BeginTeleport(door.Position.X, door.Position.Y, ground + 1f, "выходу", timeoutSeconds: PlaceTeleportSeconds, loadScene: true);
+        if (_pendingTeleport == null) return false;
+        _pendingTeleport.FloorKnown = true;
+        _pendingTeleport.Arrived = arrived;
+        return true;
     }
+
+    internal static InteriorDoor NearestDoor(InteriorBuilding building, Vector3? from) =>
+        from is Vector3 at ? building.Doors.OrderBy(door => door.Position.DistanceTo2D(at)).First() : building.Doors[0];
 
     private bool IsAvailable(InteriorBuilding building)
     {
@@ -118,7 +139,25 @@ public sealed partial class AdminMenuScript
         return _buildingAvailable[Array.IndexOf(OnlineInteriors.Buildings, building)];
     }
 
+    private bool IsAvailable(OnlineInterior interior) =>
+        IsAvailable(interior.Building) && (interior.Dlc == null || InteriorNatives.IsDlcPresent(interior.Dlc));
+
+    // игрок оказался в нашем интерьере не через дверь: телепорт к напарнику, появление дома, вход пешком
+    private void NoticeInterior()
+    {
+        if (_inside != null || _pendingTeleport != null) return;
+        int[] found = _interiors.Find(Function.Call<int>(Hash.GET_INTERIOR_FROM_ENTITY, Game.Player.Character.Handle));
+        if (found.Length == 0) return;
+        // из общей комнаты выход к тому зданию, через которое вошли
+        int index = found.Where(item => OnlineInteriors.All[item].Building == _insideDoor?.Building).DefaultIfEmpty(found[0]).First();
+        _inside = OnlineInteriors.All[index];
+        if (_insideDoor?.Building != _inside.Building) _insideDoor = _inside.Building.Doors[0];
+        _exitGround = null;
+        _exitDoor.Disarm();
+    }
+
     // Every frame on the server: door and exit markers; loading, icons every 250 ms.
+    // люди внутри тоже каждый кадр
     private void TickInteriors()
     {
         if (!_specialPlaces.OnlineMapEnabled) return;
@@ -128,24 +167,32 @@ public sealed partial class AdminMenuScript
         {
             _lastInteriorTick = now;
             _interiors.Tick(now, local);
+            if (local.HasValue) NoticeInterior();
+            TickHome(now);
         }
+
+        _interiorPeople ??= new InteriorPeople(InteriorPedData.Sets, OnlineInteriors.All, message => Logger.Info(message),
+            place => place == InteriorPeople.CayoBeachParty && _specialPlaces.IslandShown);
+        _interiorPeople.Tick(now);
 
         if (local is not Vector3 at) return;
         Ped player = Game.Player.Character;
-        bool free = !player.IsDead && !player.IsInVehicle() && _pendingTeleport == null && _pool?.AreAnyVisible != true;
-        for (int index = 0; index < OnlineInteriors.Buildings.Length; index++)
+        bool idle = !player.IsDead && _pendingTeleport == null && _pool?.AreAnyVisible != true;
+        bool free = idle && !player.IsInVehicle();
+        for (int index = 0; index < OnlineInteriors.Doors.Length; index++)
         {
-            InteriorBuilding building = OnlineInteriors.Buildings[index];
-            float flat = new Vector2(at.X - building.X, at.Y - building.Y).Length();
-            if (flat > DoorDrawDistance || !IsAvailable(building))
+            InteriorDoor door = OnlineInteriors.Doors[index];
+            Vector3 place = door.Position;
+            float flat = new Vector2(at.X - place.X, at.Y - place.Y).Length();
+            if (flat > DoorDrawDistance || !IsAvailable(door.Building))
             {
                 _doors[index].Step(float.MaxValue);
                 continue;
             }
 
-            _doorGround[index] ??= Ground(building.X, building.Y, building.Z + 2f);
-            float ground = _doorGround[index] ?? building.Z;
-            DrawDoor(building.X, building.Y, ground);
+            _doorGround[index] ??= Ground(place.X, place.Y, place.Z + 2f);
+            float ground = _doorGround[index] ?? place.Z;
+            DrawDoor(place.X, place.Y, ground);
             float distance = Math.Abs(at.Z - (ground + 1f)) <= DoorHeightReach ? flat : float.MaxValue;
             if (!free)
             {
@@ -153,7 +200,7 @@ public sealed partial class AdminMenuScript
             }
             else if (_doors[index].Step(distance))
             {
-                OnDoor(building);
+                OnDoor(door);
             }
         }
 
@@ -167,26 +214,29 @@ public sealed partial class AdminMenuScript
 
             _exitGround ??= Ground(inside.X, inside.Y, inside.Z + 0.5f);
             float floor = _exitGround ?? inside.Z - 1f;
-            DrawDoor(inside.X, inside.Y, floor);
+            // с тестовой трассы выезжают на машине, круг шире
+            bool driving = inside.ByCar && player.IsInVehicle();
+            DrawDoor(inside.X, inside.Y, floor, inside.ByCar ? DoorTrigger.CarScale : 1f);
             float exit = Math.Abs(at.Z - (floor + 1f)) <= DoorHeightReach
                 ? new Vector2(at.X - inside.X, at.Y - inside.Y).Length()
                 : float.MaxValue;
-            if (!free)
+            if (!(free || (idle && driving)))
             {
                 _exitDoor.Disarm();
             }
-            else if (_exitDoor.Step(exit))
+            else if (_exitDoor.Step(exit, driving ? DoorTrigger.CarScale : 1f))
             {
                 ExitInterior(inside);
             }
         }
     }
 
-    private void OnDoor(InteriorBuilding building)
+    private void OnDoor(InteriorDoor door)
     {
+        InteriorBuilding building = door.Building;
         if (building.Interiors.Length == 1 || _entranceMenus == null || !_entranceMenus.TryGetValue(building.Key, out NativeMenu? menu))
         {
-            EnterInterior(building.Interiors[0]);
+            EnterInterior(building.Interiors[0], door);
             return;
         }
 
@@ -195,9 +245,9 @@ public sealed partial class AdminMenuScript
         menu.Visible = true;
     }
 
-    private static void DrawDoor(float x, float y, float ground) =>
+    private static void DrawDoor(float x, float y, float ground, float scale = 1f) =>
         World.DrawMarker(MarkerType.Cylinder, new Vector3(x, y, ground + 0.02f), Vector3.Zero, Vector3.Zero,
-            new Vector3(1.4f, 1.4f, 0.6f), DoorColor);
+            new Vector3(1.4f * scale, 1.4f * scale, 0.6f), DoorColor);
 
     // First ground below a point just above the door or the floor: probing from
     // the sky would find a tower's roof.
@@ -209,8 +259,10 @@ public sealed partial class AdminMenuScript
 
     private void ResetInteriors()
     {
+        _interiorPeople?.Reset();
         _interiors.Reset();
         _inside = null;
+        _insideDoor = null;
         _exitGround = null;
     }
 }

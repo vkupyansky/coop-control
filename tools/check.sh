@@ -39,7 +39,7 @@ components=(Client/RageCoopAdmin.Client.csproj Server/CoopAdmin.Server.csproj)
 if [[ "$menu_language" == true ]]; then
     components=(Client/RageCoopAdmin.Client.csproj)
 elif [[ "$world_modes" == false ]]; then
-    components+=(Bootstrap/CoopAdmin.Startup.csproj EarlyClient/RageCoop.EarlyClient.csproj Installer/CoopControl.Installer.csproj)
+    components+=(Bootstrap/CoopAdmin.Startup.csproj EarlyClient/RageCoop.EarlyClient.csproj Installer/OGCoop.Installer.csproj)
 fi
 for component in "${components[@]}"; do
     dotnet restore "$component" --locked-mode -warnaserror

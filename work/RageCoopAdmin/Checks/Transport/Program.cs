@@ -1,5 +1,5 @@
 using System;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 internal static partial class Program
 {

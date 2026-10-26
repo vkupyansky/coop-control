@@ -16,6 +16,8 @@
     <Compile Include="../../Client/GhostTrafficRuntime.cs" Link="GhostTrafficRuntime.cs" />
     <Compile Include="../../Client/RuntimeEntityLookup.cs" Link="RuntimeEntityLookup.cs" />
     <Compile Include="../../Client/TrafficHandover.cs" Link="TrafficHandover.cs" />
+    <Compile Include="../../Client/PassengerPopulation.cs" Link="PassengerPopulation.cs" />
+    <Compile Include="../../Client/EngineTrafficPolicy.cs" Link="EngineTrafficPolicy.cs" />
     <Compile Include="../../Shared/GhostTrafficProtocol.cs" Link="GhostTrafficProtocol.cs" />
     <Compile Include="../../Shared/WorldStateProtocol.cs" Link="WorldStateProtocol.cs" />
     <Compile Include="../../Shared/WorldOptions.cs" Link="WorldOptions.cs" />

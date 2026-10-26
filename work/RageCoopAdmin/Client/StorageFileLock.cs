@@ -20,7 +20,7 @@ internal sealed class StorageFileLock : IDisposable
         string key;
         using (SHA256 hash = SHA256.Create())
             key = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(canonical))).Replace("-", string.Empty);
-        var mutex = new Mutex(false, @"Local\RageCoop.CoopControl.Storage." + key);
+        var mutex = new Mutex(false, @"Local\RageCoop.OGCoop.Storage." + key);
         try
         {
             bool acquired;

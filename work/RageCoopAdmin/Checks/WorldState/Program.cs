@@ -1,6 +1,6 @@
 using System;
 using CoopAdmin.Server;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 internal static class Program
 {

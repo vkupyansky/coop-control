@@ -1,4 +1,4 @@
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Native;
 

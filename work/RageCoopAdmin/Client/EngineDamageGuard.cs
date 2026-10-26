@@ -280,7 +280,7 @@ internal static class EngineDamageGuard
                 if (!wreck.Reported)
                 {
                     wreck.Reported = true;
-                    API.Logger?.Info("Coop Control: repeated remote wreck kept silent: id=" + record.ID + "; owner=" + record.OwnerID +
+                    API.Logger?.Info("OG Coop: repeated remote wreck kept silent: id=" + record.ID + "; owner=" + record.OwnerID +
                         "; replica=" + (wreck.Handle == vehicle.Handle ? "revived" : "recreated"));
                 }
                 wreck.Handle = vehicle.Handle;

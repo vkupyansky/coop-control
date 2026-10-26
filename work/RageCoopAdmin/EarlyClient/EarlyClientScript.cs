@@ -5,7 +5,7 @@ using RageCoopAdmin.Client;
 namespace RageCoop.EarlyClient;
 
 // SHVDN orders the discovered types by assembly name before constructing them.
-// CoopControl.EarlyClient precedes RageCoop.Client, including Main's settings read.
+// OGCoop.EarlyClient precedes RageCoop.Client, including Main's settings read.
 [ScriptAttributes(NoScriptThread = true)]
 public sealed class EarlyClientScript : Script
 {

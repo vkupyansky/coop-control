@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Text;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Math;
 using GTA.Native;

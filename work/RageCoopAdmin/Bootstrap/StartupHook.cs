@@ -27,6 +27,7 @@ internal static class StartupHook
             throw new InvalidOperationException("The CoopAdmin startup hook requires the .NET 10 build of Harmony 2.4.3.");
         }
         InstallEarlyGuards();
+        RetiredResources.Remove(AppContext.BaseDirectory);
         ServerProcessFile.Create(AppContext.BaseDirectory);
     }
 

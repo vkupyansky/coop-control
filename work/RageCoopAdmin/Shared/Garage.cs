@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // One player's saved cars and favourite models. The server keeps it per
 // RageCoop name, so every computer the player connects from sees the same list.

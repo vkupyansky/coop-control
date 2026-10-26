@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Writes beside the target and replaces it in one step: a reader never sees a
 // half-written file, and a failed write leaves the previous file intact.

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using RageCoop.Client;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoop.EarlyClient;
 

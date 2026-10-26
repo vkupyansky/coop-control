@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using HarmonyLib;
 using RageCoop.Client;
 

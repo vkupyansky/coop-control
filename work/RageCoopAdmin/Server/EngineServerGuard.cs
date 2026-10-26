@@ -328,7 +328,7 @@ internal static partial class EngineServerGuard
         fileOperation = __state;
         lock (State(__instance).ClientGate)
             if (!Connected(__instance, client)) { throw new OperationCanceledException("The file recipient disconnected."); }
-        if (name == "CoopControl.res" && Current.IsOwnClientResource(__instance, stream))
+        if (name == "OGCoop.res" && Current.IsOwnClientResource(__instance, stream))
         {
             // Resource packs remain immutable until UnloadAll. Their stream monitor
             // also protects hashing, so another transfer cannot move the position.
@@ -343,7 +343,7 @@ internal static partial class EngineServerGuard
                     hash = algorithm.ComputeHash(stream);
                 }
                 finally { stream.Seek(position, SeekOrigin.Begin); }
-                identity = new ResourceIdentity("CoopControl." + Convert.ToHexStringLower(hash) + ".res");
+                identity = new ResourceIdentity("OGCoop." + Convert.ToHexStringLower(hash) + ".res");
                 ResourceNames.Add(stream, identity);
             }
             name = identity.WireName;
@@ -741,7 +741,7 @@ internal static partial class EngineServerGuard
         internal ConcurrentDictionary<int, ServerPed> Peds(HostServer server) => (ConcurrentDictionary<int, ServerPed>)PedsProperty.GetValue(Entities.GetValue(server))!;
         internal ConcurrentDictionary<int, ServerVehicle> Vehicles(HostServer server) => (ConcurrentDictionary<int, ServerVehicle>)VehiclesProperty.GetValue(Entities.GetValue(server))!;
         internal bool IsOwnClientResource(HostServer server, Stream stream) =>
-            ((Dictionary<string, Stream>)ClientResources.GetValue(Resources.GetValue(server))!).TryGetValue("CoopControl", out Stream? pack) &&
+            ((Dictionary<string, Stream>)ClientResources.GetValue(Resources.GetValue(server))!).TryGetValue("OGCoop", out Stream? pack) &&
             ReferenceEquals(pack, stream);
         private const BindingFlags All = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 

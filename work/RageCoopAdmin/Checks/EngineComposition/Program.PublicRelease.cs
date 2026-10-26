@@ -64,8 +64,8 @@ internal static partial class Program
             host.Call("BuildInterfaceMenu");
             NativeMenu settings = host.Pool.OfType<NativeMenu>().Single(menu => menu.Name == "Настройки");
             Assert(settings.Items.Select(item => item.Title).SequenceEqual(new[]
-                { "Язык / Language", "Ремонт клавишей K", "Сочетания на геймпаде", "Ускоритель (O / A)", "Голосовой чат", "О дополнении" }),
-                "The real public settings menu has the language selector, four controls and About, without an empty HUD option.");
+                { "Язык / Language", "Ремонт клавишей K", "Сочетания на геймпаде", "Ускоритель (O / A)", "Сразу за руль", "Голосовой чат", "О дополнении" }),
+                "The real public settings menu has the language selector, five controls and About, without an empty HUD option.");
             int count = host.Pool.Count();
             host.Call("BuildAddonVehiclesMenu");
             Assert(host.Pool.Count() == count && host.Get("_addonVehiclesMenu") == null,

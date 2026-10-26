@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 internal sealed class GhostTrafficClaim
 {

@@ -12,7 +12,7 @@ internal static partial class Program
         MethodInfo resume = Resource.GetType("RageCoopAdmin.Client.RageCoopLog", true)!.GetMethod("Resume", Static)!;
         FieldInfo mainLogger = Engine.GetType("RageCoop.Client.Main", true)!.GetField("Logger", Static)!;
         object? previous = mainLogger.GetValue(null);
-        string folder = Path.Combine(Path.GetTempPath(), "coopcontrol-log-" + Guid.NewGuid().ToString("N"));
+        string folder = Path.Combine(Path.GetTempPath(), "ogcoop-log-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder);
         string path = Path.Combine(folder, "RageCoop.Client.log");
         Logger? resumed = null;

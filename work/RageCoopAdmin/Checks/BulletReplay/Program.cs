@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.Serialization;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 using HarmonyLib;
 using RageCoop.Client;

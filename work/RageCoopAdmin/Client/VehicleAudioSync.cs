@@ -92,7 +92,7 @@ internal static class VehicleAudioSync
             // A radio failure must not abort RageCoop's vehicle update loop.
             // Disable this optional patch and retain the actual error in the log.
             _failed = true;
-            API.Logger.Warning("Coop Control: radio synchronization disabled: " + ex);
+            API.Logger.Warning("OG Coop: radio synchronization disabled: " + ex);
         }
     }
 

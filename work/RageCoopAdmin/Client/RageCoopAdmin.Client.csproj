@@ -16,6 +16,9 @@
     <Compile Include="../Shared/ProductInfo.cs" Link="Shared/ProductInfo.cs" />
     <Compile Include="../Shared/Finite.cs" Link="Shared/Finite.cs" />
     <Compile Include="../Shared/Garage.cs" Link="Shared/Garage.cs" />
+    <Compile Include="../Shared/Character.cs" Link="Shared/Character.cs" />
+    <Compile Include="../Shared/Yacht.cs" Link="Shared/Yacht.cs" />
+    <Compile Include="../Shared/Home.cs" Link="Shared/Home.cs" />
     <Compile Include="../Shared/AtomicFile.cs" Link="Shared/AtomicFile.cs" />
     <Compile Include="../Shared/VehicleAppearance.cs" Link="Shared/VehicleAppearance.cs" />
     <Compile Include="../Shared/WorldOptions.cs" Link="Shared/WorldOptions.cs" />

@@ -85,8 +85,8 @@ internal static class EarlySettingsGuard
 
     // Voice chat is on: RageCoop relays push-to-talk voice only with UseVoice.
     // Its own default is false and nobody chose it, so the setting is applied in
-    // memory, never written; COOP_CONTROL_VOICE=0 keeps the file's value.
-    internal const string VoiceVariable = "COOP_CONTROL_VOICE";
+    // memory, never written; OG_COOP_VOICE=0 keeps the file's value.
+    internal const string VoiceVariable = "OG_COOP_VOICE";
 
     internal static void ApplyVoice(Settings settings, string? variable)
     {

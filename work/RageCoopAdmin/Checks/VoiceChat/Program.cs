@@ -43,7 +43,7 @@ internal static class Program
             Check(!settings.Voice && Calls.Count == 0 && log.Count == 0,
                 "while the map switch or a teleport loads the world the sound device is not opened");
             chat.Tick(true, true, "Microphone on");
-            Check(settings.Voice && Calls.SequenceEqual(new[] { "Init" }) && log.Single() == "Coop Control: voice chat on",
+            Check(settings.Voice && Calls.SequenceEqual(new[] { "Init" }) && log.Single() == "OG Coop: voice chat on",
                 "on by default: once the world is quiet RageCoop's voice setting is turned on and playback starts");
             Calls.Clear();
             chat.Tick(true, false, "Microphone on");
@@ -58,7 +58,7 @@ internal static class Program
                 "releasing push-to-talk stops the microphone at once, not at the next key press");
             Calls.Clear();
             chat.Tick(false, true, "Microphone on");
-            Check(!settings.Voice && Calls.SequenceEqual(new[] { "ClearAll" }) && log.Last() == "Coop Control: voice chat off",
+            Check(!settings.Voice && Calls.SequenceEqual(new[] { "ClearAll" }) && log.Last() == "OG Coop: voice chat off",
                 "turning voice chat off in Settings stops playback and recording");
             Calls.Clear();
             chat.Tick(false, true, "Microphone on");

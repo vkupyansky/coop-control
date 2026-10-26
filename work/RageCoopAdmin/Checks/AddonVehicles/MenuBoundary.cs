@@ -223,18 +223,18 @@ namespace RageCoopAdmin.Client
         internal void RefreshFavorites() => RefreshFavoritesMenu();
         // One simulated server garage per check directory; reopening a menu
         // for the same directory sees what the previous one stored.
-        private static readonly Dictionary<string, CoopControl.Shared.GarageData> Servers = new Dictionary<string, CoopControl.Shared.GarageData>();
+        private static readonly Dictionary<string, OGCoop.Shared.GarageData> Servers = new Dictionary<string, OGCoop.Shared.GarageData>();
         private GarageClient? _garage;
-        private CoopControl.Shared.GarageData _server = new CoopControl.Shared.GarageData();
-        internal static CoopControl.Shared.GarageData ServerFor(string directory) =>
-            Servers.TryGetValue(directory, out CoopControl.Shared.GarageData? garage) ? garage : Servers[directory] = new CoopControl.Shared.GarageData();
+        private OGCoop.Shared.GarageData _server = new OGCoop.Shared.GarageData();
+        internal static OGCoop.Shared.GarageData ServerFor(string directory) =>
+            Servers.TryGetValue(directory, out OGCoop.Shared.GarageData? garage) ? garage : Servers[directory] = new OGCoop.Shared.GarageData();
         private bool GarageReady() => _garage?.Current != null;
-        private static void NotifyGarageResult(CoopControl.Shared.GarageResult result, string success) { }
+        private static void NotifyGarageResult(OGCoop.Shared.GarageResult result, string success) { }
         private void ServerReceive(int hash, object[] args)
         {
-            if (!CoopControl.Shared.GarageCodec.TryApply(_server, args, out int token, out CoopControl.Shared.GarageResult result)) return;
+            if (!OGCoop.Shared.GarageCodec.TryApply(_server, args, out int token, out OGCoop.Shared.GarageResult result)) return;
             _garage!.ApplyResult(new object[] { token, (int)result });
-            if (result == CoopControl.Shared.GarageResult.Saved) _garage.ApplyState(new object[] { CoopControl.Shared.GarageCodec.Encode(_server) });
+            if (result == OGCoop.Shared.GarageResult.Saved) _garage.ApplyState(new object[] { OGCoop.Shared.GarageCodec.Encode(_server) });
         }
         internal void Start(string directory)
         {
@@ -242,7 +242,7 @@ namespace RageCoopAdmin.Client
             _server = ServerFor(directory);
             _garage = new GarageClient(ServerReceive);
             _garage.Changed += () => ApplyFavorites(_garage.Current!.Favorites);
-            _garage.ApplyState(new object[] { CoopControl.Shared.GarageCodec.Encode(_server) });
+            _garage.ApplyState(new object[] { OGCoop.Shared.GarageCodec.Encode(_server) });
             _catalogReady = true;
             BuildFavoritesMenu();
             BuildAddonVehiclesMenu();

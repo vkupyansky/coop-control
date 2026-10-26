@@ -23,7 +23,7 @@
         "resolved": "1.0.3",
         "contentHash": "zMk4D+9zyiEWByyQ7oPImPN/Jhpj166Ky0Nlla4eXlNL8hI/BtSJsgR8Inldd4NNpIAH3oh8yym0W2DrhXdSLQ=="
       },
-      "coopcontrol.earlyclient": {
+      "OGCoop.EarlyClient": {
         "type": "Project",
         "dependencies": {
           "Lib.Harmony": "[2.4.3, )"

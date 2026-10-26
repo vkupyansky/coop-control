@@ -8,7 +8,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using HarmonyLib;
 using RageCoop.Client;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoop.EarlyClient;
 

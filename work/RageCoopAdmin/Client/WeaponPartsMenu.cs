@@ -15,7 +15,7 @@ public sealed partial class AdminMenuScript
     private void BuildWeaponPartsMenu()
     {
         if (_pool == null) return;
-        _weaponPartsMenu = CreateMenu("Coop Control", "Обвесы");
+        _weaponPartsMenu = CreateMenu("OG Coop", "Обвесы");
         _pool.Add(_weaponPartsMenu);
     }
 

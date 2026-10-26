@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Native;
 
 namespace RageCoopAdmin.Client;

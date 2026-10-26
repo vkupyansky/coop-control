@@ -61,6 +61,16 @@ internal static class Program
         Assert(InterfaceShortcutMatcher.Match(Keys.J, Keys.None, loaded) == InterfaceShortcut.Menu &&
             InterfaceShortcutMatcher.Match(Keys.K, Keys.None, loaded) == InterfaceShortcut.None,
             "menu remains available after reopening a profile with all optional controls disabled");
+        Assert(initial.Switches.Count == 0, "a new profile has every menu switch off");
+        var switched = new InterfaceSettings { Switches = { "Invincible", "NoWanted", "InfiniteAmmo" } };
+        store.Save(switched);
+        Assert(new InterfaceSettingsStore(directory).Load().Switches.SequenceEqual(new[] { "Invincible", "NoWanted", "InfiniteAmmo" }),
+            "the menu switches that are on survive a GTA restart");
+        File.WriteAllText(Path.Combine(directory, "interface.xml"), "<Interface version=\"5\"><VoiceChat>false</VoiceChat></Interface>");
+        Assert(store.Load().Switches.Count == 0 && !store.Load().VoiceChat, "a profile saved before the switches were remembered has them all off");
+        MustReject(() => store.Save(new InterfaceSettings { Switches = { "" } }), "an empty switch name is rejected");
+        MustReject(() => store.Save(new InterfaceSettings { Switches = Enumerable.Range(0, 33).Select(i => "S" + i).ToList() }),
+            "an endless list of switches is rejected");
         store.Save(new InterfaceSettings { RepairShortcut = 0 });
         Assert(store.Load().RepairShortcut == 0,
             "atomic replacement can reenable repair without changing the menu binding");

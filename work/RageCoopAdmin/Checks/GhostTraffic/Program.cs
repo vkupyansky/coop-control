@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 using GTA.Native;
 using HarmonyLib;
@@ -203,7 +203,7 @@ internal static partial class Program
         fixture.Add(2, 1, local: true);
         fixture.Add(3, 30, owner: 20);
         fixture.Configure(true); fixture.Frame(); fixture.Frame();
-        Assert(all.Count(line => line == "Coop Control: traffic pass-through on") == 1,
+        Assert(all.Count(line => line == "OG Coop: traffic pass-through on") == 1,
             "Turning the mode on is logged once, so a report can tell whether it was on.");
         Assert(log.Count == 1 && log[0].Contains("id=2") && log[0].Contains("reason=not road traffic") && log[0].Contains("owner=local"),
             "A touched solid car is logged once with its reason; distant cars are not logged.");

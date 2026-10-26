@@ -13,6 +13,16 @@
     <Compile Include="../../Shared/VehicleAppearance.cs" Link="VehicleAppearance.cs" />
     <Compile Include="../../Shared/Garage.cs" Link="Garage.cs" />
     <Compile Include="../../Server/GarageStore.cs" Link="GarageStore.cs" />
+    <Compile Include="../../Server/PlayerFiles.cs" Link="PlayerFiles.cs" />
+    <Compile Include="../../Server/CharacterStore.cs" Link="CharacterStore.cs" />
+    <Compile Include="../../Shared/Character.cs" Link="Character.cs" />
+    <Compile Include="../../Client/CharacterLooks.cs" Link="CharacterLooks.cs" />
+    <Compile Include="../../Server/YachtStore.cs" Link="YachtStore.cs" />
+    <Compile Include="../../Server/HomeStore.cs" Link="HomeStore.cs" />
+    <Compile Include="../../Shared/Home.cs" Link="Home.cs" />
+    <Compile Include="../../Shared/Yacht.cs" Link="Yacht.cs" />
+    <Compile Include="../../Client/YachtLooks.cs" Link="YachtLooks.cs" />
+    <Compile Include="../../Client/Yachts.cs" Link="Yachts.cs" />
     <Compile Include="../../Server/WorldModeStore.cs" Link="WorldModeStore.cs" />
     <Compile Include="../../Client/GarageClient.cs" Link="GarageClient.cs" />
   </ItemGroup>

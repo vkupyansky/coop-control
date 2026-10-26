@@ -29,6 +29,7 @@ internal static partial class Program
                 "the real installed Program.Main calls the safe Settings reader exactly once before constructing the server");
             CheckExisting(directory);
             CheckInvalid(directory);
+            CheckRetiredResources(directory);
             if (args.Length != 1) { throw new ArgumentException("Pass the built public CoopAdmin.Startup.dll to check its actual settings reader."); }
             CheckPublicInitialSetup(directory, args[0]);
             var voiceOn = new Settings { UseVoice = false };
@@ -36,7 +37,7 @@ internal static partial class Program
             var voiceKept = new Settings { UseVoice = false };
             EarlySettingsGuard.ApplyVoice(voiceKept, "0");
             Assert(voiceOn.UseVoice && !voiceKept.UseVoice,
-                "voice chat is relayed by default; COOP_CONTROL_VOICE=0 keeps the file's value");
+                "voice chat is relayed by default; OG_COOP_VOICE=0 keeps the file's value");
             EarlySettingsGuard.Uninstall();
             EarlySettingsGuard.Uninstall();
             Assert(Harmony.GetPatchInfo(target)?.Owners.Contains("friendslegacy.ragecoop.earlysettings") != true,
@@ -93,6 +94,37 @@ internal static partial class Program
                     "invalid Settings stop loading without revealing values or replacing the source (case " + index + ")");
             }
         }
+    }
+
+    // папка сервера v0.3.0, скопированная под новой
+    private static void CheckRetiredResources(string directory)
+    {
+        string server = Path.Combine(directory, "server");
+        string current = Path.Combine(server, "Resources", "Client", "OGCoop");
+        string former = Path.Combine(server, RetiredResources.Folder);
+        Directory.CreateDirectory(current);
+        File.WriteAllText(Path.Combine(current, "RageCoopAdmin.Client.dll"), "new");
+        Assert(!RetiredResources.Remove(server) && File.Exists(Path.Combine(current, "RageCoopAdmin.Client.dll")),
+            "a server without the former menu folder is left unchanged");
+
+        Directory.CreateDirectory(former);
+        foreach (string name in new[] { "RageCoopAdmin.Client.dll", "0Harmony.dll", ".DS_Store" })
+            File.WriteAllText(Path.Combine(former, name), "old");
+        File.SetAttributes(Path.Combine(former, "0Harmony.dll"), FileAttributes.ReadOnly);
+        Assert(RetiredResources.Remove(server) && !Directory.Exists(former) && File.Exists(Path.Combine(current, "RageCoopAdmin.Client.dll")),
+            "the former CoopControl menu folder is removed before RageCoop packs client resources; the OGCoop one stays");
+
+        Directory.CreateDirectory(former);
+        File.WriteAllText(Path.Combine(former, "RageCoopAdmin.Client.dll"), "old");
+        File.WriteAllText(Path.Combine(former, "notes.txt"), "someone's");
+        Assert(!RetiredResources.Remove(server) && File.Exists(Path.Combine(former, "notes.txt")),
+            "a CoopControl folder with other files is not ours and stays");
+        Directory.Delete(former, true);
+        Directory.CreateDirectory(Path.Combine(former, "sub"));
+        File.WriteAllText(Path.Combine(former, "RageCoopAdmin.Client.dll"), "old");
+        Assert(!RetiredResources.Remove(server) && Directory.Exists(Path.Combine(former, "sub")),
+            "a CoopControl folder with subfolders stays");
+        Directory.Delete(server, true);
     }
 
     private static void CheckInitialSetup(string directory)

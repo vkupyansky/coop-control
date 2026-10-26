@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 using HarmonyLib;
 using RageCoopAdmin.Client;
@@ -16,6 +16,10 @@ internal static class Program
     private static readonly HashSet<string> Missing = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private static bool OnlineMap;
     private static bool IslandWater;
+    private static bool Waypoint;
+    private static bool Paused;
+    private static bool RouteFound;
+    private static int RouteMeters;
     private static int Passes;
 
     private static int Main()
@@ -26,7 +30,8 @@ internal static class Program
             foreach (MethodInfo native in typeof(SpecialPlaceNatives).GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public)
                 .Where(method => method.DeclaringType == typeof(SpecialPlaceNatives)))
             {
-                string prefix = native.ReturnType == typeof(bool) ? nameof(BoolNative) : nameof(VoidNative);
+                string prefix = native.ReturnType == typeof(bool) ? nameof(BoolNative) :
+                    native.ReturnType == typeof(int) ? nameof(IntNative) : nameof(VoidNative);
                 boundary.Patch(native, prefix: new HarmonyMethod(typeof(Program), prefix));
             }
 
@@ -149,7 +154,8 @@ internal static class Program
     private static void CheckIsland()
     {
         Reset();
-        var runtime = Ready();
+        var logs = new List<string>();
+        var runtime = Ready(logs.Add);
         SpecialPlace cayo = SpecialPlaces.All[SpecialPlaces.CayoPerico];
         SpecialPlace east = SpecialPlaces.All[SpecialPlaces.EastCarrier];
         Vector3 island = new Vector3(cayo.X, cayo.Y, cayo.Z);
@@ -164,14 +170,39 @@ internal static class Program
         Check(runtime.IslandShown && Calls.Contains("SetIslandWater(True)") && Calls.Contains("SetIslandMap(True)") && Calls.Contains("SetIslandRoads(True)"),
             "over the island its water, map and roads are on");
         Calls.Clear();
-        runtime.Frame();
+        runtime.Frame(3_100);
         Check(Calls.SequenceEqual(new[] { "DrawIslandRadarThisFrame()" }), "every frame over the island draws the island minimap");
+        Waypoint = true;
+        Paused = true;
+        Calls.Clear();
+        runtime.Frame(3_200);
+        Check(Calls.SequenceEqual(new[] { "DrawIslandRadarThisFrame()" }), "the pause map shows the island, so a waypoint can be placed on it");
+        Paused = false;
+        Calls.Clear();
+        runtime.Frame(3_300);
+        Check(Calls.Count == 0, "with a waypoint the minimap stays ordinary: GTA draws no GPS route on an interior minimap");
+        RouteFound = true;
+        RouteMeters = 840;
+        runtime.Frame(4_000);
+        Check(!logs.Any(line => line.Contains("island waypoint")), "the route is not judged before the game had time to plan it");
+        runtime.Frame(5_400);
+        runtime.Frame(9_000);
+        Check(logs.Count(line => line.Contains("island waypoint")) == 1 && logs.Contains("OG Coop: island waypoint: GPS route 840 m."),
+            "two seconds later the log records the route the game found, once per waypoint");
+        Waypoint = false;
+        runtime.Frame(9_100);
+        Waypoint = true;
+        RouteFound = false;
+        runtime.Frame(9_200);
+        runtime.Frame(11_300);
+        Check(logs.Last() == "OG Coop: island waypoint: the game found no GPS route.", "a new waypoint without a route is logged too");
+        Waypoint = false;
         runtime.Tick(4_000, deck);
         Check(!runtime.IslandShown && Calls.Contains("SetIslandWater(False)") && Calls.Contains("SetIslandMap(False)") &&
             !Calls.Contains("SetIslandRoads(False)") && runtime.IslandRoads,
             "flying off the island restores water and map but keeps its roads near it");
         Calls.Clear();
-        runtime.Frame();
+        runtime.Frame(12_000);
         Check(Calls.Count == 0, "away from the island the minimap is left alone");
         runtime.Tick(4_500, City);
         Check(Calls.Contains("SetIslandRoads(False)") && !runtime.IslandRoads && runtime.IsActive(SpecialPlaces.CayoPerico),
@@ -308,6 +339,10 @@ internal static class Program
         Missing.Clear();
         OnlineMap = false;
         IslandWater = false;
+        Waypoint = false;
+        Paused = false;
+        RouteFound = false;
+        RouteMeters = 0;
     }
 
     private static bool OnlineOnly(string part) =>
@@ -341,17 +376,35 @@ internal static class Program
         return false;
     }
 
+    // Questions about the waypoint and the pause menu are not recorded as calls.
     private static bool BoolNative(MethodBase __originalMethod, object[] __args, ref bool __result)
     {
-        if (__originalMethod.Name == "IsIslandWater")
+        switch (__originalMethod.Name)
         {
-            Calls.Add("IsIslandWater()");
-            __result = IslandWater;
-            return false;
+            case "IsIslandWater":
+                Calls.Add("IsIslandWater()");
+                __result = IslandWater;
+                return false;
+            case "IsWaypointActive":
+                __result = Waypoint;
+                return false;
+            case "IsPauseMenuActive":
+                __result = Paused;
+                return false;
+            case "IsRouteFound":
+                __result = RouteFound;
+                return false;
         }
 
         Calls.Add(__originalMethod.Name + "(" + __args[0] + ")");
         __result = Active.Contains((string)__args[0]);
+        return false;
+    }
+
+    private static bool IntNative(MethodBase __originalMethod, ref int __result)
+    {
+        if (__originalMethod.Name != "RouteLength") throw new InvalidOperationException("unexpected game call " + __originalMethod.Name);
+        __result = RouteMeters;
         return false;
     }
 

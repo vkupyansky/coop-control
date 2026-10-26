@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoop.Server;
 
 namespace CoopAdmin.Server;
@@ -41,12 +41,12 @@ public sealed partial class CoopAdminServer
         {
             using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(8), MaxResponseContentBufferSize = ReleaseCheck.MaximumResponse };
             using var request = new HttpRequestMessage(HttpMethod.Get, ProductInfo.ReleasesApi);
-            request.Headers.UserAgent.ParseAdd("CoopControl/" + ProductInfo.Version);
+            request.Headers.UserAgent.ParseAdd("OGCoop/" + ProductInfo.Version);
             request.Headers.Accept.ParseAdd("application/vnd.github+json");
             using HttpResponseMessage response = await http.SendAsync(request).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
-                Logger.Debug("Coop Control update check: GitHub answered " + (int)response.StatusCode);
+                Logger.Debug("OG Coop update check: GitHub answered " + (int)response.StatusCode);
                 return;
             }
 
@@ -58,7 +58,7 @@ public sealed partial class CoopAdminServer
         catch (Exception error) when (error is HttpRequestException or TaskCanceledException or IOException or InvalidOperationException or ObjectDisposedException)
         {
             // Offline or GitHub unreachable: the server works the same without the notice.
-            try { Logger.Debug("Coop Control update check skipped: " + error.Message); }
+            try { Logger.Debug("OG Coop update check skipped: " + error.Message); }
             catch (ObjectDisposedException)
             {
                 // The server stopped while GitHub was answering.

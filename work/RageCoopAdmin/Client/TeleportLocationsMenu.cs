@@ -35,7 +35,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        NativeMenu teleports = CreateMenu("Coop Control", "Телепорты");
+        NativeMenu teleports = CreateMenu("OG Coop", "Телепорты");
         _mainMenu.AddSubMenu(teleports);
         _pool.Add(teleports);
 
@@ -46,7 +46,7 @@ public sealed partial class AdminMenuScript
         recall.Activated += (_, _) => RequestRecallCar();
         teleports.Add(recall);
 
-        NativeMenu places = CreateMenu("Coop Control", "Интересные места");
+        NativeMenu places = CreateMenu("OG Coop", "Интересные места");
         teleports.AddSubMenu(places);
         _pool.Add(places);
         string? previousCategory = null;
@@ -55,7 +55,7 @@ public sealed partial class AdminMenuScript
         {
             if (location.Category != previousCategory)
             {
-                category = CreateMenu("Coop Control", location.Category);
+                category = CreateMenu("OG Coop", location.Category);
                 places.AddSubMenu(category);
                 _pool.Add(category);
                 previousCategory = location.Category;
@@ -68,6 +68,8 @@ public sealed partial class AdminMenuScript
 
         BuildSpecialPlacesMenu(teleports);
         BuildInteriorsMenu(teleports);
+        BuildHomeMenu(teleports);
+        BuildYachtMenu(teleports);
     }
 
     private void TeleportToLocation(TeleportLocation location)

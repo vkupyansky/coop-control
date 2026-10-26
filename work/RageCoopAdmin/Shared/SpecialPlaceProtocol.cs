@@ -1,4 +1,4 @@
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Invitation to one of the hidden map places under Teleports. The place catalog
 // and loading belong to the client; the server relays only a known place number.

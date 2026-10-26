@@ -50,18 +50,18 @@ internal sealed class FrameHitchMonitor
         if (frame >= FreezeMilliseconds)
         {
             _freezes++;
-            _log("Coop Control: freeze " + frame + " ms" + (frame < gap ? " (plus " + (gap - frame) + " ms with the window inactive)" : "") +
+            _log("OG Coop: freeze " + frame + " ms" + (frame < gap ? " (plus " + (gap - frame) + " ms with the window inactive)" : "") +
                 "; pending loads " + loading + "; " + context());
         }
         else if (gap >= FreezeMilliseconds)
         {
-            _log("Coop Control: game window inactive " + gap + " ms, not a freeze.");
+            _log("OG Coop: game window inactive " + gap + " ms, not a freeze.");
         }
 
         // Played time only: time with the window in the background is left out.
         long window = now - _windowStart - _away;
         if (window < SummaryMilliseconds) return;
-        _log("Coop Control: last " + window / 1000 + " s: " +
+        _log("OG Coop: last " + window / 1000 + " s: " +
             (_frames * 1000.0 / window).ToString("0.0", CultureInfo.InvariantCulture) + " fps; slow frames " + _slowFrames +
             "; freezes " + _freezes + "; worst frame " + _worstFrame + " ms; pending loads avg " + _loadingSum / _frames +
             ", max " + _loadingMax + (_away > 0 ? "; window inactive " + _away / 1000 + " s more" : "") + "; " + context());

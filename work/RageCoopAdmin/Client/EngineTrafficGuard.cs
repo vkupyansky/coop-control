@@ -130,7 +130,18 @@ internal static class EngineTrafficGuard
 
     internal static bool HasCullGates(IList<CodeInstruction> instructions, MethodBase target) =>
         FindCullGate(instructions, target, "WorldPedSoftLimit", typeof(Ped), out _) >= 0 &&
-        FindCullGate(instructions, target, "WorldVehicleSoftLimit", typeof(Vehicle), out _) >= 0;
+        FindCullGate(instructions, target, "WorldVehicleSoftLimit", typeof(Vehicle), out _) >= 0 &&
+        FindPedList(instructions) >= 0;
+
+    // DoSync один раз кладёт World.GetAllPeds() в EntityPool.allPeds и ищет в нём новых NPC для отправки
+    internal static int FindPedList(IList<CodeInstruction> instructions)
+    {
+        int[] matches = Enumerable.Range(0, Math.Max(0, instructions.Count - 1)).Where(index =>
+            instructions[index].operand is MethodInfo method && method.DeclaringType == typeof(World) && method.Name == "GetAllPeds" &&
+            instructions[index + 1].opcode == OpCodes.Stsfld && instructions[index + 1].operand is FieldInfo field &&
+            field.DeclaringType == Pool && field.Name == "allPeds").ToArray();
+        return matches.Length == 1 ? matches[0] : -1;
+    }
 
     private static int FindCullGate(IList<CodeInstruction> instructions, MethodBase target, string setting, Type candidateType, out int candidate)
     {
@@ -157,12 +168,16 @@ internal static class EngineTrafficGuard
         List<CodeInstruction> instructions = original.Select(code => new CodeInstruction(code)).ToList();
         int ped = FindCullGate(instructions, __originalMethod, "WorldPedSoftLimit", typeof(Ped), out int pedLocal);
         int vehicle = FindCullGate(instructions, __originalMethod, "WorldVehicleSoftLimit", typeof(Vehicle), out int vehicleLocal);
-        if (ped < 0 || vehicle < 0) { throw new InvalidOperationException("Unsupported RageCoop traffic culling gates."); }
+        int list = FindPedList(instructions);
+        if (ped < 0 || vehicle < 0 || list < 0) { throw new InvalidOperationException("Unsupported RageCoop traffic culling gates."); }
         foreach (var gate in new[] { (Index: ped, Local: pedLocal, Method: nameof(CanCullPed)), (Index: vehicle, Local: vehicleLocal, Method: nameof(CanCullVehicle)) }
             .OrderByDescending(gate => gate.Index))
         {
             instructions.InsertRange(gate.Index + 1, new[] { CodeInstruction.LoadLocal(gate.Local), CodeInstruction.Call(typeof(EngineTrafficGuard), gate.Method) });
         }
+        // список стоит раньше обеих проверок, вставки его не сдвинули
+        if (list > Math.Min(ped, vehicle)) { throw new InvalidOperationException("Unsupported RageCoop sync order."); }
+        instructions.Insert(list + 1, CodeInstruction.Call(typeof(LocalPeds), nameof(LocalPeds.Without)));
         return instructions;
     }
 
@@ -219,13 +234,13 @@ internal static class EngineTrafficGuard
         AddVehicle!.Invoke(null, new[] { NewVehicle!.Invoke(new object[] { id }) });
     }
 
-    // Only NPCs in cars: their cars need drivers. Pedestrians keep the limit.
     private static void BeforeReceivePed(object __0, bool __runOriginal)
     {
         PacketReader? packet = _pedPacket;
-        if (!__runOriginal || packet == null || packet.Speed!(__0) < 4) { return; }
-        int id = packet.Id(__0);
-        if (id == 0 || id == packet.Owner(__0) || RuntimeEntityLookup.GetPedByID(id) != null || !IsNearLocalPlayer(packet.Position(__0))) { return; }
+        if (!__runOriginal || packet == null) { return; }
+        int id = packet.Id(__0), owner = packet.Owner(__0);
+        if (!EngineTrafficPolicy.CopyNearbyPed(packet.Speed!(__0), owner, PassengerPopulation.RidingWith)) { return; }
+        if (id == 0 || id == owner || RuntimeEntityLookup.GetPedByID(id) != null || !IsNearLocalPlayer(packet.Position(__0))) { return; }
         AddPed!.Invoke(null, new[] { NewPed!.Invoke(new object[] { id }) });
     }
 
@@ -395,7 +410,7 @@ internal static class EngineTrafficGuard
         if (log == null) { return; }
         if (LoggedDuplicates.Count >= 1024) { LoggedDuplicates.Clear(); }
         if (!LoggedDuplicates.Add(key)) { return; }
-        log("Coop Control: duplicate " + kind + ": model=" + model.ToString("X8") + "; population=" + (int)population +
+        log("OG Coop: duplicate " + kind + ": model=" + model.ToString("X8") + "; population=" + (int)population +
             "; at=" + at.X.ToString("F0") + "," + at.Y.ToString("F0") + "," + at.Z.ToString("F0") + "; kept=" + kept);
     }
 

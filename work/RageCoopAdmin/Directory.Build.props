@@ -3,7 +3,7 @@
     <PublicRelease Condition="'$(PublicRelease)' == ''">true</PublicRelease>
   </PropertyGroup>
   <PropertyGroup>
-    <Product>Coop Control</Product>
+    <Product>OG Coop</Product>
     <Authors>Vladislav Kupyansky (vkupyansky)</Authors>
     <Company>Vladislav Kupyansky (vkupyansky)</Company>
     <Copyright>Copyright © 2026 Vladislav Kupyansky (vkupyansky)</Copyright>

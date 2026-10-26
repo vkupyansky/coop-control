@@ -133,7 +133,20 @@ internal static partial class Program
                 ReferenceEquals(handles[old.Handle], unrelated) && ReferenceEquals(handles[fresh.Handle], record) &&
                 !GameplayPositions.ContainsKey(old.Handle) && GameplayPositions[fresh.Handle] == new Vector3(4, 5, 6),
                 "Real projectile creation chooses the newly occupied low slot and never moves or remaps the old last projectile.");
+            _gameplayBefore = Array.Empty<Projectile>(); _gameplayAfter = new[] { fresh }; _gameplayShots = 0;
+            projectileType.GetProperty("MainProjectile")!.SetValue(record, null);
+            createProjectile.Invoke(record, Array.Empty<object>());
+            Assert(_gameplayShots == 0 && projectileType.GetProperty("MainProjectile")!.GetValue(record) == null,
+                "A remote projectile whose copy here already exploded or vanished is not shot again on the next update.");
             ids.Remove(840032); handles.Remove(fresh.Handle);
+            object reborn = ProjectileRecord(840032);
+            projectileType.GetProperty("Shooter")!.SetValue(reborn, shooter);
+            projectileType.GetProperty("WeaponHash")!.SetValue(reborn, (WeaponHash)123);
+            _gameplayShots = 0;
+            createProjectile.Invoke(reborn, Array.Empty<object>());
+            Assert(_gameplayShots == 0 && projectileType.GetProperty("MainProjectile")!.GetValue(reborn) == null,
+                "A new record the shooter's later update makes for the same projectile number shoots no second copy.");
+            ids.Remove(840032);
             record = ProjectileRecord(840036);
             projectileType.GetProperty("Shooter")!.SetValue(record, shooter);
             projectileType.GetProperty("WeaponHash")!.SetValue(record, (WeaponHash)123);
@@ -167,12 +180,22 @@ internal static partial class Program
             createProjectile.Invoke(record, Array.Empty<object>());
             Assert(ReferenceEquals(projectileType.GetProperty("MainProjectile")!.GetValue(record), fresh),
                 "The actual vehicle-source path accepts its unique new shot at the requested position when GTA attributes ownership to the driver.");
-            projectileType.GetProperty("MainProjectile")!.SetValue(record, null); handles.Remove(fresh.Handle);
+            handles.Remove(fresh.Handle);
+            Func<int, object> vehicleRecord = id =>
+            {
+                object made = ProjectileRecord(id);
+                projectileType.GetProperty("Shooter")!.SetValue(made, vehicleShooter);
+                projectileType.GetProperty("WeaponHash")!.SetValue(made, (WeaponHash)123);
+                typeof(SyncedEntity).GetProperty("Position", Instance)!.SetValue(made, new Vector3(40, 50, 60));
+                return made;
+            };
+            record = vehicleRecord(840038);
             GameplayOwners[fresh.Handle] = null; _gameplayShots = 0;
             createProjectile.Invoke(record, Array.Empty<object>());
             Assert(ReferenceEquals(projectileType.GetProperty("MainProjectile")!.GetValue(record), fresh),
                 "A vehicle-source shot with no reported owner still preserves the installed shoot operation through new handle, weapon and position identity.");
-            projectileType.GetProperty("MainProjectile")!.SetValue(record, null); handles.Remove(fresh.Handle);
+            handles.Remove(fresh.Handle);
+            record = vehicleRecord(840039);
             GameplayPositions[fresh.Handle] = new Vector3(400, 500, 600); _gameplayShots = 0;
             createProjectile.Invoke(record, Array.Empty<object>());
             Assert(projectileType.GetProperty("MainProjectile")!.GetValue(record) == null,

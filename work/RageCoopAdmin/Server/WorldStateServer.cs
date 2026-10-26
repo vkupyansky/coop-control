@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoop.Server;
 using RageCoop.Server.Scripting;
 
@@ -34,13 +34,13 @@ public sealed partial class CoopAdminServer
         try
         {
             bool? ghostTraffic = worldModes.LoadGhostTraffic();
-            if (ghostTraffic == null) Logger.Warning("Coop Control: saved world modes are damaged; traffic pass-through starts off.");
+            if (ghostTraffic == null) Logger.Warning("OG Coop: saved world modes are damaged; traffic pass-through starts off.");
             worldState.RestoreGhostTraffic(ghostTraffic == true);
-            if (ghostTraffic == true) Logger.Info("Coop Control: traffic pass-through restored: on");
+            if (ghostTraffic == true) Logger.Info("OG Coop: traffic pass-through restored: on");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Logger.Warning("Coop Control: saved world modes unreadable (" + ex.Message + "); traffic pass-through starts off.");
+            Logger.Warning("OG Coop: saved world modes unreadable (" + ex.Message + "); traffic pass-through starts off.");
         }
 
         worldStateActive = true;
@@ -141,7 +141,7 @@ public sealed partial class CoopAdminServer
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Logger.Warning("Coop Control: traffic pass-through not saved (" + ex.Message + "); it stays " + (enabled ? "on" : "off") + " until the server restarts.");
+            Logger.Warning("OG Coop: traffic pass-through not saved (" + ex.Message + "); it stays " + (enabled ? "on" : "off") + " until the server restarts.");
         }
     }
 

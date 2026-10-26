@@ -306,8 +306,8 @@
   <data name="Другие модели" xml:space="preserve">
     <value>Other models</value>
   </data>
-  <data name="~o~Coop Control:~s~ каталог транспорта готов (" xml:space="preserve">
-    <value>~o~Coop Control:~s~ vehicle catalog ready (</value>
+  <data name="~o~OG Coop:~s~ каталог транспорта готов (" xml:space="preserve">
+    <value>~o~OG Coop:~s~ vehicle catalog ready (</value>
   </data>
   <data name=" моделей)." xml:space="preserve">
     <value> models).</value>
@@ -459,8 +459,8 @@
   <data name="Машина: " xml:space="preserve">
     <value>Vehicle: </value>
   </data>
-  <data name="~o~Coop Control:~s~ " xml:space="preserve">
-    <value>~o~Coop Control:~s~ </value>
+  <data name="~o~OG Coop:~s~ " xml:space="preserve">
+    <value>~o~OG Coop:~s~ </value>
   </data>
   <data name="~o~Общая метка:~s~ появилась на вашей карте." xml:space="preserve">
     <value>~o~Shared waypoint:~s~ added to your map.</value>
@@ -501,8 +501,8 @@
   <data name="~o~Настройки:~s~ не удалось сохранить. Изменения действуют до выхода." xml:space="preserve">
     <value>~o~Settings:~s~ could not save. Changes will last until you leave.</value>
   </data>
-  <data name="~o~Coop Control:~s~ сначала подключитесь к серверу." xml:space="preserve">
-    <value>~o~Coop Control:~s~ connect to a server first.</value>
+  <data name="~o~OG Coop:~s~ сначала подключитесь к серверу." xml:space="preserve">
+    <value>~o~OG Coop:~s~ connect to a server first.</value>
   </data>
   <data name="Ввод текста" xml:space="preserve">
     <value>Text input</value>
@@ -1590,11 +1590,14 @@
   <data name="Особняки" xml:space="preserve">
     <value>Mansions</value>
   </data>
-  <data name="Клуб байкеров, Сэнди-Шорс" xml:space="preserve">
-    <value>Biker clubhouse, Sandy Shores</value>
+  <data name="Клуб байкеров 1" xml:space="preserve">
+    <value>Biker clubhouse 1</value>
   </data>
-  <data name="Клуб байкеров, Палето-Бэй" xml:space="preserve">
-    <value>Biker clubhouse, Paleto Bay</value>
+  <data name="Клуб байкеров 2" xml:space="preserve">
+    <value>Biker clubhouse 2</value>
+  </data>
+  <data name="Клуб байкеров" xml:space="preserve">
+    <value>Biker clubhouse</value>
   </data>
   <data name="Лаборатория мета" xml:space="preserve">
     <value>Meth lab</value>
@@ -1613,9 +1616,6 @@
   </data>
   <data name="Бункер" xml:space="preserve">
     <value>Bunker</value>
-  </data>
-  <data name="Ангар в аэропорту" xml:space="preserve">
-    <value>Airport hangar</value>
   </data>
   <data name="База Судного дня" xml:space="preserve">
     <value>Doomsday facility</value>
@@ -1689,38 +1689,35 @@
   <data name="Офис агентства" xml:space="preserve">
     <value>Agency office</value>
   </data>
+  <data name="Гараж агентства" xml:space="preserve">
+    <value>Agency garage</value>
+  </data>
   <data name="Особняк" xml:space="preserve">
     <value>Mansion</value>
   </data>
   <data name="О дополнении" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="Coop Control — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия " xml:space="preserve">
-    <value>Coop Control — an add-on for RageCoop. By Vladislav Kupyansky (vkupyansky). Contact: Telegram @skibidessa, github.com/vkupyansky. Version </value>
+  <data name="OG Coop — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия " xml:space="preserve">
+    <value>OG Coop — an add-on for RageCoop. By Vladislav Kupyansky (vkupyansky). Contact: Telegram @skibidessa, github.com/vkupyansky. Version </value>
   </data>
   <data name="Студия" xml:space="preserve">
     <value>Studio</value>
   </data>
-  <data name="Склад, Вест-Вайнвуд" xml:space="preserve">
-    <value>Warehouse, West Vinewood</value>
+  <data name="Склад особых грузов" xml:space="preserve">
+    <value>Special cargo warehouse</value>
   </data>
   <data name="Малый склад" xml:space="preserve">
     <value>Small warehouse</value>
   </data>
-  <data name="Склад, Дель-Перро" xml:space="preserve">
-    <value>Warehouse, Del Perro</value>
-  </data>
   <data name="Средний склад" xml:space="preserve">
     <value>Medium warehouse</value>
-  </data>
-  <data name="Склад, Ла-Меса" xml:space="preserve">
-    <value>Warehouse, La Mesa</value>
   </data>
   <data name="Большой склад" xml:space="preserve">
     <value>Large warehouse</value>
   </data>
-  <data name="Склад машин, Строберри" xml:space="preserve">
-    <value>Vehicle warehouse, Strawberry</value>
+  <data name="Склад машин" xml:space="preserve">
+    <value>Vehicle warehouse</value>
   </data>
   <data name="Мастерская внизу" xml:space="preserve">
     <value>Workshop below</value>
@@ -1766,5 +1763,714 @@
   </data>
   <data name="~g~Возрождение:~s~ рядом с напарником." xml:space="preserve">
     <value>~g~Respawn:~s~ next to your partner.</value>
+  </data>
+  <data name="Внешность" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Персонаж GTA Online: лицо, волосы и одежда. Сохраняется на сервере и виден напарнику." xml:space="preserve">
+    <value>GTA Online character: face, hair and clothes. Kept on the server and seen by your partner.</value>
+  </data>
+  <data name="Наследственность" xml:space="preserve">
+    <value>Heritage</value>
+  </data>
+  <data name="Черты лица" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Внешний вид" xml:space="preserve">
+    <value>Looks</value>
+  </data>
+  <data name="Одежда" xml:space="preserve">
+    <value>Clothes</value>
+  </data>
+  <data name="Мама" xml:space="preserve">
+    <value>Mother</value>
+  </data>
+  <data name="Папа" xml:space="preserve">
+    <value>Father</value>
+  </data>
+  <data name="Лицо и цвет кожи складываются из лиц мамы и папы." xml:space="preserve">
+    <value>The face and skin tone blend the mother's and the father's.</value>
+  </data>
+  <data name="Сходство с папой" xml:space="preserve">
+    <value>Resemblance to father</value>
+  </data>
+  <data name="На кого больше похож: 0% — на маму, 100% — на папу." xml:space="preserve">
+    <value>Who the face takes after: 0% the mother, 100% the father.</value>
+  </data>
+  <data name="Цвет кожи как у папы" xml:space="preserve">
+    <value>Skin tone from father</value>
+  </data>
+  <data name="Цвет кожи: 0% — как у мамы, 100% — как у папы." xml:space="preserve">
+    <value>Skin tone: 0% the mother's, 100% the father's.</value>
+  </data>
+  <data name="Случайные родители" xml:space="preserve">
+    <value>Random parents</value>
+  </data>
+  <data name="Выбрать маму, папу и сходство случайно." xml:space="preserve">
+    <value>Pick the mother, the father and the resemblance at random.</value>
+  </data>
+  <data name="Листайте ←/→: от −10 до +10." xml:space="preserve">
+    <value>Browse with ←/→: from −10 to +10.</value>
+  </data>
+  <data name="Ширина носа" xml:space="preserve">
+    <value>Nose width</value>
+  </data>
+  <data name="Высота кончика носа" xml:space="preserve">
+    <value>Nose tip height</value>
+  </data>
+  <data name="Длина кончика носа" xml:space="preserve">
+    <value>Nose tip length</value>
+  </data>
+  <data name="Высота переносицы" xml:space="preserve">
+    <value>Nose bridge height</value>
+  </data>
+  <data name="Опущенность кончика носа" xml:space="preserve">
+    <value>Nose tip drop</value>
+  </data>
+  <data name="Изгиб переносицы" xml:space="preserve">
+    <value>Nose bridge twist</value>
+  </data>
+  <data name="Высота бровей" xml:space="preserve">
+    <value>Brow height</value>
+  </data>
+  <data name="Глубина бровей" xml:space="preserve">
+    <value>Brow depth</value>
+  </data>
+  <data name="Высота скул" xml:space="preserve">
+    <value>Cheekbone height</value>
+  </data>
+  <data name="Ширина скул" xml:space="preserve">
+    <value>Cheekbone width</value>
+  </data>
+  <data name="Ширина щёк" xml:space="preserve">
+    <value>Cheek width</value>
+  </data>
+  <data name="Разрез глаз" xml:space="preserve">
+    <value>Eye opening</value>
+  </data>
+  <data name="Толщина губ" xml:space="preserve">
+    <value>Lip thickness</value>
+  </data>
+  <data name="Ширина челюсти" xml:space="preserve">
+    <value>Jaw width</value>
+  </data>
+  <data name="Форма челюсти" xml:space="preserve">
+    <value>Jaw shape</value>
+  </data>
+  <data name="Высота подбородка" xml:space="preserve">
+    <value>Chin height</value>
+  </data>
+  <data name="Длина подбородка" xml:space="preserve">
+    <value>Chin length</value>
+  </data>
+  <data name="Ширина подбородка" xml:space="preserve">
+    <value>Chin width</value>
+  </data>
+  <data name="Ямочка на подбородке" xml:space="preserve">
+    <value>Chin dimple</value>
+  </data>
+  <data name="Толщина шеи" xml:space="preserve">
+    <value>Neck thickness</value>
+  </data>
+  <data name="Цвет волос" xml:space="preserve">
+    <value>Hair colour</value>
+  </data>
+  <data name="Основной цвет волос." xml:space="preserve">
+    <value>The main hair colour.</value>
+  </data>
+  <data name="Мелирование" xml:space="preserve">
+    <value>Highlights</value>
+  </data>
+  <data name="Цвет прядей; такой же, как основной, — без мелирования." xml:space="preserve">
+    <value>Colour of the streaks; the same as the main colour means none.</value>
+  </data>
+  <data name="Цвет глаз" xml:space="preserve">
+    <value>Eye colour</value>
+  </data>
+  <data name="Листайте ←/→." xml:space="preserve">
+    <value>Browse with ←/→.</value>
+  </data>
+  <data name="Зелёные" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="Изумрудные" xml:space="preserve">
+    <value>Emerald</value>
+  </data>
+  <data name="Светло-голубые" xml:space="preserve">
+    <value>Light blue</value>
+  </data>
+  <data name="Синие" xml:space="preserve">
+    <value>Ocean blue</value>
+  </data>
+  <data name="Светло-карие" xml:space="preserve">
+    <value>Light brown</value>
+  </data>
+  <data name="Тёмно-карие" xml:space="preserve">
+    <value>Dark brown</value>
+  </data>
+  <data name="Ореховые" xml:space="preserve">
+    <value>Hazel</value>
+  </data>
+  <data name="Тёмно-серые" xml:space="preserve">
+    <value>Dark grey</value>
+  </data>
+  <data name="Светло-серые" xml:space="preserve">
+    <value>Light grey</value>
+  </data>
+  <data name="Розовые" xml:space="preserve">
+    <value>Pink</value>
+  </data>
+  <data name="Жёлтые" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="Фиолетовые" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="Чёрные" xml:space="preserve">
+    <value>Blackout</value>
+  </data>
+  <data name="Оттенки серого" xml:space="preserve">
+    <value>Shades of grey</value>
+  </data>
+  <data name="Текила санрайз" xml:space="preserve">
+    <value>Tequila sunrise</value>
+  </data>
+  <data name="Атомные" xml:space="preserve">
+    <value>Atomic</value>
+  </data>
+  <data name="Искажённые" xml:space="preserve">
+    <value>Warp</value>
+  </data>
+  <data name="И-Кола" xml:space="preserve">
+    <value>eCola</value>
+  </data>
+  <data name="Космические" xml:space="preserve">
+    <value>Space ranger</value>
+  </data>
+  <data name="Инь-ян" xml:space="preserve">
+    <value>Yin yang</value>
+  </data>
+  <data name="Мишень" xml:space="preserve">
+    <value>Bullseye</value>
+  </data>
+  <data name="Ящериные" xml:space="preserve">
+    <value>Lizard</value>
+  </data>
+  <data name="Драконьи" xml:space="preserve">
+    <value>Dragon</value>
+  </data>
+  <data name="Инопланетные" xml:space="preserve">
+    <value>Extra-terrestrial</value>
+  </data>
+  <data name="Козьи" xml:space="preserve">
+    <value>Goat</value>
+  </data>
+  <data name="Смайлики" xml:space="preserve">
+    <value>Smiley</value>
+  </data>
+  <data name="Одержимые" xml:space="preserve">
+    <value>Possessed</value>
+  </data>
+  <data name="Демонические" xml:space="preserve">
+    <value>Demon</value>
+  </data>
+  <data name="Заражённые" xml:space="preserve">
+    <value>Infected</value>
+  </data>
+  <data name="Чужие" xml:space="preserve">
+    <value>Alien</value>
+  </data>
+  <data name="Нежить" xml:space="preserve">
+    <value>Undead</value>
+  </data>
+  <data name="Зомби" xml:space="preserve">
+    <value>Zombie</value>
+  </data>
+  <data name="Брови" xml:space="preserve">
+    <value>Eyebrows</value>
+  </data>
+  <data name="Борода" xml:space="preserve">
+    <value>Beard</value>
+  </data>
+  <data name="Волосы на груди" xml:space="preserve">
+    <value>Chest hair</value>
+  </data>
+  <data name="Макияж" xml:space="preserve">
+    <value>Make-up</value>
+  </data>
+  <data name="Румяна" xml:space="preserve">
+    <value>Blush</value>
+  </data>
+  <data name="Помада" xml:space="preserve">
+    <value>Lipstick</value>
+  </data>
+  <data name="Пятна на коже" xml:space="preserve">
+    <value>Blemishes</value>
+  </data>
+  <data name="Старение" xml:space="preserve">
+    <value>Ageing</value>
+  </data>
+  <data name="Цвет лица" xml:space="preserve">
+    <value>Complexion</value>
+  </data>
+  <data name="Повреждения от солнца" xml:space="preserve">
+    <value>Sun damage</value>
+  </data>
+  <data name="Родинки и веснушки" xml:space="preserve">
+    <value>Moles and freckles</value>
+  </data>
+  <data name="Листайте ←/→. «Нет» — убрать." xml:space="preserve">
+    <value>Browse with ←/→. "None" removes it.</value>
+  </data>
+  <data name="{0}: насыщенность" xml:space="preserve">
+    <value>{0}: strength</value>
+  </data>
+  <data name="Насколько заметно." xml:space="preserve">
+    <value>How visible it is.</value>
+  </data>
+  <data name="{0}: цвет" xml:space="preserve">
+    <value>{0}: colour</value>
+  </data>
+  <data name="Тело" xml:space="preserve">
+    <value>Body</value>
+  </data>
+  <data name="Мужчина или женщина из GTA Online, или ваш сюжетный герой." xml:space="preserve">
+    <value>A GTA Online man or woman, or your story hero.</value>
+  </data>
+  <data name="Мужчина" xml:space="preserve">
+    <value>Man</value>
+  </data>
+  <data name="Женщина" xml:space="preserve">
+    <value>Woman</value>
+  </data>
+  <data name="Сюжетный герой" xml:space="preserve">
+    <value>Story hero</value>
+  </data>
+  <data name="Случайная одежда" xml:space="preserve">
+    <value>Random outfit</value>
+  </data>
+  <data name="Одеть персонажа случайно; дальше можно поправить по частям." xml:space="preserve">
+    <value>Dress the character at random, then adjust it piece by piece.</value>
+  </data>
+  <data name="Причёска" xml:space="preserve">
+    <value>Hair</value>
+  </data>
+  <data name="Верх" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="Под верхом" xml:space="preserve">
+    <value>Undershirt</value>
+  </data>
+  <data name="Руки" xml:space="preserve">
+    <value>Arms</value>
+  </data>
+  <data name="Низ" xml:space="preserve">
+    <value>Lower body</value>
+  </data>
+  <data name="Обувь" xml:space="preserve">
+    <value>Shoes</value>
+  </data>
+  <data name="Маска" xml:space="preserve">
+    <value>Mask</value>
+  </data>
+  <data name="Шея и украшения" xml:space="preserve">
+    <value>Neckwear</value>
+  </data>
+  <data name="Сумка" xml:space="preserve">
+    <value>Bag</value>
+  </data>
+  <data name="Бронежилет" xml:space="preserve">
+    <value>Body armour</value>
+  </data>
+  <data name="Нашивки" xml:space="preserve">
+    <value>Decals</value>
+  </data>
+  <data name="Головной убор" xml:space="preserve">
+    <value>Hat</value>
+  </data>
+  <data name="Очки" xml:space="preserve">
+    <value>Glasses</value>
+  </data>
+  <data name="Серьги" xml:space="preserve">
+    <value>Earrings</value>
+  </data>
+  <data name="Часы" xml:space="preserve">
+    <value>Watch</value>
+  </data>
+  <data name="Браслет" xml:space="preserve">
+    <value>Bracelet</value>
+  </data>
+  <data name="Камера" xml:space="preserve">
+    <value>Camera</value>
+  </data>
+  <data name="Показать персонажа целиком, лицо или ноги." xml:space="preserve">
+    <value>Show the whole character, the face or the feet.</value>
+  </data>
+  <data name="Во весь рост" xml:space="preserve">
+    <value>Full body</value>
+  </data>
+  <data name="Лицо" xml:space="preserve">
+    <value>Face</value>
+  </data>
+  <data name="Ноги" xml:space="preserve">
+    <value>Feet</value>
+  </data>
+  <data name="Поворот" xml:space="preserve">
+    <value>Turn</value>
+  </data>
+  <data name="Повернуть персонажа, чтобы рассмотреть со всех сторон." xml:space="preserve">
+    <value>Turn the character to see it from every side.</value>
+  </data>
+  <data name="Готово" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Сохранить персонажа на сервере. Он будет с вами при каждом входе." xml:space="preserve">
+    <value>Save the character on the server. You will have it every time you join.</value>
+  </data>
+  <data name="Выйти без изменений." xml:space="preserve">
+    <value>Leave without changes.</value>
+  </data>
+  <data name="Позже" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="Выйти без персонажа. Редактор откроется снова при следующем входе на сервер." xml:space="preserve">
+    <value>Leave without a character. The editor opens again the next time you join the server.</value>
+  </data>
+  <data name="Нет" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="У сюжетного героя своя одежда." xml:space="preserve">
+    <value>A story hero wears its own clothes.</value>
+  </data>
+  <data name="Татуировки" xml:space="preserve">
+    <value>Tattoos</value>
+  </data>
+  <data name="Татуировки салонов GTA Online по частям тела." xml:space="preserve">
+    <value>GTA Online parlour tattoos by body part.</value>
+  </data>
+  <data name="Торс" xml:space="preserve">
+    <value>Torso</value>
+  </data>
+  <data name="Голова" xml:space="preserve">
+    <value>Head</value>
+  </data>
+  <data name="Левая рука" xml:space="preserve">
+    <value>Left arm</value>
+  </data>
+  <data name="Правая рука" xml:space="preserve">
+    <value>Right arm</value>
+  </data>
+  <data name="Левая нога" xml:space="preserve">
+    <value>Left leg</value>
+  </data>
+  <data name="Правая нога" xml:space="preserve">
+    <value>Right leg</value>
+  </data>
+  <data name="Снять все татуировки" xml:space="preserve">
+    <value>Remove all tattoos</value>
+  </data>
+  <data name="Убрать все татуировки с тела." xml:space="preserve">
+    <value>Remove every tattoo from the body.</value>
+  </data>
+  <data name="Татуировка {0}" xml:space="preserve">
+    <value>Tattoo {0}</value>
+  </data>
+  <data name="Enter — сделать или свести." xml:space="preserve">
+    <value>Enter — get it or remove it.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ не больше {0} татуировок." xml:space="preserve">
+    <value>~o~Character:~s~ at most {0} tattoos.</value>
+  </data>
+  <data name="Моя яхта" xml:space="preserve">
+    <value>My yacht</value>
+  </data>
+  <data name="Своя яхта GTA Online: стоянка и вид. Её видят все на сервере." xml:space="preserve">
+    <value>Your own GTA Online yacht: berth and look. Everyone on the server sees it.</value>
+  </data>
+  <data name="Получить яхту" xml:space="preserve">
+    <value>Get a yacht</value>
+  </data>
+  <data name="Яхта Galaxy Super Yacht на свободной стоянке." xml:space="preserve">
+    <value>A Galaxy Super Yacht at a free berth.</value>
+  </data>
+  <data name="На яхту" xml:space="preserve">
+    <value>To the yacht</value>
+  </data>
+  <data name="Перенестись на палубу своей яхты." xml:space="preserve">
+    <value>Go to the deck of your yacht.</value>
+  </data>
+  <data name="Стоянка" xml:space="preserve">
+    <value>Berth</value>
+  </data>
+  <data name="Выберите место ←/→ и нажмите Enter: капитан перегонит яхту туда." xml:space="preserve">
+    <value>Pick a place with ←/→ and press Enter: the captain takes the yacht there.</value>
+  </data>
+  <data name="Яхта" xml:space="preserve">
+    <value>Yacht</value>
+  </data>
+  <data name="Orion, Pisces или Aquaris: разные верхние палубы." xml:space="preserve">
+    <value>Orion, Pisces or Aquaris: different upper decks.</value>
+  </data>
+  <data name="Цвет" xml:space="preserve">
+    <value>Colour</value>
+  </data>
+  <data name="Окраска корпуса и палуб, как в Online." xml:space="preserve">
+    <value>Hull and deck colours, as in Online.</value>
+  </data>
+  <data name="Перила" xml:space="preserve">
+    <value>Railings</value>
+  </data>
+  <data name="Хромированные или золотые." xml:space="preserve">
+    <value>Chrome or gold.</value>
+  </data>
+  <data name="Хромированные" xml:space="preserve">
+    <value>Chrome</value>
+  </data>
+  <data name="Золотые" xml:space="preserve">
+    <value>Gold</value>
+  </data>
+  <data name="Подсветка" xml:space="preserve">
+    <value>Lighting</value>
+  </data>
+  <data name="Огни на палубах." xml:space="preserve">
+    <value>Lights on the decks.</value>
+  </data>
+  <data name="зелёный" xml:space="preserve">
+    <value>green</value>
+  </data>
+  <data name="синий" xml:space="preserve">
+    <value>blue</value>
+  </data>
+  <data name="розовый" xml:space="preserve">
+    <value>rose</value>
+  </data>
+  <data name="золотой" xml:space="preserve">
+    <value>gold</value>
+  </data>
+  <data name="Флаг" xml:space="preserve">
+    <value>Flag</value>
+  </data>
+  <data name="Флаг на мачте и корме." xml:space="preserve">
+    <value>The flag on the mast and the stern.</value>
+  </data>
+  <data name="~o~Яхта:~s~ все стоянки заняты." xml:space="preserve">
+    <value>~o~Yacht:~s~ every berth is taken.</value>
+  </data>
+  <data name="~o~Яхта:~s~ здесь стоит яхта напарника. Выберите другую стоянку." xml:space="preserve">
+    <value>~o~Yacht:~s~ a partner's yacht is here. Pick another berth.</value>
+  </data>
+  <data name="~b~Капитан:~s~ перегоняю яхту к стоянке «{0}»." xml:space="preserve">
+    <value>~b~Captain:~s~ taking the yacht to «{0}».</value>
+  </data>
+  <data name="~g~Яхта ваша.~s~ Стоянка «{0}»: Телепорты → Моя яхта → На яхту." xml:space="preserve">
+    <value>~g~The yacht is yours.~s~ Berth «{0}»: Teleports → My yacht → To the yacht.</value>
+  </data>
+  <data name="~o~Яхта:~s~ сервер не сохранил изменение. Возможно, стоянку только что занял напарник." xml:space="preserve">
+    <value>~o~Yacht:~s~ the server did not save the change. A partner may have just taken the berth.</value>
+  </data>
+  <data name="~o~Яхта:~s~ её пока нет на карте." xml:space="preserve">
+    <value>~o~Yacht:~s~ it is not on the map yet.</value>
+  </data>
+  <data name="~INPUT_CONTEXT~ Капитан: перегнать яхту на другую стоянку" xml:space="preserve">
+    <value>~INPUT_CONTEXT~ Captain: move the yacht to another berth</value>
+  </data>
+  <data name="Ваша яхта" xml:space="preserve">
+    <value>Your yacht</value>
+  </data>
+  <data name="Яхта напарника" xml:space="preserve">
+    <value>Partner's yacht</value>
+  </data>
+  <data name="Чумаш" xml:space="preserve">
+    <value>Chumash</value>
+  </data>
+  <data name="Лаго-Занкудо" xml:space="preserve">
+    <value>Lago Zancudo</value>
+  </data>
+  <data name="Пасифик-Блафс" xml:space="preserve">
+    <value>Pacific Bluffs</value>
+  </data>
+  <data name="Веспуччи" xml:space="preserve">
+    <value>Vespucci</value>
+  </data>
+  <data name="Аэропорт" xml:space="preserve">
+    <value>LSIA</value>
+  </data>
+  <data name="Терминал" xml:space="preserve">
+    <value>Terminal</value>
+  </data>
+  <data name="Паломино" xml:space="preserve">
+    <value>Palomino</value>
+  </data>
+  <data name="Татавиам" xml:space="preserve">
+    <value>Tataviam</value>
+  </data>
+  <data name="Сан-Шаньский хребет" xml:space="preserve">
+    <value>San Chianski</value>
+  </data>
+  <data name="Гора Гордо" xml:space="preserve">
+    <value>Mount Gordo</value>
+  </data>
+  <data name="Прокопио" xml:space="preserve">
+    <value>Procopio</value>
+  </data>
+  <data name="Палето-Бэй" xml:space="preserve">
+    <value>Paleto Bay</value>
+  </data>
+  <data name="Австралия" xml:space="preserve"><value>Australia</value></data>
+  <data name="Австрия" xml:space="preserve"><value>Austria</value></data>
+  <data name="Англия" xml:space="preserve"><value>England</value></data>
+  <data name="Аргентина" xml:space="preserve"><value>Argentina</value></data>
+  <data name="Бельгия" xml:space="preserve"><value>Belgium</value></data>
+  <data name="Бразилия" xml:space="preserve"><value>Brazil</value></data>
+  <data name="Великобритания" xml:space="preserve"><value>United Kingdom</value></data>
+  <data name="Венгрия" xml:space="preserve"><value>Hungary</value></data>
+  <data name="Германия" xml:space="preserve"><value>Germany</value></data>
+  <data name="Дания" xml:space="preserve"><value>Denmark</value></data>
+  <data name="Евросоюз" xml:space="preserve"><value>European Union</value></data>
+  <data name="Израиль" xml:space="preserve"><value>Israel</value></data>
+  <data name="Ирландия" xml:space="preserve"><value>Ireland</value></data>
+  <data name="Испания" xml:space="preserve"><value>Spain</value></data>
+  <data name="Италия" xml:space="preserve"><value>Italy</value></data>
+  <data name="Канада" xml:space="preserve"><value>Canada</value></data>
+  <data name="Китай" xml:space="preserve"><value>China</value></data>
+  <data name="Колумбия" xml:space="preserve"><value>Colombia</value></data>
+  <data name="Лихтенштейн" xml:space="preserve"><value>Liechtenstein</value></data>
+  <data name="Мальта" xml:space="preserve"><value>Malta</value></data>
+  <data name="Мексика" xml:space="preserve"><value>Mexico</value></data>
+  <data name="Нидерланды" xml:space="preserve"><value>Netherlands</value></data>
+  <data name="Нигерия" xml:space="preserve"><value>Nigeria</value></data>
+  <data name="Новая Зеландия" xml:space="preserve"><value>New Zealand</value></data>
+  <data name="Норвегия" xml:space="preserve"><value>Norway</value></data>
+  <data name="Палестина" xml:space="preserve"><value>Palestine</value></data>
+  <data name="Польша" xml:space="preserve"><value>Poland</value></data>
+  <data name="Португалия" xml:space="preserve"><value>Portugal</value></data>
+  <data name="Пуэрто-Рико" xml:space="preserve"><value>Puerto Rico</value></data>
+  <data name="Россия" xml:space="preserve"><value>Russia</value></data>
+  <data name="Словакия" xml:space="preserve"><value>Slovakia</value></data>
+  <data name="Словения" xml:space="preserve"><value>Slovenia</value></data>
+  <data name="США" xml:space="preserve"><value>United States</value></data>
+  <data name="Турция" xml:space="preserve"><value>Turkey</value></data>
+  <data name="Уэльс" xml:space="preserve"><value>Wales</value></data>
+  <data name="Финляндия" xml:space="preserve"><value>Finland</value></data>
+  <data name="Франция" xml:space="preserve"><value>France</value></data>
+  <data name="Хорватия" xml:space="preserve"><value>Croatia</value></data>
+  <data name="Чехия" xml:space="preserve"><value>Czech Republic</value></data>
+  <data name="Швейцария" xml:space="preserve"><value>Switzerland</value></data>
+  <data name="Швеция" xml:space="preserve"><value>Sweden</value></data>
+  <data name="Шотландия" xml:space="preserve"><value>Scotland</value></data>
+  <data name="ЮАР" xml:space="preserve"><value>South Africa</value></data>
+  <data name="Южная Корея" xml:space="preserve"><value>South Korea</value></data>
+  <data name="Ямайка" xml:space="preserve"><value>Jamaica</value></data>
+  <data name="Япония" xml:space="preserve"><value>Japan</value></data>
+  <data name="Ничего не надето. Листайте ←/→." xml:space="preserve">
+    <value>Nothing is worn. Browse with ←/→.</value>
+  </data>
+  <data name="Цвет {0} из {1}: Enter — следующий. Вещи — ←/→." xml:space="preserve">
+    <value>Colour {0} of {1}: Enter for the next. Items: ←/→.</value>
+  </data>
+  <data name="Вещи — ←/→." xml:space="preserve">
+    <value>Items: ←/→.</value>
+  </data>
+  <data name="интерьер не загрузился. Попробуйте ещё раз." xml:space="preserve">
+    <value>the interior did not load. Try again.</value>
+  </data>
+  <data name="Видна дыра на теле — подберите руки под верх." xml:space="preserve">
+    <value>A hole shows on the body? Pick arms that fit the top.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ модель не загрузилась. Попробуйте ещё раз." xml:space="preserve">
+    <value>~o~Character:~s~ the body did not load. Try again.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ сервер ещё не ответил. Попробуйте через несколько секунд." xml:space="preserve">
+    <value>~o~Character:~s~ the server has not answered yet. Try again in a few seconds.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ дождитесь окончания загрузки или перемещения." xml:space="preserve">
+    <value>~o~Character:~s~ wait until loading or travel ends.</value>
+  </data>
+  <data name="~b~Персонаж:~s~ создайте своего персонажа. Его увидит напарник, и он сохранится на сервере." xml:space="preserve">
+    <value>~b~Character:~s~ create your character. Your partner will see it, and the server will keep it.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ эту одежду нельзя сохранить. Выберите другую." xml:space="preserve">
+    <value>~o~Character:~s~ these clothes cannot be saved. Choose others.</value>
+  </data>
+  <data name="~o~Персонаж:~s~ сервер не сохранил персонажа. Попробуйте ещё раз." xml:space="preserve">
+    <value>~o~Character:~s~ the server did not save the character. Try again.</value>
+  </data>
+  <data name="~g~Персонаж сохранён.~s~ Он будет с вами при каждом входе на сервер." xml:space="preserve">
+    <value>~g~Character saved.~s~ You will have it every time you join the server.</value>
+  </data>
+  <data name="~b~Персонаж:~s~ создать его можно позже: J → Персонаж → Внешность." xml:space="preserve">
+    <value>~b~Character:~s~ you can create it later: J → Character → Appearance.</value>
+  </data>
+  <data name="Швейная фабрика" xml:space="preserve">
+    <value>Garment Factory</value>
+  </data>
+  <data name="Тестовая трасса" xml:space="preserve">
+    <value>Test track</value>
+  </data>
+  <data name="Особняк Эль Рубио" xml:space="preserve">
+    <value>El Rubio's mansion</value>
+  </data>
+  <data name="Моё жильё" xml:space="preserve">
+    <value>My home</value>
+  </data>
+  <data name="Квартира, дом или особняк. После входа на сервер вы появляетесь дома, машина из дома ждёт у входа." xml:space="preserve">
+    <value>An apartment, a house or a mansion. After joining the server you appear at home, and a car ordered at home waits at the door.</value>
+  </data>
+  <data name="Домой" xml:space="preserve">
+    <value>Go home</value>
+  </data>
+  <data name="Перенестись в своё жильё." xml:space="preserve">
+    <value>Travel to your home.</value>
+  </data>
+  <data name="Жильё" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Выберите ←/→ и нажмите Enter, чтобы сделать своим." xml:space="preserve">
+    <value>Pick with ←/→ and press Enter to make it yours.</value>
+  </data>
+  <data name="~g~Жильё:~s~ теперь ваш дом «{0}»." xml:space="preserve">
+    <value>~g~Home:~s~ your home is now "{0}".</value>
+  </data>
+  <data name="~g~Жильё:~s~ вы без жилья." xml:space="preserve">
+    <value>~g~Home:~s~ you have no home now.</value>
+  </data>
+  <data name="~o~Жильё:~s~ сервер не сохранил выбор. Повторите." xml:space="preserve">
+    <value>~o~Home:~s~ the server did not save your choice. Try again.</value>
+  </data>
+  <data name="~o~Жильё:~s~ ещё загружается. Попробуйте через секунду." xml:space="preserve">
+    <value>~o~Home:~s~ still loading. Try again in a second.</value>
+  </data>
+  <data name="~o~Жильё:~s~ сначала выберите его ниже." xml:space="preserve">
+    <value>~o~Home:~s~ choose one below first.</value>
+  </data>
+  <data name="Ангар McKenzie Field" xml:space="preserve">
+    <value>McKenzie Field hangar</value>
+  </data>
+  <data name="Ограбления" xml:space="preserve">
+    <value>Heists</value>
+  </data>
+  <data name="Выставочный зал" xml:space="preserve">
+    <value>Exhibition hall</value>
+  </data>
+  <data name="Хранилище" xml:space="preserve">
+    <value>Vault</value>
+  </data>
+  <data name="Погрузка" xml:space="preserve">
+    <value>Loading bay</value>
+  </data>
+  <data name="Подвал" xml:space="preserve">
+    <value>Basement</value>
+  </data>
+  <data name="Сразу за руль" xml:space="preserve">
+    <value>Drive new vehicles</value>
+  </data>
+  <data name="Созданная машина сразу сажает вас за руль. Выключите, чтобы она просто появлялась рядом." xml:space="preserve">
+    <value>A vehicle you create puts you behind the wheel at once. Turn this off to have it simply appear nearby.</value>
+  </data>
+  <data name="~g~Машина готова,~s~ вы за рулём." xml:space="preserve">
+    <value>~g~Vehicle ready,~s~ you are behind the wheel.</value>
+  </data>
+  <data name="~o~Машина:~s~ выходим к двери, она появится там." xml:space="preserve">
+    <value>~o~Vehicle:~s~ heading to the door, it will appear there.</value>
   </data>
 </root>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Math;
 using GTA.Native;

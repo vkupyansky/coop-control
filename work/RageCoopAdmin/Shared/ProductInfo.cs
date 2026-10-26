@@ -1,23 +1,23 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // One place for the product name, version, author and links shown by the
 // menu, the server window and the installer.
 internal static class ProductInfo
 {
-    internal const string Name = "Coop Control";
-    internal const string Version = "0.3.0";
+    internal const string Name = "OG Coop";
+    internal const string Version = "0.4.0";
     internal const string Tag = "v" + Version + "-wip";
     internal const string Author = "Vladislav Kupyansky (vkupyansky)";
     internal const string Telegram = "@skibidessa";
-    internal const string Repository = "vkupyansky/coop-control";
+    internal const string Repository = "vkupyansky/og-coop";
     internal const string Releases = "https://github.com/" + Repository + "/releases";
     internal const string NewIssue = "https://github.com/" + Repository + "/issues/new/choose";
     internal const string ReleasesApi = "https://api.github.com/repos/" + Repository + "/releases?per_page=10";
-    // COOP_CONTROL_UPDATE_CHECK=0 turns the GitHub release check off.
-    internal const string UpdateCheckVariable = "COOP_CONTROL_UPDATE_CHECK";
+    // OG_COOP_UPDATE_CHECK=0 turns the GitHub release check off.
+    internal const string UpdateCheckVariable = "OG_COOP_UPDATE_CHECK";
 }
 
 // Reads GitHub's release list without a JSON library (the installer runs on

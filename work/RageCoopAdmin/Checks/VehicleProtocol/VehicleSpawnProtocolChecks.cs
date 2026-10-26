@@ -103,10 +103,10 @@ internal static class VehicleSpawnProtocolChecks
 
     private static string EncodeAppearance(int model)
     {
-        Type appearance = typeof(CoopAdminServer).Assembly.GetType("CoopControl.Shared.VehicleAppearance", true)!;
+        Type appearance = typeof(CoopAdminServer).Assembly.GetType("OGCoop.Shared.VehicleAppearance", true)!;
         object value = Activator.CreateInstance(appearance)!;
         appearance.GetProperty("ModelHash")!.SetValue(value, model);
-        Type codec = typeof(CoopAdminServer).Assembly.GetType("CoopControl.Shared.VehicleAppearanceCodec", true)!;
+        Type codec = typeof(CoopAdminServer).Assembly.GetType("OGCoop.Shared.VehicleAppearanceCodec", true)!;
         return (string)codec.GetMethod("Encode", Static)!.Invoke(null, new[] { value })!;
     }
 

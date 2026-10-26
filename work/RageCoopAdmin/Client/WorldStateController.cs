@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;

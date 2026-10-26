@@ -38,7 +38,7 @@ internal static class RepairSync
         _active = true;
         if (!VehicleRepairCache.IsAvailable)
         {
-            warning("Coop Control: repair cache contract does not match the installed RageCoop client.");
+            warning("OG Coop: repair cache contract does not match the installed RageCoop client.");
         }
     }
 
@@ -71,7 +71,7 @@ internal static class RepairSync
             if (_lastWarningTick == 0 || now - _lastWarningTick >= Stopwatch.Frequency * 5)
             {
                 _lastWarningTick = now;
-                _warning?.Invoke("Coop Control: repair retry failed: " + ex.GetType().Name);
+                _warning?.Invoke("OG Coop: repair retry failed: " + ex.GetType().Name);
             }
         }
     }

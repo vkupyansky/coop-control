@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using HarmonyLib;
 using Lidgren.Network;
 using RageCoop.Client;

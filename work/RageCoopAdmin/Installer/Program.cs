@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
-namespace CoopControl.Installer;
+namespace OGCoop.Installer;
 
 // One double-click for the player: finds GTA V Legacy, checks it, installs or
 // updates everything next to GTA5.exe, checks the cars and says what is next.
@@ -40,7 +40,7 @@ internal static class Program
         try
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Console.Title = Text.Get("Coop Control — установка и обновление", "Coop Control — install and update");
+            Console.Title = Text.Get("OG Coop — установка и обновление", "OG Coop — install and update");
         }
         catch (IOException)
         {
@@ -90,7 +90,7 @@ internal static class Program
 
     private static int Run(Options options, string home)
     {
-        Say(Text.Get("=== Coop Control " + ProductInfo.Version + " — установка и обновление ===", "=== Coop Control " + ProductInfo.Version + " — install and update ==="));
+        Say(Text.Get("=== OG Coop " + ProductInfo.Version + " — установка и обновление ===", "=== OG Coop " + ProductInfo.Version + " — install and update ==="));
         Say(Text.Get("Автор: ", "By ") + ProductInfo.Author + " · Telegram " + ProductInfo.Telegram + " · github.com/vkupyansky");
         if (options.Check) Say(Text.Get("Режим проверки: ничего не меняю, только показываю.", "Check mode: nothing is changed."));
         string payload = Payload(home) ?? throw new InstallerException(
@@ -127,6 +127,7 @@ internal static class Program
         CopyResult copied = GameFiles.Install(payload, game.Path, apply: !options.Check);
         Say(Text.Get("Файлы игры: ", "Game files: ") + copied.Added + Text.Get(" новых, ", " new, ") + copied.Updated +
             Text.Get(" обновлено, ", " updated, ") + copied.Settings + Text.Get(" настроек дополнено, ", " settings merged, ") +
+            copied.Removed + Text.Get(" старых убрано, ", " old removed, ") +
             copied.Unchanged + Text.Get(" без изменений.", " unchanged."));
         foreach (string changed in copied.Changed) Log("  " + changed);
 
@@ -162,7 +163,7 @@ internal static class Program
         {
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             var request = (HttpWebRequest)WebRequest.Create(ProductInfo.ReleasesApi);
-            request.UserAgent = "CoopControl/" + ProductInfo.Version;
+            request.UserAgent = "OGCoop/" + ProductInfo.Version;
             request.Accept = "application/vnd.github+json";
             request.Timeout = request.ReadWriteTimeout = 5000;
             using var response = (HttpWebResponse)request.GetResponse();
@@ -178,8 +179,8 @@ internal static class Program
         }
 
         if (!ReleaseCheck.IsNewer(latest)) return true;
-        Say(Text.Get("Вышла новая версия Coop Control " + latest!.ToString(3) + ", а это " + ProductInfo.Version + ". Скачайте новую:",
-            "Coop Control " + latest!.ToString(3) + " is out; this is " + ProductInfo.Version + ". Download the new one:"));
+        Say(Text.Get("Вышла новая версия OG Coop " + latest!.ToString(3) + ", а это " + ProductInfo.Version + ". Скачайте новую:",
+            "OG Coop " + latest!.ToString(3) + " is out; this is " + ProductInfo.Version + ". Download the new one:"));
         Say("  " + ProductInfo.Releases);
         if (options.Check) return true;
         Say(Text.Get("Enter — открыть страницу и выйти, Y — всё равно поставить эту версию.", "Enter — open the page and quit, Y — install this version anyway."));

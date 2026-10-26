@@ -8,7 +8,7 @@ using GTA.Math;
 using GTA.Native;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 

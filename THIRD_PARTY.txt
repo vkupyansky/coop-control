@@ -1,4 +1,4 @@
-Third-party notices — Coop Control public preview
+Third-party notices — OG Coop public preview
 
 The toolkit's own code is licensed separately in LICENSE. The compatible
 RageCoop baseline and embedded libraries retain the licences reproduced below;
@@ -25,15 +25,20 @@ The server folder contains the official Microsoft .NET Runtime 10.0.13 for
 Windows x64 (dotnet-runtime-10.0.13-win-x64.zip) unchanged in server/dotnet,
 including its own LICENSE.txt (MIT) and ThirdPartyNotices.txt.
 
-reshade/CoopControl.ini is this project's own ReShade preset (MIT). ReShade and
+reshade/OGCoop.ini is this project's own ReShade preset (MIT). ReShade and
 its effect files are not included; players download them from reshade.me.
+
+The personal yacht follows HKH191's Working Galaxy Super Yacht mod (MIT,
+Copyright (c) 2022 HKH191, https://github.com/HKH191/Working-Galaxy-Super-Yacht-Mod-Mod-FIles)
+for the yacht's object names and where they sit on the hull; no code of that
+mod is included.
 
 ScriptHookV and the game belong to their respective owners and are obtained
 separately. No endorsement by any upstream author or publisher is implied.
 
 Кратко по-русски
 
-Собственный код Coop Control распространяется по MIT. В комплекте есть
+Собственный код OG Coop распространяется по MIT. В комплекте есть
 сторонние библиотеки по MIT, Apache 2.0 и zlib, официальный SHVDN
 3.7.0-nightly.188 и среда .NET 10.0.13 для Windows-сервера со своими файлами
 лицензий; полные условия и авторство сохранены ниже и рядом с этими файлами. Лицензия нашего кода не заменяет эти условия. Состав и хеши

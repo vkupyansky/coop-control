@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using static CoopControl.Shared.WorldOptions;
+using static OGCoop.Shared.WorldOptions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -14,7 +14,7 @@ using LemonUI.Menus;
 using LemonUI.Scaleform;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
@@ -80,6 +80,7 @@ public sealed partial class AdminMenuScript : ClientScript
     private PendingTeleport? _pendingTeleport;
     private readonly StoryScriptStopper _storyScripts = new StoryScriptStopper(StoryScripts.Stopped, message => API.Logger.Info(message));
     private readonly StoryBlipHider _storyBlips = new StoryBlipHider(message => API.Logger.Info(message));
+    private readonly SafehouseDoors _safehouseDoors = new SafehouseDoors(message => API.Logger.Info(message));
     private readonly SnowTracks _snow = new SnowTracks();
     private readonly OnlineRadio _onlineRadio = new OnlineRadio(message => API.Logger.Info(message));
     private readonly VoiceChat _voice = new VoiceChat(message => API.Logger.Info(message));
@@ -111,11 +112,11 @@ public sealed partial class AdminMenuScript : ClientScript
             try { RageCoopLog.Resume(CurrentResource); }
             catch (Exception ex) when (ex is TargetInvocationException or MemberAccessException or ArgumentException or InvalidCastException)
             {
-                Logger.Warning("Coop Control: stopped RageCoop log could not be resumed: " + ex.GetType().Name);
+                Logger.Warning("OG Coop: stopped RageCoop log could not be resumed: " + ex.GetType().Name);
             }
-            CoopControl.Shared.EngineLoggerGuard.Install();
-            CoopControl.Shared.EngineWorkerGuard.Install();
-            CoopControl.Shared.EngineTransportGuard.Install();
+            OGCoop.Shared.EngineLoggerGuard.Install();
+            OGCoop.Shared.EngineWorkerGuard.Install();
+            OGCoop.Shared.EngineTransportGuard.Install();
             EngineRosterGuard.Install();
             EngineIngressGuard.Install();
             EnginePacketGuard.Install();
@@ -136,7 +137,7 @@ public sealed partial class AdminMenuScript : ClientScript
             EngineSendGuard.Install();
             EngineGameplayGuard.Install();
             // Cosmetic: an unknown build keeps RageCoop's own name tags.
-            if (!EngineNameTagGuard.Install()) Logger.Warning("Coop Control: player name tag contract is unsupported.");
+            if (!EngineNameTagGuard.Install()) Logger.Warning("OG Coop: player name tag contract is unsupported.");
         }
         catch
         {
@@ -150,9 +151,9 @@ public sealed partial class AdminMenuScript : ClientScript
             EnginePacketGuard.Uninstall();
             EngineIngressGuard.Uninstall();
             EngineRosterGuard.Uninstall();
-            CoopControl.Shared.EngineTransportGuard.Uninstall();
-            CoopControl.Shared.EngineWorkerGuard.Uninstall();
-            CoopControl.Shared.EngineLoggerGuard.Uninstall();
+            OGCoop.Shared.EngineTransportGuard.Uninstall();
+            OGCoop.Shared.EngineWorkerGuard.Uninstall();
+            OGCoop.Shared.EngineLoggerGuard.Uninstall();
             throw;
         }
 
@@ -160,36 +161,36 @@ public sealed partial class AdminMenuScript : ClientScript
         {
             if (!DeathMessageGuard.Install())
             {
-                Logger.Warning("Coop Control: death message guard unavailable; RageCoop KillMessage signature changed.");
+                Logger.Warning("OG Coop: death message guard unavailable; RageCoop KillMessage signature changed.");
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: death message guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: death message guard failed: " + ex.GetType().Name);
         }
 
         try
         {
             if (!PassengerSeatGuard.Install(() => !_active || _stopping || _pool?.AreAnyVisible != false || IsInputBlocked()))
             {
-                Logger.Warning("Coop Control: passenger seat guard unavailable; RageCoop signatures changed.");
+                Logger.Warning("OG Coop: passenger seat guard unavailable; RageCoop signatures changed.");
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: passenger seat guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: passenger seat guard failed: " + ex.GetType().Name);
         }
 
         try
         {
             if (!VehicleBulletReplayGuard.Install())
             {
-                Logger.Warning("Coop Control: vehicle bullet range guard unavailable; RageCoop contract changed.");
+                Logger.Warning("OG Coop: vehicle bullet range guard unavailable; RageCoop contract changed.");
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: vehicle bullet range guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: vehicle bullet range guard failed: " + ex.GetType().Name);
         }
 
         WindowFocusClock.Start(_hangWatch);
@@ -197,24 +198,24 @@ public sealed partial class AdminMenuScript : ClientScript
         {
             if (!EngineTickTimer.Install())
             {
-                Logger.Warning("Coop Control: frame timing unavailable; RageCoop contract changed.");
+                Logger.Warning("OG Coop: frame timing unavailable; RageCoop contract changed.");
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: frame timing failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: frame timing failed: " + ex.GetType().Name);
         }
 
         try
         {
             if (!VehicleMuzzleGuard.Install())
             {
-                Logger.Warning("Coop Control: vehicle gun guard unavailable; RageCoop contract changed.");
+                Logger.Warning("OG Coop: vehicle gun guard unavailable; RageCoop contract changed.");
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: vehicle gun guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: vehicle gun guard failed: " + ex.GetType().Name);
         }
 
         try
@@ -227,11 +228,14 @@ public sealed partial class AdminMenuScript : ClientScript
             _eventSubscriptions.Register(RecallCarState, OnRecallCarReceived);
             RegisterVehicleToolsEvents();
             RegisterGarageEvents();
+            RegisterCharacterEvents();
+            RegisterYachtEvents();
+            RegisterHomeEvents();
             RegisterVehicleSpawnEvents();
             RepairSync.Start(Logger.Warning);
             if (!VehicleAudioSync.Install())
             {
-                Logger.Warning("Coop Control: radio synchronization contract unavailable.");
+                Logger.Warning("OG Coop: radio synchronization contract unavailable.");
             }
             API.QueueAction(Initialize);
         }
@@ -253,7 +257,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: vehicle bullet range guard cleanup failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: vehicle bullet range guard cleanup failed: " + ex.GetType().Name);
         }
 
         WindowFocusClock.Stop();
@@ -263,7 +267,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: frame timing cleanup failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: frame timing cleanup failed: " + ex.GetType().Name);
         }
 
         try
@@ -272,7 +276,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: vehicle gun guard cleanup failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: vehicle gun guard cleanup failed: " + ex.GetType().Name);
         }
 
         try
@@ -281,7 +285,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: death message guard cleanup failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: death message guard cleanup failed: " + ex.GetType().Name);
         }
 
         try
@@ -290,7 +294,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: passenger seat guard cleanup failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: passenger seat guard cleanup failed: " + ex.GetType().Name);
         }
 
         if (_cleaned)
@@ -317,38 +321,43 @@ public sealed partial class AdminMenuScript : ClientScript
         try
         {
             if (!HostAbortCleanupGuard.Install(CleanupBeforeHostAbort))
-                Logger.Warning("Coop Control: host cleanup guard unavailable; SHVDN lifecycle signature changed.");
+                Logger.Warning("OG Coop: host cleanup guard unavailable; SHVDN lifecycle signature changed.");
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: host cleanup guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: host cleanup guard failed: " + ex.GetType().Name);
         }
 
         ResourceIdentity.Normalize(CurrentResource);
         InitializeGarage();
+        InitializeCharacters();
+        InitializeYachts();
+        InitializeHome();
         InitializeInterface();
         InitializeVehicleTools();
         BuildMenus();
+        BindMenuSwitches();
+        RestoreMenuSwitches();
         InitializeWorldControls();
         InitializeTextInput();
         RefreshMenuLanguage();
         try
         {
             if (!HostMenuInputGuard.Install(OwnsHostMenuCancel, IsProcessingResourceMenuInput, OwnsTextInput))
-                Logger.Warning("Coop Control: host pause input guard unavailable; RageCoop pause input contract changed.");
+                Logger.Warning("OG Coop: host pause input guard unavailable; RageCoop pause input contract changed.");
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: host pause input guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: host pause input guard failed: " + ex.GetType().Name);
         }
         try
         {
             if (!PassengerSeatGuard.HideOriginalSetting())
-                Logger.Warning("Coop Control: original passenger setting does not match the supported menu contract.");
+                Logger.Warning("OG Coop: original passenger setting does not match the supported menu contract.");
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: original passenger setting could not be hidden: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: original passenger setting could not be hidden: " + ex.GetType().Name);
         }
         API.Events.OnKeyDown += OnKeyDown;
         API.Events.OnKeyUp += OnKeyUp;
@@ -356,7 +365,7 @@ public sealed partial class AdminMenuScript : ClientScript
         API.Events.OnVehicleSpawned += OnVehicleSpawned;
         API.Events.OnVehicleDeleted += OnVehicleDeleted;
         _active = true;
-        Logger.Info("Coop Control initialized: module=" + typeof(AdminMenuScript).Assembly.ManifestModule.ModuleVersionId +
+        Logger.Info("OG Coop initialized: module=" + typeof(AdminMenuScript).Assembly.ManifestModule.ModuleVersionId +
             "; resource=" + CurrentResource.Name);
         ResourceIdentity.CleanupObsolete(CurrentResource, Logger.Warning);
     }
@@ -375,11 +384,13 @@ public sealed partial class AdminMenuScript : ClientScript
         try { PassengerSeatSetting.Restore(); }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: original passenger setting could not be restored: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: original passenger setting could not be restored: " + ex.GetType().Name);
         }
         RepairSync.Stop();
         VehicleAudioSync.Uninstall();
         CleanupExtras();
+        CleanupCharacters();
+        CleanupYachts();
         DisableNoWanted();
         DisableInvincibility();
         CleanupPlayerAbilities();
@@ -413,9 +424,9 @@ public sealed partial class AdminMenuScript : ClientScript
         EnginePacketGuard.Uninstall();
         EngineIngressGuard.Uninstall();
         EngineRosterGuard.Uninstall();
-        CoopControl.Shared.EngineTransportGuard.Uninstall();
-        CoopControl.Shared.EngineWorkerGuard.Uninstall();
-        CoopControl.Shared.EngineLoggerGuard.Uninstall();
+        OGCoop.Shared.EngineTransportGuard.Uninstall();
+        OGCoop.Shared.EngineWorkerGuard.Uninstall();
+        OGCoop.Shared.EngineLoggerGuard.Uninstall();
         _pendingTeleport = null;
         _pendingRecall = null;
         _recallRequests.Cancel();
@@ -442,7 +453,7 @@ public sealed partial class AdminMenuScript : ClientScript
         try { EngineGameplayGuard.Uninstall(); }
         catch (Exception ex)
         {
-            try { API.Logger.Warning("Coop Control: gameplay guard cleanup failed: " + ex.GetType().Name); }
+            try { API.Logger.Warning("OG Coop: gameplay guard cleanup failed: " + ex.GetType().Name); }
             catch { }
         }
     }
@@ -450,13 +461,13 @@ public sealed partial class AdminMenuScript : ClientScript
     private void BuildMenus()
     {
         _pool = new ObjectPool();
-        _mainMenu = CreateMenu("Coop Control", "Главное меню");
-        NativeMenu worldMenu = CreateMenu("Coop Control", "Мир");
-        _vehicleMenu = CreateMenu("Coop Control", "Транспорт");
-        _playerMenu = CreateMenu("Coop Control", "Персонаж");
-        NativeMenu weatherMenu = CreateMenu("Coop Control", "Погода");
-        NativeMenu timeMenu = CreateMenu("Coop Control", "Время");
-        _searchMenu = CreateMenu("Coop Control", "Результаты поиска");
+        _mainMenu = CreateMenu("OG Coop", "Главное меню");
+        NativeMenu worldMenu = CreateMenu("OG Coop", "Мир");
+        _vehicleMenu = CreateMenu("OG Coop", "Транспорт");
+        _playerMenu = CreateMenu("OG Coop", "Персонаж");
+        NativeMenu weatherMenu = CreateMenu("OG Coop", "Погода");
+        NativeMenu timeMenu = CreateMenu("OG Coop", "Время");
+        _searchMenu = CreateMenu("OG Coop", "Результаты поиска");
         _searchMenu.Parent = _vehicleMenu;
 
         NativeItem shareWaypointItem = UiMenu.Item(() => UiText.Get("Поделиться меткой"), () => UiText.Get("Заменить точку на карте у всех игроков вашей меткой."));
@@ -485,6 +496,7 @@ public sealed partial class AdminMenuScript : ClientScript
         var health = UiMenu.Item(() => UiText.Get("Восстановить здоровье и броню"), () => UiText.Get("Полностью восстановить здоровье и броню вашего персонажа."));
         health.Activated += (_, _) => RestoreHealthAndArmor();
         _playerMenu.Add(health);
+        BuildCharacterMenus();
 
         _wantedItem = UiMenu.List(() => UiText.Get("Мой розыск"), () => UiText.Get("Выберите число звёзд стрелками ←/→. Меняется только ваш розыск."), () => (WantedOptions).Select(UiText.Get).ToArray());
         _wantedItem.ItemChanged += (_, e) =>
@@ -642,10 +654,14 @@ public sealed partial class AdminMenuScript : ClientScript
             _frameMonitor.Reset();
             _hangWatch.Reset();
             _storyBlips.Reset();
+            _safehouseDoors.Reset();
             _snow.Reset();
             _onlineRadio.Reset();
             _voice.Reset();
             ResetRespawn();
+            ResetYachts();
+            ResetHome();
+            if (_creator != null) EndCreator(_creator);
             return;
         }
 
@@ -730,8 +746,10 @@ public sealed partial class AdminMenuScript : ClientScript
         TickFrameMonitor();
         _hangWatch.Step("story scripts");
         _storyScripts.Frame();
+        HeroSwitch.Block();
         _hangWatch.Step("map icons and snow");
         _storyBlips.Tick(NowMilliseconds());
+        _safehouseDoors.Tick(NowMilliseconds());
         _snow.Tick(NowMilliseconds());
         _hangWatch.Step("radio");
         _onlineRadio.Tick();
@@ -741,6 +759,10 @@ public sealed partial class AdminMenuScript : ClientScript
         TickSpecialPlaces();
         _hangWatch.Step("respawn");
         TickRespawn();
+        _hangWatch.Step("character");
+        TickCharacters(NowMilliseconds());
+        _hangWatch.Step("yachts");
+        TickYachts(NowMilliseconds());
         _hangWatch.Step("teleport");
         ProcessPendingTeleport(now);
         ProcessPendingRecall(now);
@@ -819,7 +841,7 @@ public sealed partial class AdminMenuScript : ClientScript
             string className = group.Key >= 0 && group.Key < ClassNames.Length
                 ? ClassNames[group.Key]
                 : "Другие модели";
-            NativeMenu menu = CreateMenu("Coop Control", className);
+            NativeMenu menu = CreateMenu("OG Coop", className);
             foreach (VehicleEntry entry in group.OrderBy(e => e.DisplayName, StringComparer.CurrentCultureIgnoreCase))
             {
                 AddVehicleItem(menu, entry);
@@ -830,7 +852,7 @@ public sealed partial class AdminMenuScript : ClientScript
             _pool.Add(menu);
         }
 
-        Notification.PostTicker(UiText.Get("~o~Coop Control:~s~ каталог транспорта готов (") + _catalog.Count + UiText.Get(" моделей)."), false);
+        Notification.PostTicker(UiText.Get("~o~OG Coop:~s~ каталог транспорта готов (") + _catalog.Count + UiText.Get(" моделей)."), false);
         _favoritesDirty = true;
     }
 
@@ -928,7 +950,7 @@ public sealed partial class AdminMenuScript : ClientScript
 
     private void SendSpawn(int modelHash) => RequestVehicleSpawn(modelHash, null);
 
-    private void SendWeather(int index) => RequestWorldChange(CoopControl.Shared.WorldStateChange.SetWeather, index, 0, false);
+    private void SendWeather(int index) => RequestWorldChange(OGCoop.Shared.WorldStateChange.SetWeather, index, 0, false);
 
     private void AddTimePreset(NativeMenu menu, string name, int hour)
     {
@@ -958,7 +980,7 @@ public sealed partial class AdminMenuScript : ClientScript
         {
             _worldTimeHour = hour;
             _worldTimeMinute = minute;
-            if (RequestWorldChange(CoopControl.Shared.WorldStateChange.SetTime, hour, minute, false) == 0)
+            if (RequestWorldChange(OGCoop.Shared.WorldStateChange.SetTime, hour, minute, false) == 0)
                 _timeSelection.Cancel();
         }
     }
@@ -1098,7 +1120,9 @@ public sealed partial class AdminMenuScript : ClientScript
 
         if ((now - pending.StartTick) / (double)Stopwatch.Frequency > pending.TimeoutSeconds)
         {
-            FinishTeleport(pending, false, "место ещё не загрузилось. Попробуйте другую точку рядом.");
+            FinishTeleport(pending, false, pending.Interior >= 0
+                ? "интерьер не загрузился. Попробуйте ещё раз."
+                : "место ещё не загрузилось. Попробуйте другую точку рядом.");
             return;
         }
 
@@ -1164,6 +1188,15 @@ public sealed partial class AdminMenuScript : ClientScript
             }
         }
 
+        // An Online interior streams in after its map parts: placed earlier,
+        // the player found no floor (the casino hall is below the ground) or
+        // the roof above it (the penthouse).
+        if (pending.Interior >= 0 && !_interiors.IsReady(pending.Interior))
+        {
+            _interiors.Target(pending.Interior, NowMilliseconds());
+            return;
+        }
+
         Vehicle? vehicle = player.CurrentVehicle;
         if (vehicle != null && vehicle.Exists() && vehicle.Driver?.Handle != player.Handle)
         {
@@ -1214,6 +1247,10 @@ public sealed partial class AdminMenuScript : ClientScript
     {
         surface = default;
         GTA.Math.Vector3 target = new GTA.Math.Vector3(pending.X, pending.Y, pending.ExpectedZ ?? 100f);
+        if (pending.FloorKnown)
+        {
+            return TryFindFloor(target, out surface);
+        }
 
         if (pending.ForRecall)
         {
@@ -1235,6 +1272,13 @@ public sealed partial class AdminMenuScript : ClientScript
 
         return TryFindArrivalAt(target, pending.ExpectedZ, inVehicle, 65f, out surface);
     }
+
+    // An interior or a door: the point stands just above the floor, with a
+    // ceiling, roof or awning higher up. From 12 m up the probe hit the casino
+    // tower's roof or the top of an underground hall, and the player arrived on
+    // the roof or under the street; until the floor has collision it waits.
+    private static bool TryFindFloor(GTA.Math.Vector3 point, out GTA.Math.Vector3 surface) =>
+        TrySurfaceRay(point, point.Z + 1f, point.Z - 4f, out surface);
 
     private static bool TryFindArrivalAt(GTA.Math.Vector3 target, float? expectedZ, bool inVehicle,
         float searchRadius, out GTA.Math.Vector3 surface)
@@ -1341,6 +1385,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
 
         Notification.PostTicker((success ? "~g~" : "~r~") + UiText.Get("Телепорт:~s~ ") + UiText.Get(message), false);
+        if (success) pending.Arrived?.Invoke();
     }
 
     private void ClearTeleportFocus()
@@ -1613,7 +1658,7 @@ public sealed partial class AdminMenuScript : ClientScript
     private void FailRecall(string reason)
     {
         _pendingRecall = null;
-        API.LocalChatMessage(UiText.Get("Coop Control"), UiText.Get("Машина: ") + UiText.Get(reason));
+        API.LocalChatMessage(UiText.Get("OG Coop"), UiText.Get("Машина: ") + UiText.Get(reason));
     }
 
     private void OnVehicleSpawned(object? sender, SyncedVehicle vehicle)
@@ -1738,7 +1783,7 @@ public sealed partial class AdminMenuScript : ClientScript
         {
             if (_active && !_stopping)
             {
-                Notification.PostTicker(UiText.Get("~o~Coop Control:~s~ ") + UiText.Get(safeMessage), false);
+                Notification.PostTicker(UiText.Get("~o~OG Coop:~s~ ") + UiText.Get(safeMessage), false);
             }
         });
     }
@@ -2021,6 +2066,13 @@ public sealed partial class AdminMenuScript : ClientScript
         public long LastProbeTick { get; set; }
         public bool FocusSet { get; set; }
         public int NextRecallOffset { get; set; }
+        // An Online interior to arrive in (its catalog index), -1 for a place
+        // in the open world.
+        public int Interior { get; set; } = -1;
+        // The floor lies just below the point (an interior or its door).
+        public bool FloorKnown { get; set; }
+        // что сделать на месте: машина из дома появляется у двери
+        public Action? Arrived { get; set; }
     }
 
     private sealed class PendingRecall

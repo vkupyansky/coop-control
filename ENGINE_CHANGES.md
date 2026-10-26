@@ -23,8 +23,9 @@ These changes target the **tested RageCoop 1.5.12.15 binaries** listed in the re
 | Remote wrecks | A remote car's wreck exploded again on every update that revived its copy | One visible explosion per wreck; repeats are silent |
 | Name tags | Tags were converted to pixels in another coordinate space and lifted 100 px, drifting sideways on non-16:9 screens | Drawn at a world point above the head |
 | Client log | On disconnect the log stopped, expecting an SHVDN reload; without one it stayed stopped for the rest of the game | The log resumes in the same file when the resource starts again |
-| Voice chat | Recording stopped only at the next key press, so a released push-to-talk key kept the microphone open; voice was off on the server and in the client by default | Recording stops when the key is released; voice is on by default and starts a few seconds after the map has loaded, with an off switch in Settings and `COOP_CONTROL_VOICE=0` on the server |
+| Voice chat | Recording stopped only at the next key press, so a released push-to-talk key kept the microphone open; voice was off on the server and in the client by default | Recording stops when the key is released; voice is on by default and starts a few seconds after the map has loaded, with an off switch in Settings and `OG_COOP_VOICE=0` on the server |
 | Vehicle weapons | Shots of vehicles missing from RageCoop's gun table (the Lazer and others) were not replayed for other players, and every shot logged a warning | Gun positions are taken from the vehicle's own weapon bones; the warning is logged once per vehicle |
+| Remote rockets | When the local copy of a rocket exploded or vanished before the shooter's, its record was dropped, and the next update of the still-flying original made a new rocket: a stream of rockets and explosions along the path | A projectile number is shown once (remembered for 30 s) |
 
 ## Added
 
@@ -33,6 +34,7 @@ These changes target the **tested RageCoop 1.5.12.15 binaries** listed in the re
 | Shared parked vehicles | Both games create the same parked cars, boats and planes in the same spots, and both copies were shown | One shared copy (the lower player number's); shop clerks and NPCs at fixed spots stay one per player |
 | Removed traffic | The server does not relay removals: an NPC car or pedestrian removed by its owner's game stood still for others and vanished after 10 s | A silent copy near another player is taken over by that player's game and lives on as its traffic |
 | Nearby copies | Copies per owner were capped by the soft limit divided by the player count, so nearby traffic appeared late or without a driver | Cars and NPC drivers within 150 m of the local player are always copied |
+| Passenger's pedestrians | In another player's car both games filled the same spot with their own pedestrians, and RageCoop showed only part of the driver's, so the passenger saw people the driver never had | While riding with a player, the passenger's game adds no pedestrians of its own and shows all of the driver's nearby |
 
 ## Removed
 

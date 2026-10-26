@@ -1,6 +1,6 @@
 using GTA.Math;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // .NET Framework 4.8 has no float.IsFinite.
 internal static class Finite

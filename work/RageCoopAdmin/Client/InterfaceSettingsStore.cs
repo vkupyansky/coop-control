@@ -1,15 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
 internal sealed class InterfaceSettingsStore
 {
     private const long MaximumFileBytes = 16 * 1024;
+    private const int MaximumSwitches = 32;
     private static readonly XmlSerializer Serializer = new XmlSerializer(typeof(InterfaceSettings));
     private readonly string _path;
 
@@ -121,6 +123,12 @@ internal sealed class InterfaceSettingsStore
         {
             throw new InvalidDataException("Unsupported menu language.");
         }
+
+        settings.Switches ??= new List<string>();
+        if (settings.Switches.Count > MaximumSwitches || settings.Switches.Any(name => string.IsNullOrWhiteSpace(name) || name.Length > 32))
+        {
+            throw new InvalidDataException("Unsupported menu switches.");
+        }
     }
 
     private static void ValidateChoices(InterfaceSettings settings, int maximumChoice)
@@ -145,6 +153,12 @@ public sealed partial class InterfaceSettings
     public UiLanguage MenuLanguage { get; set; } = UiLanguage.Russian;
     // Absent in older files, so voice chat is on until the player turns it off.
     public bool VoiceChat { get; set; } = true;
+    // в старых файлах нет, поэтому новая машина сажает за руль, пока игрок не выключит
+    public bool DriveNewVehicle { get; set; } = true;
+    // The Персонаж and Оружие switches that are on (invincibility and the
+    // like), turned on again at the next join. Absent in older files: all off.
+    [XmlArrayItem("On")]
+    public List<string> Switches { get; set; } = new List<string>();
     // Options this build does not know, written by another version, are kept as they are.
     [XmlAnyElement]
     public XmlElement[]? OtherOptions { get; set; }

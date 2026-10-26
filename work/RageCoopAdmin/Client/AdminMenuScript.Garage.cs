@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Xml;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.UI;
 using RageCoop.Client.Scripting;
 
@@ -57,7 +57,7 @@ public sealed partial class AdminMenuScript
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or XmlException)
         {
             // The files stay untouched; the next connection tries again.
-            Logger.Warning("Coop Control: local garage could not be moved to the server: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: local garage could not be moved to the server: " + ex.GetType().Name);
         }
     }
 

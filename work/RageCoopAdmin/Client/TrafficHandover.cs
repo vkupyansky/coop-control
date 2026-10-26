@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Math;
 using GTA.Native;
@@ -63,6 +63,7 @@ internal static class TrafficHandover
         _lastScan = now;
         if (!IsAvailable) { return; }
         Vector3 local = LocalPosition();
+        int ridingWith = PassengerPopulation.RidingWith;
         var peds = new List<SyncedPed>();
         var vehicles = new List<SyncedVehicle>();
         lock (PedLock!)
@@ -70,7 +71,7 @@ internal static class TrafficHandover
             foreach (SyncedPed ped in Peds!.Values)
             {
                 Ped? native = ped.MainPed;
-                if (ped.IsLocal || ped.IsPlayer || native == null || !Exists(native)) { continue; }
+                if (ped.IsLocal || ped.IsPlayer || native == null || !Exists(native) || !EngineTrafficPolicy.MayAdopt(ped.OwnerID, ridingWith)) { continue; }
                 if (ShouldAdopt(Silence(ped), OwnerSilence(ped.OwnerID), PositionOf(native).DistanceToSquared(local))) { peds.Add(ped); }
             }
         }
@@ -79,7 +80,7 @@ internal static class TrafficHandover
             foreach (SyncedVehicle vehicle in Vehicles!.Values)
             {
                 Vehicle? native = vehicle.MainVehicle;
-                if (vehicle.IsLocal || native == null || !Exists(native)) { continue; }
+                if (vehicle.IsLocal || native == null || !Exists(native) || !EngineTrafficPolicy.MayAdopt(vehicle.OwnerID, ridingWith)) { continue; }
                 float distance = PositionOf(native).DistanceToSquared(local);
                 if (!ShouldAdopt(Silence(vehicle), OwnerSilence(vehicle.OwnerID), distance)) { continue; }
                 if (!HasPlayerInside(vehicle.ID) && !HasPlayerOccupant(native)) { vehicles.Add(vehicle); }

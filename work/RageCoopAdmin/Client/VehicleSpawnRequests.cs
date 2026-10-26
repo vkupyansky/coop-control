@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using GTA;
+using GTA.Native;
 using GTA.UI;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
@@ -33,6 +35,7 @@ public sealed partial class AdminMenuScript
             return;
         }
         if (!EnsureSpawnModelAvailable(modelHash)) { return; }
+        if (SpawnOutsideHome(modelHash, encodedAppearance)) { return; }
 
         _nextVehicleSpawnToken = unchecked(_nextVehicleSpawnToken + 1);
         if (_nextVehicleSpawnToken == 0) { _nextVehicleSpawnToken = 1; }
@@ -110,8 +113,15 @@ public sealed partial class AdminMenuScript
         if (synced == null || synced.ID != pending.VehicleId || !RuntimeEntityLookup.IsCurrentVehicle(synced) ||
             vehicle == null || !vehicle.Exists() || vehicle.Model.Hash != pending.ModelHash) { return; }
         _pendingVehicleSpawn = null;
-        Notification.PostTicker(UiText.Get("~g~Машина появилась рядом."), false);
+        if (TakeDriverSeat(player, vehicle))
+            Notification.PostTicker(UiText.Get("~g~Машина готова,~s~ вы за рулём."), false);
+        else
+            Notification.PostTicker(UiText.Get("~g~Машина появилась рядом."), false);
     }
+
+    // по умолчанию игрок сразу садится за руль новой машины
+    private bool TakeDriverSeat(Ped player, Vehicle vehicle) =>
+        _interfaceSettings.DriveNewVehicle && VehicleSeating.TakeDriverSeat(player.Handle, vehicle.Handle);
 
     private void CleanupVehicleSpawn() => _pendingVehicleSpawn = null;
 
@@ -126,5 +136,19 @@ public sealed partial class AdminMenuScript
         internal int ModelHash { get; }
         internal long Started { get; }
         internal int VehicleId { get; set; }
+    }
+}
+
+// вызовы игры для посадки, проверки их подменяют
+internal static class VehicleSeating
+{
+    // за руль, только если место водителя свободно, чужого водителя не трогаем
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool TakeDriverSeat(int ped, int vehicle)
+    {
+        if (Function.Call<int>(Hash.GET_VEHICLE_PED_IS_IN, ped, false) == vehicle ||
+            !Function.Call<bool>(Hash.IS_VEHICLE_SEAT_FREE, vehicle, (int)VehicleSeat.Driver, false)) return false;
+        Function.Call(Hash.SET_PED_INTO_VEHICLE, ped, vehicle, (int)VehicleSeat.Driver);
+        return Function.Call<int>(Hash.GET_VEHICLE_PED_IS_IN, ped, false) == vehicle;
     }
 }

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.UI;
 using LemonUI.Menus;
@@ -44,19 +44,19 @@ public sealed partial class AdminMenuScript
         {
             if (!VehicleAppearanceRuntimeGuard.Install(FindAppearanceSnapshot, TryApplyVehicleAppearance))
             {
-                Logger.Warning("Coop Control: installed RageCoop cosmetic cache signatures are unsupported.");
+                Logger.Warning("OG Coop: installed RageCoop cosmetic cache signatures are unsupported.");
                 Notification.PostTicker(UiText.Get("~o~Общий тюнинг недоступен для этой версии RageCoop."), false);
             }
         }
         catch (Exception ex)
         {
-            Logger.Warning("Coop Control: vehicle appearance guard failed: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: vehicle appearance guard failed: " + ex.GetType().Name);
             Notification.PostTicker(UiText.Get("~o~Не удалось включить общий тюнинг."), false);
         }
 
         if (!RuntimeEntityLookup.IsAvailable)
         {
-            Logger.Warning("Coop Control: installed RageCoop entity lookup signatures are unsupported.");
+            Logger.Warning("OG Coop: installed RageCoop entity lookup signatures are unsupported.");
             Notification.PostTicker(UiText.Get("~o~Эта версия RageCoop не поддерживает общий тюнинг и посадку через меню."), false);
         }
     }
@@ -68,10 +68,10 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        _presetsMenu = CreateMenu("Coop Control", "Гараж");
+        _presetsMenu = CreateMenu("OG Coop", "Гараж");
         _vehicleMenu.AddSubMenu(_presetsMenu);
         _pool.Add(_presetsMenu);
-        _presetDeleteMenu = CreateMenu("Coop Control", "Удалить сохранённую машину?");
+        _presetDeleteMenu = CreateMenu("OG Coop", "Удалить сохранённую машину?");
         _presetDeleteMenu.Parent = _presetsMenu;
         var cancel = UiMenu.Item(() => UiText.Get("Отмена"), () => UiText.Get("Вернуться к сохранённым машинам."));
         cancel.Activated += (_, _) => ClosePresetDeletion();
@@ -353,7 +353,7 @@ public sealed partial class AdminMenuScript
         }
         catch (Exception ex) when (IsVehicleStorageError(ex))
         {
-            Logger.Warning("Coop Control: rejected vehicle appearance: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: rejected vehicle appearance: " + ex.GetType().Name);
         }
     }
 

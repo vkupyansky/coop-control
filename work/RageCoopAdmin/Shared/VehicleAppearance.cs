@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // The same bounded contract is validated before persistence, before a request and on the server.
 [XmlRoot("VehicleAppearance")]

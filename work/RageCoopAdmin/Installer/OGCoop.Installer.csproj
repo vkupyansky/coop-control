@@ -7,7 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <AssemblyName>CoopInstaller</AssemblyName>
-    <RootNamespace>CoopControl.Installer</RootNamespace>
+    <RootNamespace>OGCoop.Installer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>

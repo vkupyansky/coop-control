@@ -53,6 +53,7 @@ internal static partial class Program
             CheckVehicleSpawnComposition();
             CheckVehicleCardComposition();
             CheckGameplayComposition();
+            CheckInteriorArrival();
             CheckMenuNavigationComposition();
             CheckIdleInputPolling();
             CheckConcurrentMenuStorage();
@@ -207,7 +208,7 @@ internal static partial class Program
             presets.Items[0].Title == "Сохранить текущую машину" && presets.Items[0].Enabled && !presets.Items[1].Enabled,
             "The actual empty garage retains its save action and disabled empty-state row.");
         Assert(new[] { "ChangeAppearance", "AddPaintRow", "OpenVehicleParts", "ChangePlate" }.All(name => script.GetMethod(name, Instance) == null) &&
-            Resource.GetType("CoopControl.Shared.VehicleAppearanceFactory") == null,
+            Resource.GetType("OGCoop.Shared.VehicleAppearanceFactory") == null,
             "The built client contains no separate appearance editor handlers or factory reset implementation.");
     }
 
@@ -421,8 +422,8 @@ internal static partial class Program
     {
         Type garageType = Resource.GetType("RageCoopAdmin.Client.GarageClient", true)!;
         object garage = Activator.CreateInstance(garageType, Instance, null, new object[] { new Action<int, object[]>((_, _) => { }) }, null)!;
-        string xml = (string)Resource.GetType("CoopControl.Shared.GarageCodec", true)!.GetMethod("Encode", Static)!
-            .Invoke(null, new[] { Activator.CreateInstance(Resource.GetType("CoopControl.Shared.GarageData", true)!)! })!;
+        string xml = (string)Resource.GetType("OGCoop.Shared.GarageCodec", true)!.GetMethod("Encode", Static)!
+            .Invoke(null, new[] { Activator.CreateInstance(Resource.GetType("OGCoop.Shared.GarageData", true)!)! })!;
         garageType.GetMethod("ApplyState", Instance)!.Invoke(garage, new object[] { new object[] { xml } });
         return garage;
     }

@@ -6,7 +6,7 @@ using Lidgren.Network;
 
 internal static partial class Program
 {
-    private static Type SharedGuard(string name) => Resource.GetType("CoopControl.Shared.Engine" + name + "Guard", true)!;
+    private static Type SharedGuard(string name) => Resource.GetType("OGCoop.Shared.Engine" + name + "Guard", true)!;
 
     private static void InstallSharedRuntimeGuards()
     {

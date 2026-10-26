@@ -9,7 +9,7 @@ using System.Threading;
 using HarmonyLib;
 using RageCoop.Core;
 
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 // Worker.Stop promises to finish the current job, rather than drain the queue.
 // Serialize producers with the stop transition; never hold this gate across Join.

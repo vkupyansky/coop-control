@@ -32,7 +32,7 @@ internal sealed class OnlineRadio
         _shown = true;
         int before = OnlineRadioNatives.UnlockedCount();
         foreach (string station in Stations) OnlineRadioNatives.Show(station);
-        _log("Coop Control: Online radio stations shown: " + before + " -> " + OnlineRadioNatives.UnlockedCount());
+        _log("OG Coop: Online radio stations shown: " + before + " -> " + OnlineRadioNatives.UnlockedCount());
     }
 
     // A new connection shows them again; repeating is harmless.

@@ -28,7 +28,7 @@ internal static class Program
                 "on the server the seven Online stations are put on the radio wheel");
             Check(!OnlineRadio.Stations.Contains("RADIO_36_AUDIOPLAYER") && OnlineRadio.Stations.All(name => name.StartsWith("RADIO_", StringComparison.Ordinal)),
                 "Media Player, which has no music in story mode, stays hidden");
-            Check(log.Single() == "Coop Control: Online radio stations shown: 20 -> 27", "the log tells how many stations the wheel has before and after");
+            Check(log.Single() == "OG Coop: Online radio stations shown: 20 -> 27", "the log tells how many stations the wheel has before and after");
             Shown.Clear();
             radio.Tick();
             Check(Shown.Count == 0, "they are shown once per connection, not every frame");

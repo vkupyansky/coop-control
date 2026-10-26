@@ -374,7 +374,7 @@ internal static partial class Program
             }
 
             Type inputType = Resource.GetType("RageCoopAdmin.Client.ResourceTextInput", true)!;
-            NativeMenu textMenu = LocalizedInputMenu("Coop Control", "Ввод текста");
+            NativeMenu textMenu = LocalizedInputMenu("OG Coop", "Ввод текста");
             object textInput = Activator.CreateInstance(inputType, Instance, null, new object[] { textMenu }, null)!;
             script.GetField("_textInput", Instance)!.SetValue(instance, textInput);
             pool.Add(textMenu);

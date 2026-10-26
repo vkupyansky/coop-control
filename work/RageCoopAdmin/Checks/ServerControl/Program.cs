@@ -18,7 +18,7 @@ Directory.CreateDirectory(root);
 try
 {
     string[] english = ServerBanner.Lines(4499, new[] { IPAddress.Parse("192.168.1.20"), IPAddress.Parse("100.101.102.103") }, russian: false);
-    Assert(english[0].Contains("Coop Control") && english[0].Contains("Vladislav Kupyansky (vkupyansky)") && english[0].Contains("@skibidessa"),
+    Assert(english[0].Contains("OG Coop") && english[0].Contains("Vladislav Kupyansky (vkupyansky)") && english[0].Contains("@skibidessa"),
         "The start banner names the product, the author and the contact.");
     Assert(english.Contains("  on this PC: 127.0.0.1:4499") && english.Contains("  on the same or a virtual network: 192.168.1.20:4499") &&
         english.Contains("  on the same or a virtual network: 100.101.102.103:4499") && english.Last().Contains("forward UDP 4499"),
@@ -44,13 +44,15 @@ try
     string releases = "[{\"url\":\"x\",\"author\":{\"login\":\"a\"},\"tag_name\":\"v0.9.0-wip\",\"name\":\"d\",\"draft\":true,\"prerelease\":true}," +
         "{\"tag_name\":\"v0.3.1-wip\",\"draft\":false,\"prerelease\":true,\"assets\":[{\"name\":\"a.zip\"}]}," +
         "{\"tag_name\":\"v0.2.0-wip\",\"draft\":false,\"prerelease\":true},{\"tag_name\":\"nightly\",\"draft\":false}]";
-    Assert(CoopControl.Shared.ReleaseCheck.Newest(releases) == new Version(0, 3, 1),
+    Assert(OGCoop.Shared.ReleaseCheck.Newest(releases) == new Version(0, 3, 1),
         "The newest published release is found among pre-releases; drafts and tags that are not versions are ignored.");
-    Assert(CoopControl.Shared.ReleaseCheck.IsNewer(new Version(0, 3, 1)) && !CoopControl.Shared.ReleaseCheck.IsNewer(CoopControl.Shared.ReleaseCheck.Current) &&
-        !CoopControl.Shared.ReleaseCheck.IsNewer(null) && CoopControl.Shared.ReleaseCheck.Current == new Version(0, 3, 0),
+    Version current = OGCoop.Shared.ReleaseCheck.Current;
+    Assert(OGCoop.Shared.ReleaseCheck.IsNewer(new Version(current.Major, current.Minor, current.Build + 1)) &&
+        !OGCoop.Shared.ReleaseCheck.IsNewer(current) && !OGCoop.Shared.ReleaseCheck.IsNewer(new Version(current.Major, current.Minor, 0)) &&
+        !OGCoop.Shared.ReleaseCheck.IsNewer(null) && current == Version.Parse(OGCoop.Shared.ProductInfo.Version),
         "Only a newer release is offered; this version and a failed check are not.");
-    Assert(CoopControl.Shared.ReleaseCheck.Newest("[]") == null && CoopControl.Shared.ReleaseCheck.Newest("not json") == null &&
-        CoopControl.Shared.ReleaseCheck.Newest(new string(' ', CoopControl.Shared.ReleaseCheck.MaximumResponse + 1)) == null,
+    Assert(OGCoop.Shared.ReleaseCheck.Newest("[]") == null && OGCoop.Shared.ReleaseCheck.Newest("not json") == null &&
+        OGCoop.Shared.ReleaseCheck.Newest(new string(' ', OGCoop.Shared.ReleaseCheck.MaximumResponse + 1)) == null,
         "An empty, broken or oversized answer offers nothing.");
 
     ServerProcessFile.Create(root);

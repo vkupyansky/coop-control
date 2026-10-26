@@ -43,11 +43,11 @@ public sealed partial class CoopAdminServer : ServerScript
 
     public override void OnStart()
     {
-        CoopControl.Shared.EngineLoggerGuard.Install();
+        OGCoop.Shared.EngineLoggerGuard.Install();
         try
         {
-            CoopControl.Shared.EngineWorkerGuard.Install();
-            CoopControl.Shared.EngineTransportGuard.Install();
+            OGCoop.Shared.EngineWorkerGuard.Install();
+            OGCoop.Shared.EngineTransportGuard.Install();
             EngineServerGuard.Install();
             EngineRelayGuard.Install();
         }
@@ -55,9 +55,9 @@ public sealed partial class CoopAdminServer : ServerScript
         {
             EngineRelayGuard.Uninstall();
             EngineServerGuard.Uninstall();
-            CoopControl.Shared.EngineTransportGuard.Uninstall();
-            CoopControl.Shared.EngineWorkerGuard.Uninstall();
-            CoopControl.Shared.EngineLoggerGuard.Uninstall();
+            OGCoop.Shared.EngineTransportGuard.Uninstall();
+            OGCoop.Shared.EngineWorkerGuard.Uninstall();
+            OGCoop.Shared.EngineLoggerGuard.Uninstall();
             throw;
         }
         API.RegisterCustomEventHandler(SpawnVehicleEvent, OnSpawnVehicle);
@@ -70,13 +70,16 @@ public sealed partial class CoopAdminServer : ServerScript
         RegisterWorldStateEvents();
         RegisterGhostTrafficEvents();
         RegisterGarageEvents();
+        RegisterCharacterEvents();
+        RegisterYachtEvents();
+        RegisterHomeEvents();
         RegisterSpecialPlaceEvents();
         API.Events.OnPlayerReady += OnPlayerReady;
         API.Events.OnPlayerDisconnected += OnPlayerDisconnected;
         API.Events.OnPlayerUpdate += OnRepairPlayerUpdate;
         API.Events.OnPlayerUpdate += OnWorldPlayerUpdate;
         API.Events.OnPlayerUpdate += OnGhostTrafficPlayerUpdate;
-        Logger.Info("Coop Control ready: shared world, vehicles and owner-confirmed repair");
+        Logger.Info("OG Coop ready: shared world, vehicles and owner-confirmed repair");
         int port = ServerBanner.ReadPort(System.IO.Path.Combine(AppContext.BaseDirectory, "Settings.xml"));
         foreach (string line in ServerBanner.Lines(port, ServerBanner.LocalAddresses(), ServerBanner.Russian)) Logger.Info(line);
         StartUpdateCheck();
@@ -91,9 +94,9 @@ public sealed partial class CoopAdminServer : ServerScript
         API.Events.OnPlayerUpdate -= OnWorldPlayerUpdate;
         API.Events.OnPlayerUpdate -= OnGhostTrafficPlayerUpdate;
         EngineServerGuard.Uninstall();
-        CoopControl.Shared.EngineTransportGuard.Uninstall();
-        CoopControl.Shared.EngineWorkerGuard.Uninstall();
-        CoopControl.Shared.EngineLoggerGuard.Uninstall();
+        OGCoop.Shared.EngineTransportGuard.Uninstall();
+        OGCoop.Shared.EngineWorkerGuard.Uninstall();
+        OGCoop.Shared.EngineLoggerGuard.Uninstall();
         pendingRepairs.Clear();
         lastSpawn.Clear();
         lastRepair.Clear();
@@ -376,6 +379,9 @@ public sealed partial class CoopAdminServer : ServerScript
         OnVehicleToolsPlayerDisconnected(client);
         RemoveWorldStateClient(client);
         OnGhostTrafficPlayerDisconnected(client);
+        OnCharacterPlayerDisconnected(client);
+        OnYachtPlayerDisconnected(client);
+        OnHomePlayerDisconnected(client);
         if (spawnedVehicles.Remove(client, out ServerVehicle? vehicle))
         {
             if (ReferenceEquals(API.Entities.GetVehicleByID(vehicle.ID), vehicle))

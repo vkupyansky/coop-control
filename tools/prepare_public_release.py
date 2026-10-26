@@ -32,10 +32,16 @@ DOC_NAMES = (
 )
 SCREENSHOT_FILES = (
     "screenshots/01-shared-play.png",
-    "screenshots/02-main-menu.png",
-    "screenshots/10-vehicle-catalog.png",
-    "screenshots/09-garage.png",
-    "screenshots/08-partners.png",
+    "screenshots/02-main-menu.jpg",
+    "screenshots/03-transport.jpg",
+    "screenshots/04-teleports.jpg",
+    "screenshots/05-character.jpg",
+    "screenshots/06-weapons.jpg",
+    "screenshots/07-yacht.jpg",
+    "screenshots/08-cayo-perico.jpg",
+    "screenshots/09-map.jpg",
+    "screenshots/10-casino.jpg",
+    "screenshots/11-casino-entrance.jpg",
 )
 PROJECT = Path("work/RageCoopAdmin")
 PUBLIC_BUILD = Path("outputs/public-build")
@@ -104,7 +110,7 @@ PROJECT_FILES = (
 PUBLIC_INSTALLER = PUBLIC_BUILD / "Installer/Release/net48/CoopInstaller.exe"
 EXTRA_FILES = (
     (Path("publication/ScriptHookVDotNet.ini"), "client/ScriptHookVDotNet.ini", "publication/ScriptHookVDotNet.ini"),
-    (Path("work/ReShade/CoopControl.ini"), "reshade/CoopControl.ini", "work/ReShade/CoopControl.ini"),
+    (Path("work/ReShade/OGCoop.ini"), "reshade/OGCoop.ini", "work/ReShade/OGCoop.ini"),
 )
 # GitHub issue forms; they live in the repository, not in the add-on.
 REPOSITORY_FILES = (
@@ -181,15 +187,15 @@ TEXT_SUFFIXES = frozenset(
 )
 # Our own binaries; third-party and baseline files are pinned elsewhere.
 OWN_BINARIES = (
-    "client/scripts/CoopControl.EarlyClient.dll",
-    "server/Resources/Client/CoopControl/RageCoopAdmin.Client.dll",
+    "client/scripts/OGCoop.EarlyClient.dll",
+    "server/Resources/Client/OGCoop/RageCoopAdmin.Client.dll",
     "server/Resources/Server/CoopAdmin/CoopAdmin.dll",
     "server/Bootstrap/CoopAdmin.Startup.dll",
     "Install.exe",
 )
 SKIP_DIRECTORIES = frozenset(("bin", "obj", "lib", "__pycache__"))
-ARCHIVE_NAMES = ("CoopControl-Addon.zip", "CoopControl-Source.zip")
-MANIFEST_NAME = "CoopControl-manifest.json"
+ARCHIVE_NAMES = ("OGCoop-Addon.zip", "OGCoop-Source.zip")
+MANIFEST_NAME = "OGCoop-manifest.json"
 OUTPUT_DIRECTORY = Path("outputs/public")
 CHUNK_SIZE = 1024 * 1024
 PRIVATE_PATH = re.compile(
@@ -713,14 +719,14 @@ def collect_inputs(
     binary.extend(baseline)
     binary_inputs = (
         (
-            PUBLIC_BUILD / "EarlyClient/Release/net48/CoopControl.EarlyClient.dll",
-            "client/scripts/CoopControl.EarlyClient.dll",
+            PUBLIC_BUILD / "EarlyClient/Release/net48/OGCoop.EarlyClient.dll",
+            "client/scripts/OGCoop.EarlyClient.dll",
         ),
         (PUBLIC_BUILD / "EarlyClient/Release/net48/0Harmony.dll", "client/scripts/0Harmony.dll"),
-        (public_client, "server/Resources/Client/CoopControl/RageCoopAdmin.Client.dll"),
+        (public_client, "server/Resources/Client/OGCoop/RageCoopAdmin.Client.dll"),
         (
             PUBLIC_BUILD / "EarlyClient/Release/net48/0Harmony.dll",
-            "server/Resources/Client/CoopControl/0Harmony.dll",
+            "server/Resources/Client/OGCoop/0Harmony.dll",
         ),
         (
             PUBLIC_BUILD / "Server/Release/net10.0/CoopAdmin.dll",

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using Lidgren.Network;
 
 internal static partial class Program

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using RageCoop.Server;
 using RageCoop.Server.Scripting;
 

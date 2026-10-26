@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using HarmonyLib;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;

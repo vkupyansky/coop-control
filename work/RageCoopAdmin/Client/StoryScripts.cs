@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using GTA;
+using GTA.Input;
 using GTA.Native;
 
 namespace RageCoopAdmin.Client;
@@ -12,7 +13,12 @@ namespace RageCoopAdmin.Client;
 // freaks, random events, side jobs and collectibles. The scripts that run the
 // game, shops, phone, Los Santos Customs, respawn and the map icons
 // (blip_controller: it draws the shops' icons too) stay; StoryBlipHider hides
-// the story characters' icons instead. Scripts the game started once at load
+// the story characters' icons instead. The hero wheel (selector) is stopped
+// as well: the user turned hero switching off on the server. So are the
+// clothes shops, barbers, tattoo parlours and the safehouse wardrobe: they
+// dress the story hero, and an Online character (which the game takes for that
+// hero) would get the hero's clothes; looks change in our character editor
+// instead. Scripts the game started once at load
 // (the story flow, calls) stay stopped until GTA restarts; those the world
 // starts on its own (random events, side jobs) return after disconnecting.
 internal static class StoryScripts
@@ -82,12 +88,36 @@ internal static class StoryScripts
         "taxi_followcar", "taxi_gotyounow", "taxi_gotyourback", "taxi_needexcitement", "taxi_procedural",
         "taxi_takeiteasy", "taxi_taketobest", "taxitutorial", "towing", "traffick_air", "traffick_ground",
         "traffickingsettings", "traffickingteleport", "triathlonsp",
-        // Коллекционные предметы (11)
-        "ambient_diving", "ambient_sonar", "ambient_ufos", "flyunderbridges", "murdermystery", "photographymonkey",
-        "photographywildlife", "shot_bikejump", "spaceshipparts", "ufo", "underwaterpickups",
+        // Коллекционные предметы (12)
+        "ambient_diving", "ambient_sonar", "ambient_ufos", "flyunderbridges", "forsalesigns", "murdermystery",
+        "photographymonkey", "photographywildlife", "shot_bikejump", "spaceshipparts", "ufo", "underwaterpickups",
         // Живой мир (2)
         "cheat_controller", "restrictedareas",
+        // Колесо выбора персонажа (1): смена героя на сервере запрещена
+        "selector",
+        // Магазины одежды, парикмахерские, салоны татуировок и гардероб в
+        // убежище (4): они одевают героя сюжета, а внешность персонажа меняется
+        // в нашем редакторе
+        "clothes_shop_sp", "hairdo_shop_sp", "tattoo_shop", "wardrobe_sp",
     };
+}
+
+// Switching heroes is off on the server. The wheel's script is stopped with
+// the story; these keys are blocked too, so the wheel cannot open in the
+// frames before the stopper reaches it. The gamepad menu shortcut reads the
+// wheel button as a disabled control and keeps working. Game thread only.
+internal static class HeroSwitch
+{
+    internal static readonly ControlAction[] Keys =
+    {
+        ControlAction.CharacterWheel, ControlAction.SelectCharacterMichael, ControlAction.SelectCharacterFranklin,
+        ControlAction.SelectCharacterTrevor, ControlAction.SelectCharacterMultiplayer,
+    };
+
+    internal static void Block()
+    {
+        foreach (ControlAction action in Keys) Controls.DisableControlActionThisFrame(ControlType.PlayerControl, action);
+    }
 }
 
 // Checks a few names each frame and stops any that runs; a parent that starts
@@ -122,13 +152,20 @@ internal sealed class StoryScriptStopper
             _next = (_next + 1) % _names.Length;
             if (!StoryScriptNatives.IsRunning(_hashes[index])) continue;
             StoryScriptNatives.Stop(_names[index]);
-            if (_logged.Add(_names[index])) _log?.Invoke("Coop Control: stopped story script " + _names[index] + ".");
+            if (_logged.Add(_names[index])) _log?.Invoke("OG Coop: stopped story script " + _names[index] + ".");
         }
+
+        // A story script's save request queues "autosave is off" help; the
+        // story scripts that would take it down again are stopped.
+        if (StoryScriptNatives.IsHelpShown(SaveOffHelp)) StoryScriptNatives.ClearHelp();
     }
+
+    internal const string SaveOffHelp = "SAVE_OFF";
 }
 
 // Story characters' map icons: mission letters, strangers' question marks and
-// story contacts. blip_controller draws them together with the icons of shops,
+// story contacts, plus the clothes shops, barbers and tattoo parlours that are
+// closed on the server. blip_controller draws them together with the icons of other shops,
 // Los Santos Customs and activities, so it keeps running and only these icons
 // are hidden, once a second (it may show them again). Sprite numbers from the
 // FiveM blip list source (docs: game-references/blips, build 3258; radar_*_family,
@@ -149,6 +186,7 @@ internal sealed class StoryBlipHider
         292, 293, 352, 355, // band_strand, simeon_family, martin_madrazzo, devin
         381, 382, 383, 384, 385, 386, 387, 388, 389, // barry, dom, maryann, cletus, josh, minute, omega, tonya, paparazzo
         400, // abigail
+        71, 73, 75, // radar_barber, radar_clothes_store, radar_tattoo: closed on the server
     };
 
     private readonly Action<string>? _log;
@@ -175,7 +213,7 @@ internal sealed class StoryBlipHider
         if (hidden > 0 && !_logged)
         {
             _logged = true;
-            _log?.Invoke("Coop Control: hid " + hidden + " story map icons.");
+            _log?.Invoke("OG Coop: hid " + hidden + " story map icons.");
         }
     }
 
@@ -208,4 +246,12 @@ internal static class StoryScriptNatives
     internal static bool IsRunning(int hash) => Function.Call<int>((Hash)0x2C83A9DA6BFFC4F9UL, hash) > 0; // GET_NUMBER_OF_THREADS_RUNNING_THE_SCRIPT_WITH_THIS_HASH
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void Stop(string name) => Function.Call((Hash)0x9DC711BC69C548DFUL, name); // TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static bool IsHelpShown(string label)
+    {
+        Function.Call((Hash)0x0A24DA3A41B718F5UL, label); // BEGIN_TEXT_COMMAND_IS_THIS_HELP_MESSAGE_BEING_DISPLAYED
+        return Function.Call<bool>((Hash)0x10BDDBFC529428DDUL, 0); // END_TEXT_COMMAND_IS_THIS_HELP_MESSAGE_BEING_DISPLAYED
+    }
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    internal static void ClearHelp() => Function.Call((Hash)0x8DFCED7A656F8802UL, true); // CLEAR_HELP
 }

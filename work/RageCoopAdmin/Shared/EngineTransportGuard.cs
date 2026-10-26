@@ -1,4 +1,4 @@
-namespace CoopControl.Shared;
+namespace OGCoop.Shared;
 
 internal static class EngineTransportGuard
 {

@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using CoopAdmin.Server;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Math;
 using HarmonyLib;
 using Lidgren.Network;
@@ -92,8 +92,8 @@ internal static partial class Program
             "unrelated resources retain their ordinary file names and actual lengths");
         ((IDictionary)Field(resources, "ClientResources")).Clear();
         using var separate = new MemoryStream(new byte[] { 1, 2, 3 }, writable: false);
-        Call(fixture.Server, "SendFile", separate, "CoopControl.res", fixture.First, 0, null);
-        Assert(fixture.FileOffers.Values.Count(offer => offer.Name == "CoopControl.res") == 1,
+        Call(fixture.Server, "SendFile", separate, "OGCoop.res", fixture.First, 0, null);
+        Assert(fixture.FileOffers.Values.Count(offer => offer.Name == "OGCoop.res") == 1,
             "an ordinary SendFile with the same name is not treated as the owned client resource");
         fixture.ThrowPumpFailure();
     }
@@ -106,7 +106,7 @@ internal static partial class Program
         string previousName = SendResourceVersion(first);
         string nextName = SendResourceVersion(second);
         Assert(previousName != nextName && first.Length == second.Length,
-            "changed CoopControl bytes produce a new cache name even when both resource versions have the same length");
+            "changed OGCoop bytes produce a new cache name even when both resource versions have the same length");
     }
 
     private static string SendResourceVersion(byte[] bytes)
@@ -115,17 +115,17 @@ internal static partial class Program
         using var stream = new SlowStream(bytes);
         stream.Position = 11;
         object resources = Field(fixture.Server, "Resources");
-        ((IDictionary)Field(resources, "ClientResources")).Add("CoopControl", stream);
+        ((IDictionary)Field(resources, "ClientResources")).Add("OGCoop", stream);
         Call(resources, "SendTo", fixture.First);
         Call(resources, "SendTo", fixture.Second);
         WaitUntil(() => { fixture.ThrowPumpFailure(); return fixture.First.IsReady && fixture.Second.IsReady; },
             "content-addressed resource loading did not finish");
-        string expected = "CoopControl." + Convert.ToHexStringLower(SHA256.HashData(bytes)) + ".res";
+        string expected = "OGCoop." + Convert.ToHexStringLower(SHA256.HashData(bytes)) + ".res";
         Assert(fixture.FileOffers.Count == 2 && fixture.FileOffers.Values.All(offer => offer.Name == expected && offer.Length == bytes.Length) &&
             fixture.Downloads.Count == 2 && fixture.Downloads.Values.All(value => value.SequenceEqual(bytes)),
             "actual Resources.SendTo offers both clients the SHA256 name and transfers the matching original bytes and length");
         Assert(stream.BytesRead == bytes.Length * 3L && stream.ConcurrentReads == 0,
-            "one immutable CoopControl stream is hashed once and both complete transfers share its monitor");
+            "one immutable OGCoop stream is hashed once and both complete transfers share its monitor");
         ((IDictionary)Field(resources, "ClientResources")).Clear();
         return expected;
     }

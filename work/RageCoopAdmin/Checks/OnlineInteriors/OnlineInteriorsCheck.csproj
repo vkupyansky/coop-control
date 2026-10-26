@@ -13,6 +13,9 @@
     <Compile Include="../../Client/OnlineInteriors.cs" Link="OnlineInteriors.cs" />
     <Compile Include="../../Client/MapIconBudget.cs" Link="MapIconBudget.cs" />
     <Compile Include="../../Client/SpecialPlaceNatives.cs" Link="SpecialPlaceNatives.cs" />
+    <Compile Include="../../Client/SpecialPlaces.cs" Link="SpecialPlaces.cs" />
+    <Compile Include="../../Shared/SpecialPlaceProtocol.cs" Link="SpecialPlaceProtocol.cs" />
+    <Compile Include="../../Shared/Home.cs" Link="Home.cs" />
     <Compile Include="../../Shared/Finite.cs" Link="Finite.cs" />
     <Reference Include="ScriptHookVDotNet3"><HintPath>$(RageCoopServerDir)/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
   </ItemGroup>

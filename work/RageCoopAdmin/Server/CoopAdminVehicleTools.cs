@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA.Native;
 using RageCoop.Server;
 using RageCoop.Server.Scripting;

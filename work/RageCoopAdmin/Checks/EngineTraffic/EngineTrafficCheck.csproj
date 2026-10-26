@@ -18,7 +18,9 @@
     <Compile Include="../../Client/EngineTrafficGuard.cs" Link="EngineTrafficGuard.cs" />
     <Compile Include="../../Client/EngineTrafficPolicy.cs" Link="EngineTrafficPolicy.cs" />
     <Compile Include="../../Client/TrafficHandover.cs" Link="TrafficHandover.cs" />
+    <Compile Include="../../Client/PassengerPopulation.cs" Link="PassengerPopulation.cs" />
     <Compile Include="../../Client/FullSnapshotSchedule.cs" Link="FullSnapshotSchedule.cs" />
+    <Compile Include="../../Client/LocalPeds.cs" Link="LocalPeds.cs" />
     <Reference Include="RageCoop.Client"><HintPath>$(RageCoopClientDir)/RageCoop.Client.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="RageCoop.Core"><HintPath>$(RageCoopServerDir)/RageCoop.Core.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="ScriptHookVDotNet3"><HintPath>$(RageCoopServerDir)/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>

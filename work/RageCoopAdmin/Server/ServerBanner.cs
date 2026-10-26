@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Xml;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 
@@ -77,9 +77,9 @@ internal static class ServerBanner
         }
     }
 
-    // COOP_CONTROL_LANGUAGE=ru|en overrides the system language: a terminal's
+    // OG_COOP_LANGUAGE=ru|en overrides the system language: a terminal's
     // locale is often English on a Russian computer.
-    internal static bool Russian => Environment.GetEnvironmentVariable("COOP_CONTROL_LANGUAGE") switch
+    internal static bool Russian => Environment.GetEnvironmentVariable("OG_COOP_LANGUAGE") switch
     {
         "ru" => true,
         "en" => false,

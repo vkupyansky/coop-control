@@ -26,7 +26,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        _favoritesMenu = CreateMenu("Coop Control", "Избранное");
+        _favoritesMenu = CreateMenu("OG Coop", "Избранное");
         _vehicleMenu.AddSubMenu(_favoritesMenu);
         _pool.Add(_favoritesMenu);
         RefreshFavoritesMenu();

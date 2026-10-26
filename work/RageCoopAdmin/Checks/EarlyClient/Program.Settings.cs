@@ -155,7 +155,7 @@ internal static partial class EarlyClientLifecycle
         string earlyKey = early.Name + "-" + early.Version + typeof(EarlyClientScript).FullName + "%%";
         string mainKey = engine.Name + "-" + engine.Version + "RageCoop.Client.Main%%";
         var actualOrder = new SortedList<string, string> { [mainKey] = "Main", [earlyKey] = "Early" };
-        Assert(early.Name == "CoopControl.EarlyClient" && actualOrder.Values.SequenceEqual(new[] { "Early", "Main" }),
+        Assert(early.Name == "OGCoop.EarlyClient" && actualOrder.Values.SequenceEqual(new[] { "Early", "Main" }),
             "The built early assembly sorts before the installed RageCoop.Client.Main under the actual host key contract.");
     }
 }

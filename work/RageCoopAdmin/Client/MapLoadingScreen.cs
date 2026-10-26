@@ -22,7 +22,7 @@ internal static class MapLoadingScreen
         Function.Call((Hash)0x61BB1D9B3A95D802UL, AfterFade); // SET_SCRIPT_GFX_DRAW_ORDER
         Function.Call(Hash.DRAW_RECT, 0.5f, 0.5f, 1f, 1f, 10, 12, 15, alpha, false);
 
-        Text(UiText.Get("Coop Control").ToUpperInvariant(), 0.355f, 0.34f, 255, 167, 46, alpha);
+        Text(UiText.Get("OG Coop").ToUpperInvariant(), 0.355f, 0.34f, 255, 167, 46, alpha);
         Function.Call(Hash.DRAW_RECT, 0.5f, 0.392f, 0.036f, 0.0028f, 255, 167, 46, alpha, false);
         Text(UiText.Get("Загружаем карту"), 0.41f, 0.85f, 236, 234, 230, alpha);
         Text(UiText.Get("Авианосцы, яхты, грузовое судно и аэродром"), 0.505f, 0.42f, 170, 178, 188, alpha);
@@ -45,6 +45,8 @@ internal static class MapLoadingScreen
 
     internal static void FadeOut(int milliseconds) => Function.Call((Hash)0x891B5B39AC6302AFUL, milliseconds); // DO_SCREEN_FADE_OUT
     internal static void FadeIn(int milliseconds) => Function.Call((Hash)0xD4E8E24955024033UL, milliseconds); // DO_SCREEN_FADE_IN
+    internal static bool IsFadedOut() => Function.Call<bool>((Hash)0xB16FCE9DDC7BA182UL); // IS_SCREEN_FADED_OUT
+    internal static bool IsFadingOut() => Function.Call<bool>((Hash)0x797AC7CB535BA28FUL); // IS_SCREEN_FADING_OUT
 
     private static void Text(string text, float y, float scale, int r, int g, int b, int alpha)
     {

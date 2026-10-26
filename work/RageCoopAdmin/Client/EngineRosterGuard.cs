@@ -8,7 +8,7 @@ using System.Threading;
 using Blip = GTA.Blip;
 using HarmonyLib;
 using RageCoop.Client;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 

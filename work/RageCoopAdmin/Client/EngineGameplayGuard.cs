@@ -11,7 +11,7 @@ using HarmonyLib;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
 using Player = RageCoop.Client.Player;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
@@ -76,6 +76,7 @@ internal static class EngineGameplayGuard
     internal static void Uninstall()
     {
         _epoch = new object();
+        ShownIds.Clear();
         lock (PendingVehicles) { PendingVehicles.Clear(); }
         if (_harmony != null)
         {
@@ -196,8 +197,28 @@ internal static class EngineGameplayGuard
         SetupVehicle.Invoke(vehicle, Array.Empty<object>());
     }
 
+    // A remote projectile is shown here once per projectile number. When its
+    // copy explodes or vanishes before the shooter's (it hit something earlier
+    // here), RageCoop drops the record, and the shooter's next update of the
+    // still-flying original makes a new record with the same number — which
+    // shot one more copy from the latest position: a stream of rockets and
+    // explosions along the path. Numbers are remembered for ShownSeconds.
+    private const int ShownSeconds = 30;
+    private static readonly Dictionary<int, long> ShownIds = new Dictionary<int, long>();
+
+    private static bool AlreadyShown(int id, long now)
+    {
+        if (ShownIds.Count > 256)
+        {
+            foreach (int old in ShownIds.Where(entry => now - entry.Value > Stopwatch.Frequency * ShownSeconds).Select(entry => entry.Key).ToArray())
+                ShownIds.Remove(old);
+        }
+        return ShownIds.TryGetValue(id, out long shown) && now - shown <= Stopwatch.Frequency * ShownSeconds;
+    }
+
     private static bool BeforeProjectile(object __instance)
     {
+        if (AlreadyShown(((SyncedEntity)__instance).ID, Timestamp())) { return false; }
         if (ProjectileShooter.GetValue(__instance) is not SyncedEntity shooter || !API.IsOnServer ||
             EntityOwner.GetValue(shooter) is not Player owner) { return false; }
         Entity? source = shooter is SyncedPed ped ? ped.MainPed : (shooter as SyncedVehicle)?.MainVehicle;
@@ -226,6 +247,7 @@ internal static class EngineGameplayGuard
         foreach (int handle in handles.Keys.Cast<int>().Where(handle => ReferenceEquals(handles[handle], synced)).ToArray()) { handles.Remove(handle); }
         ProjectileObject.SetValue(synced, created);
         AddProjectile.Invoke(null, new object[] { synced });
+        ShownIds[synced.ID] = Timestamp();
         return false;
     }
 

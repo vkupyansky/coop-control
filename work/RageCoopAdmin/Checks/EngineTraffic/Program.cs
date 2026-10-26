@@ -70,6 +70,11 @@ internal static class Program
             "A copy near this player is taken over only after 1.5 s of silence while its owner keeps sending.");
         Assert(EngineTrafficPolicy.CreateNearbyCopy(149f * 149f) && !EngineTrafficPolicy.CreateNearbyCopy(151f * 151f) &&
             !EngineTrafficPolicy.CreateNearbyCopy(float.NaN), "Another player's cars within 150 m of this player are always copied; farther ones keep RageCoop's limit.");
+        Assert(EngineTrafficPolicy.CopyNearbyPed(4, 72, 0) && !EngineTrafficPolicy.CopyNearbyPed(1, 72, 0) &&
+            EngineTrafficPolicy.CopyNearbyPed(1, 72, 72) && !EngineTrafficPolicy.CopyNearbyPed(1, 73, 72),
+            "Nearby pedestrians are copied in full only from the player whose car this player rides in.");
+        Assert(EngineTrafficPolicy.MayAdopt(72, 0) && EngineTrafficPolicy.MayAdopt(73, 72) && !EngineTrafficPolicy.MayAdopt(72, 72),
+            "A passenger does not keep the driver's removed NPCs and cars as its own.");
         Assert(!EngineTrafficPolicy.CanCull(true, false, false, false, float.NaN) &&
             !EngineTrafficPolicy.CanCull(true, false, false, false, float.PositiveInfinity), "Invalid distance never authorizes a deletion.");
         Assert(EngineTrafficPolicy.SuppressSpawn(false, false, false, 100f * 100f, 50f * 50f),
@@ -91,9 +96,23 @@ internal static class Program
         List<CodeInstruction> original = PatchProcessor.GetOriginalInstructions(sync);
         Assert(EngineTrafficGuard.HasCullGates(original, sync), "Both installed soft-limit comparisons and their typed candidate locals match.");
         CodeInstruction[] rewritten = EngineTrafficGuard.ProtectTraffic(original, sync).ToArray();
-        Assert(rewritten.Length == original.Count + 4 && rewritten.Count(code => code.operand is MethodInfo method &&
+        Assert(rewritten.Length == original.Count + 5 && rewritten.Count(code => code.operand is MethodInfo method &&
             method.DeclaringType == typeof(EngineTrafficGuard) && (method.Name == "CanCullPed" || method.Name == "CanCullVehicle")) == 2,
-            "Exactly two protection predicates are added to DoSync.");
+            "Exactly two protection predicates and the local-people filter are added to DoSync.");
+        int list = EngineTrafficGuard.FindPedList(original);
+        Assert(list >= 0 && rewritten[list + 1].operand is MethodInfo filter && filter.DeclaringType == typeof(LocalPeds) &&
+            filter.Name == nameof(LocalPeds.Without) && rewritten[list + 2].opcode == OpCodes.Stsfld &&
+            rewritten.Count(code => code.operand is MethodInfo method && method.DeclaringType == typeof(LocalPeds)) == 1,
+            "DoSync's list of all NPCs passes through LocalPeds before RageCoop picks new ones to send.");
+        LocalPeds.Add(1001);
+        Assert(LocalPeds.Without(new[] { NativeEntity<Ped>(1000), NativeEntity<Ped>(1001) }).Select(ped => ped.Handle).SequenceEqual(new[] { 1000 }),
+            "A ped this game placed for itself (interior people, yacht captains) is left out of RageCoop's list.");
+        LocalPeds.Remove(1001);
+        Assert(LocalPeds.Without(new[] { NativeEntity<Ped>(1000), NativeEntity<Ped>(1001) }).Length == 2, "A removed ped is sent again like any other.");
+        LocalPeds.Add(2002);
+        Assert(LocalPeds.Without(new[] { NativeEntity<Ped>(1000) }).Length == 1 &&
+            LocalPeds.Without(new[] { NativeEntity<Ped>(1000), NativeEntity<Ped>(2002) }).Length == 2,
+            "A registered ped the game no longer has frees its handle, so a new NPC given that handle is sent as usual.");
         Assert(rewritten.Count(code => code.operand is MethodInfo method && method.Name == "get_PopulationType") ==
             original.Count(code => code.operand is MethodInfo method && method.Name == "get_PopulationType"),
             "Original ambient population rules remain in the engine.");
@@ -284,13 +303,14 @@ internal static class Program
         object previousLocal = localField.GetValue(null)!;
         Dictionary<int, SyncedVehicle> vehicles = PoolDictionary<SyncedVehicle>("VehiclesByID");
         Dictionary<int, SyncedPed> peds = PoolDictionary<SyncedPed>("PedsByID");
-        int[] vehicleIds = { 870103, 870104 }, pedIds = { 870203, 870204, 870205 };
-        object Packet(string handler, int id, Vector3 position, byte speed = 0)
+        int[] vehicleIds = { 870103, 870104 }, pedIds = { 870203, 870204, 870205, 870206, 870207 };
+        FieldInfo ridingWith = typeof(PassengerPopulation).GetField("_ridingWith", Static)!;
+        object Packet(string handler, int id, Vector3 position, byte speed = 0, int owner = 72)
         {
             Type type = EngineTrafficGuard.FindReceive(handler)!.GetParameters()[0].ParameterType;
             object packet = Activator.CreateInstance(type, true)!;
             type.GetProperty("ID")!.SetValue(packet, id);
-            type.GetProperty("OwnerID")!.SetValue(packet, 72);
+            type.GetProperty("OwnerID")!.SetValue(packet, owner);
             type.GetProperty("Position")!.SetValue(packet, position);
             if (handler == "PedSync") type.GetProperty("Speed")!.SetValue(packet, speed);
             return packet;
@@ -314,9 +334,15 @@ internal static class Program
             Prefix("BeforeReceivePed", Packet("PedSync", pedIds[2], new Vector3(30, 0, 0), speed: 4));
             Assert(peds.TryGetValue(pedIds[2], out SyncedPed? driver) && driver.ID == pedIds[2],
                 "The NPC driving another player's car near this player gets its real pool record, so the car is not driverless.");
+            ridingWith.SetValue(null, 72);
+            Prefix("BeforeReceivePed", Packet("PedSync", pedIds[3], new Vector3(30, 0, 0), speed: 1));
+            Prefix("BeforeReceivePed", Packet("PedSync", pedIds[4], new Vector3(30, 0, 0), speed: 1, owner: 73));
+            Assert(peds.ContainsKey(pedIds[3]) && !peds.ContainsKey(pedIds[4]),
+                "Riding in a player's car, all of that player's nearby pedestrians get real pool records; a third player's keep the limit.");
         }
         finally
         {
+            ridingWith.SetValue(null, 0);
             localField.SetValue(null, previousLocal);
             foreach (int id in vehicleIds) vehicles.Remove(id);
             foreach (int id in pedIds) peds.Remove(id);
@@ -375,9 +401,15 @@ internal static class Program
             TrafficHandover.Tick(Stopwatch.GetTimestamp());
             Assert(HandoverReleases.Count == 0 && vehicles.ContainsKey(873104),
                 "When the owner itself has gone silent (paused or connection lost), nothing is taken over.");
+            HandoverSilences[72] = 100; TrafficHandover.Reset();
+            typeof(PassengerPopulation).GetField("_ridingWith", Static)!.SetValue(null, 72);
+            TrafficHandover.Tick(Stopwatch.GetTimestamp());
+            Assert(HandoverReleases.Count == 0 && vehicles.ContainsKey(873104),
+                "Riding in the owner's car, what the owner removed is not kept here either.");
         }
         finally
         {
+            typeof(PassengerPopulation).GetField("_ridingWith", Static)!.SetValue(null, 0);
             localField.SetValue(null, previousLocal);
             patch.UnpatchAll(patchId);
             foreach (int id in new[] { 72, 873001 }) peds.Remove(id);

@@ -119,7 +119,7 @@ internal static partial class EarlyClientLifecycle
 
             byte[] client = File.ReadAllBytes(Path.Combine(binaries, "RageCoopAdmin.Client.dll"));
             byte[] harmony = File.ReadAllBytes(Path.Combine(binaries, "0Harmony.dll"));
-            string actual = Archive("CoopControl.fixture", ("RageCoopAdmin.Client.dll", client), ("0Harmony.dll", harmony),
+            string actual = Archive("OGCoop.fixture", ("RageCoopAdmin.Client.dll", client), ("0Harmony.dll", harmony),
                 ("native.dll", new byte[] { 1, 2, 3 }), ("nested/ignored.dll", client),
                 ("assets/readme.txt", Encoding.UTF8.GetBytes("resource fixture")));
             for (int reload = 0; reload < 2; reload++)
@@ -129,8 +129,8 @@ internal static partial class EarlyClientLifecycle
                 Load(loader, actual);
                 AssertClean(start);
                 var loaded = (ClientResource)Loaded(loader)[0]!;
-                Assert(Loaded(loader).Count == 1 && loaded.Name == "CoopControl.fixture" &&
-                    loaded.DataFolder == Path.Combine(root, "data", "CoopControl.fixture") && loaded.Files.Count == 5 &&
+                Assert(Loaded(loader).Count == 1 && loaded.Name == "OGCoop.fixture" &&
+                    loaded.DataFolder == Path.Combine(root, "data", "OGCoop.fixture") && loaded.Files.Count == 5 &&
                     loaded.Files["assets/readme.txt"].Name == "assets/readme.txt" && !loaded.Files["native.dll"].IsDirectory &&
                     loaded.Files.ContainsKey("nested/ignored.dll"),
                     "The actual loader retains archive file metadata, resource name and its data-directory contract.");

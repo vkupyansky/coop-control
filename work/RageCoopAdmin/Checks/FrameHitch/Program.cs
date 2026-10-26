@@ -44,7 +44,7 @@ internal static class Program
         monitor.Frame(now += FrameHitchMonitor.FreezeMilliseconds, 57, 0, Context);
         monitor.Frame(now += 4800, 210, 0, Context);
         Check(logs.Count == 2 && ContextCalls == 2, "each frame at or over the threshold is logged once with its context");
-        Check(logs[1] == "Coop Control: freeze 4800 ms; pending loads 210; ctx", "a freeze line names its length, the pending loads and the context");
+        Check(logs[1] == "OG Coop: freeze 4800 ms; pending loads 210; ctx", "a freeze line names its length, the pending loads and the context");
     }
 
     // The stopped-game watch runs on its timer's simulated steps.
@@ -62,7 +62,7 @@ internal static class Program
         Check(logs.Count == 0, "time with the window in the background does not count");
         watch.Check(250, true);
         watch.Check(250, true);
-        Check(logs.Count == 1 && logs[0] == "Coop Control: game stopped: no frame for 10 s with the window in front; Coop Control step: map load; RageCoop ticks running: Main resources",
+        Check(logs.Count == 1 && logs[0] == "OG Coop: game stopped: no frame for 10 s with the window in front; OG Coop step: map load; RageCoop ticks running: Main resources",
             "a stop is reported once while it lasts, with our step and the running RageCoop ticks");
         watch.Frame();
         watch.Check(250, true);
@@ -83,14 +83,14 @@ internal static class Program
         for (int i = 0; i < 1170; i++) monitor.Frame(now += 50, i % 2 == 0 ? 10 : 30, 0, Context);
         monitor.Frame(now += 150, 20, 0, Context);
         monitor.Frame(now += 1000, 400, 0, Context);
-        Check(logs.Count == 1 && logs[0].StartsWith("Coop Control: freeze 1000 ms", StringComparison.Ordinal), "the freeze is logged before the minute closes");
+        Check(logs.Count == 1 && logs[0].StartsWith("OG Coop: freeze 1000 ms", StringComparison.Ordinal), "the freeze is logged before the minute closes");
         while (now < FrameHitchMonitor.SummaryMilliseconds) monitor.Frame(now += 50, 10, 0, Context);
         Check(logs.Count == 2, "a summary line closes the minute");
         string summary = logs[1];
-        Check(summary.StartsWith("Coop Control: last 60 s: ", StringComparison.Ordinal) && summary.Contains(" fps; slow frames 2; freezes 1; worst frame 1000 ms;") &&
+        Check(summary.StartsWith("OG Coop: last 60 s: ", StringComparison.Ordinal) && summary.Contains(" fps; slow frames 2; freezes 1; worst frame 1000 ms;") &&
             summary.Contains("pending loads avg ") && summary.Contains(", max 400; ctx"),
             "the summary counts slow frames (the freeze too), freezes, the worst frame and the pending-load peak: " + summary);
-        string fps = summary.Substring("Coop Control: last 60 s: ".Length).Split(' ')[0];
+        string fps = summary.Substring("OG Coop: last 60 s: ".Length).Split(' ')[0];
         Check(fps.Contains('.') && !fps.Contains(',') && double.Parse(fps, System.Globalization.CultureInfo.InvariantCulture) is > 19.0 and < 21.0,
             "frame rate is written with a dot and matches the simulated 20 fps: " + fps);
         long next = now + FrameHitchMonitor.SummaryMilliseconds - 100;
@@ -107,13 +107,13 @@ internal static class Program
         long now = 0;
         monitor.Frame(now, 0, 0, Context);
         monitor.Frame(now += 120_000, 0, 119_750, Context);
-        Check(logs.SequenceEqual(new[] { "Coop Control: game window inactive 120000 ms, not a freeze." }),
+        Check(logs.SequenceEqual(new[] { "OG Coop: game window inactive 120000 ms, not a freeze." }),
             "two minutes with the window in the background are logged as time away, not as a freeze");
         monitor.Frame(now += 9_000, 0, 1_000, Context);
-        Check(logs.Count == 2 && logs[1] == "Coop Control: freeze 8000 ms (plus 1000 ms with the window inactive); pending loads 0; ctx",
+        Check(logs.Count == 2 && logs[1] == "OG Coop: freeze 8000 ms (plus 1000 ms with the window inactive); pending loads 0; ctx",
             "a real freeze counts only the time the window was in front");
         while (logs.Count == 2) monitor.Frame(now += 16, 0, 0, Context);
-        Check(logs[2].StartsWith("Coop Control: last 60 s: ", StringComparison.Ordinal) && logs[2].Contains("freezes 1;") &&
+        Check(logs[2].StartsWith("OG Coop: last 60 s: ", StringComparison.Ordinal) && logs[2].Contains("freezes 1;") &&
             logs[2].Contains("worst frame 8000 ms;") && logs[2].Contains("; window inactive 120 s more; "),
             "the minute covers played time only, counts only the real freeze and notes the time away");
     }

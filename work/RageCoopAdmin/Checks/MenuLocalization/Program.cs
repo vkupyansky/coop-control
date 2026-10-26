@@ -187,7 +187,7 @@ internal static class Program
         NativeCheckboxItem clock = (NativeCheckboxItem)Get("_freezeTimeItem");
         NativeCheckboxItem weather = (NativeCheckboxItem)Get("_freezeWeatherItem");
         Type controllerType = Resource.GetType("RageCoopAdmin.Client.WorldStateController", true)!;
-        Type snapshotType = Resource.GetType("CoopControl.Shared.WorldStateSnapshot", true)!;
+        Type snapshotType = Resource.GetType("OGCoop.Shared.WorldStateSnapshot", true)!;
         object controller = Activator.CreateInstance(controllerType, Instance, null,
             new object[] { new Action<int, object[]>((_, _) => throw new InvalidOperationException("Changing the display language must not send a world request.")) }, null)!;
         object snapshot = Activator.CreateInstance(snapshotType, Instance, null,
@@ -204,8 +204,8 @@ internal static class Program
         // The menu shows the garage the server sent; an empty one is enough here.
         Type garageType = Resource.GetType("RageCoopAdmin.Client.GarageClient", true)!;
         object garage = Activator.CreateInstance(garageType, Instance, null, new object[] { new Action<int, object[]>((_, _) => { }) }, null)!;
-        string emptyGarage = (string)Resource.GetType("CoopControl.Shared.GarageCodec", true)!.GetMethod("Encode", Static)!
-            .Invoke(null, new[] { Activator.CreateInstance(Resource.GetType("CoopControl.Shared.GarageData", true)!)! })!;
+        string emptyGarage = (string)Resource.GetType("OGCoop.Shared.GarageCodec", true)!.GetMethod("Encode", Static)!
+            .Invoke(null, new[] { Activator.CreateInstance(Resource.GetType("OGCoop.Shared.GarageData", true)!)! })!;
         garageType.GetMethod("ApplyState", Instance)!.Invoke(garage, new object[] { new object[] { emptyGarage } });
         Set("_garage", garage);
         ((HashSet<int>)Get("_favoriteHashes")).Add(0x7f00123);
@@ -245,7 +245,7 @@ internal static class Program
     private static object CreateInputFixture(Type scriptType, object script, string custom)
     {
         Type inputType = Resource.GetType("RageCoopAdmin.Client.ResourceTextInput", true)!;
-        var inputMenu = (NativeMenu)scriptType.GetMethod("CreateMenu", Static)!.Invoke(null, new object[] { "Coop Control", "Название машины" })!;
+        var inputMenu = (NativeMenu)scriptType.GetMethod("CreateMenu", Static)!.Invoke(null, new object[] { "OG Coop", "Название машины" })!;
         object input = Activator.CreateInstance(inputType, Instance, null, new object[] { inputMenu }, null)!;
         scriptType.GetField("_textInput", Instance)!.SetValue(script, input);
         object pool = scriptType.GetField("_pool", Instance)!.GetValue(script)!;

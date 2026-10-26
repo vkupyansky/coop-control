@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using CoopControl.Shared;
+using OGCoop.Shared;
 using GTA;
 using GTA.Native;
 using GTA.UI;
@@ -29,6 +29,7 @@ public sealed partial class AdminMenuScript
     // switch the game's streaming focus moves to the open sea until the area
     // around the player has unloaded, as behind GTA Online's loading screen.
     private const long MapLoadFadeIn = 450;
+    private const long MapFadeLimit = 5_000;
     private const long MapClearMinimum = 1500;
     private const long MapClearLimit = 6_000;
     private const long MapLoadMinimum = 1500;
@@ -40,7 +41,7 @@ public sealed partial class AdminMenuScript
     {
         if (_pool == null) return;
         _teleportsMenu = teleports;
-        NativeMenu places = CreateMenu("Coop Control", "Особые места");
+        NativeMenu places = CreateMenu("OG Coop", "Особые места");
         UiMenu.Description(places, () => UiText.Get("Скрытые места карты. Влево/вправо: только вы или вместе с напарником."));
         teleports.AddSubMenu(places);
         _pool.Add(places);
@@ -185,8 +186,8 @@ public sealed partial class AdminMenuScript
 
     private void TickSpecialPlaces()
     {
-        _specialPlaces.Frame();
         long now = NowMilliseconds();
+        _specialPlaces.Frame(now);
         _hangWatch.Step("map load");
         TickMapLoad(now);
         _hangWatch.Step("interiors");
@@ -238,37 +239,60 @@ public sealed partial class AdminMenuScript
 
             alpha = (int)(255 * (1 - (double)closing / MapLoadFadeOut));
         }
-        else if (elapsed < MapLoadFadeIn)
+        else
         {
-            alpha = (int)(255 * (double)elapsed / MapLoadFadeIn);
-        }
-        else if (load.ClearedAt == 0)
-        {
-            Function.Call(Hash.SET_FOCUS_POS_AND_VEL, OpenSea.X, OpenSea.Y, OpenSea.Z, 0f, 0f, 0f);
-            load.FocusAway = true;
-            load.ClearedAt = now;
-        }
-        else if (load.SwitchedAt == 0)
-        {
-            // The area has unloaded once the collision around the player is gone.
-            bool unloaded = !load.Held.Exists() || !Function.Call<bool>((Hash)0xE9676F61BC0B3321UL, load.Held.Handle); // HAS_COLLISION_LOADED_AROUND_ENTITY
-            long clearing = now - load.ClearedAt;
-            if ((clearing >= MapClearMinimum && unloaded) || clearing >= MapClearLimit)
+            if (elapsed < MapLoadFadeIn) alpha = (int)(255 * (double)elapsed / MapLoadFadeIn);
+            // ON_ENTER_MP stops the game for seconds, and meanwhile only GTA's
+            // own fade covers the world: this drawing stops with the game. The
+            // fade counts game time, which lags right after connecting, so the
+            // switch waits until the screen is really dark; another script
+            // that fades the screen in is overridden.
+            bool dark = MapLoadingScreen.IsFadedOut();
+            if (!dark && elapsed >= MapLoadFadeIn && !MapLoadingScreen.IsFadingOut()) MapLoadingScreen.FadeOut((int)MapLoadFadeIn);
+            if (load.ClearedAt == 0)
             {
-                _specialPlaces.EnterOnlineMap();
-                Function.Call(Hash.CLEAR_FOCUS);
-                load.FocusAway = false;
-                GTA.Math.Vector3 here = load.Held.Exists() ? load.Held.Position : Game.Player.Character.Position;
-                Function.Call((Hash)0xACCFB4ACF53551B0UL, here.X, here.Y, here.Z, 200f, 0); // NEW_LOAD_SCENE_START_SPHERE
-                load.SwitchedAt = now;
-                API.Logger.Info("Coop Control: map cleared for the switch in " + clearing + " ms" + (unloaded ? "" : " (limit reached)") + ".");
+                if (dark || elapsed >= MapFadeLimit)
+                {
+                    Function.Call(Hash.SET_FOCUS_POS_AND_VEL, OpenSea.X, OpenSea.Y, OpenSea.Z, 0f, 0f, 0f);
+                    load.FocusAway = true;
+                    load.ClearedAt = now;
+                    load.DarkAfter = dark ? elapsed : -1;
+                }
             }
-        }
-        else if ((now - load.SwitchedAt >= MapLoadMinimum && Function.Call<bool>((Hash)0x01B8247A7A8B9AD1UL)) || // IS_NEW_LOAD_SCENE_LOADED
-                 now - load.SwitchedAt >= MapLoadLimit)
-        {
-            ReleaseMapLoad(load);
-            load.ClosedAt = now;
+            else if (load.SwitchedAt == 0)
+            {
+                // The area has unloaded once the collision around the player is gone.
+                bool unloaded = !load.Held.Exists() || !Function.Call<bool>((Hash)0xE9676F61BC0B3321UL, load.Held.Handle); // HAS_COLLISION_LOADED_AROUND_ENTITY
+                long clearing = now - load.ClearedAt;
+                if ((clearing >= MapClearMinimum && unloaded && dark) || clearing >= MapClearLimit)
+                {
+                    _specialPlaces.EnterOnlineMap();
+                    Function.Call(Hash.CLEAR_FOCUS);
+                    load.FocusAway = false;
+                    GTA.Math.Vector3 here = load.Held.Exists() ? load.Held.Position : Game.Player.Character.Position;
+                    Function.Call((Hash)0xACCFB4ACF53551B0UL, here.X, here.Y, here.Z, 200f, 0); // NEW_LOAD_SCENE_START_SPHERE
+                    load.SwitchedAt = NowMilliseconds();
+                    API.Logger.Info("OG Coop: map switched: screen dark " +
+                        (load.DarkAfter >= 0 ? "after " + load.DarkAfter + " ms" : "not confirmed") +
+                        ", area cleared in " + clearing + " ms" + (unloaded ? "" : " (limit reached)") +
+                        ", the switch took " + (load.SwitchedAt - now) + " ms" + (dark ? "" : " (screen not dark)") + ".");
+                }
+            }
+            else
+            {
+                // Rockstar's own switch waits for the scene, the content
+                // changes and the player's streaming before fading in.
+                long loading = now - load.SwitchedAt;
+                bool ready = Function.Call<bool>((Hash)0x01B8247A7A8B9AD1UL) && // IS_NEW_LOAD_SCENE_LOADED
+                    !Function.Call<bool>((Hash)0x241FCA5B1AA14F75UL) && // ARE_ANY_CCS_PENDING
+                    Function.Call<bool>((Hash)0x7350823473013C02UL, Game.Player.Character.Handle); // HAVE_ALL_STREAMING_REQUESTS_COMPLETED
+                if ((loading >= MapLoadMinimum && ready) || loading >= MapLoadLimit)
+                {
+                    ReleaseMapLoad(load);
+                    load.ClosedAt = now;
+                    API.Logger.Info("OG Coop: map loaded " + loading + " ms after the switch" + (ready ? "" : " (limit reached)") + ".");
+                }
+            }
         }
 
         MapLoadingScreen.Draw(alpha, elapsed / 1000.0);
@@ -326,6 +350,7 @@ public sealed partial class AdminMenuScript
         internal Entity Held { get; }
         internal bool HeldWasFrozen { get; }
         internal long ClearedAt { get; set; }
+        internal long DarkAfter { get; set; }
         internal bool FocusAway { get; set; }
         internal long SwitchedAt { get; set; }
         internal long ClosedAt { get; set; }

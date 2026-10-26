@@ -103,7 +103,7 @@ internal static partial class Program
         int before = handlers.Sum(pair => pair.Value.Count);
         ((ClientScript)instance).OnStart();
         int after = handlers.Sum(pair => pair.Value.Count);
-        Assert(after - before is 15 or 17, "The real OnStart registers exactly fifteen instance handlers plus at most two persistent static repair handlers.");
+        Assert(after - before is 23 or 25, "The real OnStart registers exactly twenty-three instance handlers plus at most two persistent static repair handlers.");
         int gets = abort ? 6 : 92;
         int start = LifecycleSounds.Count;
         for (int index = 0; index < gets; index++) SoundIdPool.GetSoundId();
@@ -186,7 +186,7 @@ internal static partial class Program
         }
         finally { _lifecycleFailQueue = false; }
         Assert(handlers.Sum(pair => pair.Value.Count) == before,
-            "Failure after the real instance registrations rolls all fifteen subscriptions back before OnStart returns.");
+            "Failure after the real instance registrations rolls all eighteen subscriptions back before OnStart returns.");
         // Installed StartAll retains a failed script in its resource. Its host
         // guards follow the existing OnStop lifecycle; event rollback is immediate.
         ((ClientScript)instance).OnStop(); host.GetMethod("DoQueuedActions", Static)!.Invoke(null, null);

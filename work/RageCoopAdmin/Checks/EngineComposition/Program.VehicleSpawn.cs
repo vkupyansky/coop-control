@@ -38,6 +38,11 @@ internal static partial class Program
         object instance = FormatterServices.GetUninitializedObject(script);
         script.GetField("_active", Instance)!.SetValue(instance, true);
         script.GetField("_nextVehicleSpawnToken", Instance)!.SetValue(instance, 100);
+        // сначала без посадки за руль, её проверка в конце
+        object settings = Activator.CreateInstance(Resource.GetType("RageCoopAdmin.Client.InterfaceSettings", true)!)!;
+        PropertyInfo drive = settings.GetType().GetProperty("DriveNewVehicle")!;
+        drive.SetValue(settings, false);
+        script.GetField("_interfaceSettings", Instance)!.SetValue(instance, settings);
         FieldInfo pending = script.GetField("_pendingVehicleSpawn", Instance)!;
         void Call(string name, params object?[] args) => Method(name).Invoke(instance, args);
         object? Pending() => pending.GetValue(instance);
@@ -63,6 +68,7 @@ internal static partial class Program
                 boundary.Patch(Method(name), transpiler: new HarmonyMethod(typeof(Program), nameof(IsolateSpawnGameBoundaries)));
             Patch(Method("EnsureSpawnModelAvailable"), nameof(SpawnAvailableModel));
             Patch(Method("PreloadSpawnModel"), nameof(SkipMenuLayout));
+            Patch(Resource.GetType("RageCoopAdmin.Client.VehicleSeating", true)!.GetMethod("TakeDriverSeat", Static)!, nameof(SpawnTakeSeat));
 
             Spawn(); int first = Token();
             for (int repeat = 0; repeat < 8; repeat++) Spawn(555, "different-preset");
@@ -133,12 +139,19 @@ internal static partial class Program
             Assert(Token() == afterQueued,
                 "A reply queued before cleanup rechecks its token on the game thread and cannot cancel a newer request.");
             Call("CleanupVehicleSpawn");
+            Assert(SpawnSeats.Count == 0, "With the driving option off a new vehicle only appears nearby.");
+            _spawnDeferQueue = false;
+            SpawnQueued.Clear();
+            drive.SetValue(settings, true);
+            Spawn(); Reply(Token(), vehicleId, 444); Tick();
+            Assert(Pending() == null && SpawnSeats.SequenceEqual(new[] { (SpawnPed.Handle, 830003) }) && SpawnNotices.Last().Contains("за рулём"),
+                "By default the player is put behind the wheel of the vehicle that just appeared, and told so.");
         }
         finally
         {
             vehicles.Remove(vehicleId);
             boundary.UnpatchAll(boundary.Id);
-            SpawnSent.Clear(); SpawnNotices.Clear(); SpawnModels.Clear(); SpawnMissing.Clear(); SpawnQueued.Clear();
+            SpawnSent.Clear(); SpawnNotices.Clear(); SpawnModels.Clear(); SpawnMissing.Clear(); SpawnQueued.Clear(); SpawnSeats.Clear();
             _spawnConnected = true; _spawnDead = false; _spawnDeferQueue = false;
         }
     }
@@ -172,6 +185,8 @@ internal static partial class Program
     private static bool SpawnEntityDead(Entity entity) => _spawnDead;
     private static Model SpawnEntityModel(Entity entity) => new Model(SpawnModels.TryGetValue(entity.Handle, out int hash) ? hash : 0);
     private static bool SpawnAvailableModel(ref bool __result) { __result = true; return false; }
+    private static readonly List<(int Ped, int Vehicle)> SpawnSeats = new List<(int, int)>();
+    private static bool SpawnTakeSeat(int ped, int vehicle, ref bool __result) { SpawnSeats.Add((ped, vehicle)); __result = true; return false; }
     private static T SpawnNative<T>(int handle) where T : Entity =>
         (T)typeof(T).GetConstructor(Instance, null, new[] { typeof(int) }, null)!.Invoke(new object[] { handle });
 }

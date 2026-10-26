@@ -25,6 +25,7 @@ public sealed partial class AdminMenuScript
     private bool? _unsavedKeyboardBoost;
     private UiLanguage? _unsavedMenuLanguage;
     private bool? _unsavedVoiceChat;
+    private bool? _unsavedDriveNewVehicle;
     private bool _gettingUserInput;
     private ResourceTextInput? _textInput;
     private readonly MenuInputReleaseGuard _textInputActivationGuard = new MenuInputReleaseGuard();
@@ -54,7 +55,7 @@ public sealed partial class AdminMenuScript
         catch (Exception ex) when (IsInterfaceStorageError(ex))
         {
             _interfaceSettingsUnavailable = true;
-            Logger.Warning("Coop Control: interface settings could not be loaded: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: interface settings could not be loaded: " + ex.GetType().Name);
             Notification.PostTicker(UiText.Get("~o~Настройки:~s~ не удалось прочитать файл. Изменения будут действовать до выхода."), false);
         }
         UiText.SetLanguage(_interfaceSettings.MenuLanguage);
@@ -67,7 +68,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        NativeMenu settings = CreateMenu("Coop Control", "Настройки");
+        NativeMenu settings = CreateMenu("OG Coop", "Настройки");
         _mainMenu.AddSubMenu(settings);
         _pool.Add(settings);
         var language = UiMenu.List(() => "Язык / Language",
@@ -101,6 +102,13 @@ public sealed partial class AdminMenuScript
                 PersistInterfaceSettings(value => value.KeyboardBoost = boost.Checked);
         };
         settings.Add(boost);
+        var drive = UiMenu.Checkbox(() => UiText.Get("Сразу за руль"), () => UiText.Get("Созданная машина сразу сажает вас за руль. Выключите, чтобы она просто появлялась рядом."), _interfaceSettings.DriveNewVehicle);
+        drive.CheckboxChanged += (_, _) =>
+        {
+            if (!_updatingInterfaceSettings)
+                PersistInterfaceSettings(value => value.DriveNewVehicle = drive.Checked);
+        };
+        settings.Add(drive);
         var voice = UiMenu.Checkbox(() => UiText.Get("Голосовой чат"), () => UiText.Get("Говорить — удерживайте N (кнопка «Рация» в настройках управления GTA). Вас слышат все на сервере. На Mac разрешите CrossOver доступ к микрофону."), _interfaceSettings.VoiceChat);
         voice.CheckboxChanged += (_, _) =>
         {
@@ -113,8 +121,8 @@ public sealed partial class AdminMenuScript
         // Who made the add-on and how to reach them; selecting it does nothing.
         string version = typeof(AdminMenuScript).Assembly.GetName().Version?.ToString() ?? "?";
         settings.Add(UiMenu.Item(() => UiText.Get("О дополнении"),
-            () => UiText.Get("Coop Control — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия ") +
-                CoopControl.Shared.ProductInfo.Version + " · " + version));
+            () => UiText.Get("OG Coop — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия ") +
+                OGCoop.Shared.ProductInfo.Version + " · " + version));
         _refreshInterfaceSettings = () =>
         {
             _updatingInterfaceSettings = true;
@@ -124,6 +132,7 @@ public sealed partial class AdminMenuScript
                 repairKey.Checked = _interfaceSettings.RepairShortcut == 0;
                 gamepad.Checked = _interfaceSettings.GamepadShortcuts;
                 boost.Checked = _interfaceSettings.KeyboardBoost;
+                drive.Checked = _interfaceSettings.DriveNewVehicle;
                 voice.Checked = _interfaceSettings.VoiceChat;
                 foreach (Action refresh in extraRefresh) refresh();
             }
@@ -146,9 +155,13 @@ public sealed partial class AdminMenuScript
         bool boost = _interfaceSettings.KeyboardBoost;
         UiLanguage language = _interfaceSettings.MenuLanguage;
         bool voice = _interfaceSettings.VoiceChat;
+        bool drive = _interfaceSettings.DriveNewVehicle;
+        string[] switches = _interfaceSettings.Switches.ToArray();
         RememberExtraSettings();
         change(_interfaceSettings);
+        NoteSwitchChanges(switches);
         if (voice != _interfaceSettings.VoiceChat) _unsavedVoiceChat = _interfaceSettings.VoiceChat;
+        if (drive != _interfaceSettings.DriveNewVehicle) _unsavedDriveNewVehicle = _interfaceSettings.DriveNewVehicle;
         if (repair != _interfaceSettings.RepairShortcut) _unsavedRepairShortcut = _interfaceSettings.RepairShortcut;
         if (gamepad != _interfaceSettings.GamepadShortcuts) _unsavedGamepadShortcuts = _interfaceSettings.GamepadShortcuts;
         if (boost != _interfaceSettings.KeyboardBoost) _unsavedKeyboardBoost = _interfaceSettings.KeyboardBoost;
@@ -172,20 +185,24 @@ public sealed partial class AdminMenuScript
                 if (_unsavedKeyboardBoost.HasValue) value.KeyboardBoost = _unsavedKeyboardBoost.Value;
                 if (_unsavedMenuLanguage.HasValue) value.MenuLanguage = _unsavedMenuLanguage.Value;
                 if (_unsavedVoiceChat.HasValue) value.VoiceChat = _unsavedVoiceChat.Value;
+                if (_unsavedDriveNewVehicle.HasValue) value.DriveNewVehicle = _unsavedDriveNewVehicle.Value;
+                ApplyUnsavedSwitches(value);
                 ApplyUnsavedExtras(value);
             });
+            _unsavedSwitches = null;
             _unsavedRepairShortcut = null;
             _unsavedGamepadShortcuts = null;
             _unsavedKeyboardBoost = null;
             _unsavedMenuLanguage = null;
             _unsavedVoiceChat = null;
+            _unsavedDriveNewVehicle = null;
             ClearUnsavedExtras();
             _refreshInterfaceSettings?.Invoke();
             ApplyInterfaceLanguage();
         }
         catch (Exception ex) when (IsInterfaceStorageError(ex))
         {
-            Logger.Warning("Coop Control: interface settings could not be saved: " + ex.GetType().Name);
+            Logger.Warning("OG Coop: interface settings could not be saved: " + ex.GetType().Name);
             Notification.PostTicker(UiText.Get("~o~Настройки:~s~ не удалось сохранить. Изменения действуют до выхода."), false);
         }
     }
@@ -270,11 +287,12 @@ public sealed partial class AdminMenuScript
     {
         if (!API.IsOnServer)
         {
-            Notification.PostTicker(UiText.Get("~o~Coop Control:~s~ сначала подключитесь к серверу."), false);
+            Notification.PostTicker(UiText.Get("~o~OG Coop:~s~ сначала подключитесь к серверу."), false);
             return;
         }
 
-        if (_pool == null || _mainMenu == null)
+        // The character editor keeps its own menu; Back leaves it.
+        if (_pool == null || _mainMenu == null || _creator != null)
         {
             return;
         }
@@ -619,7 +637,7 @@ public sealed partial class AdminMenuScript
     private void InitializeTextInput()
     {
         if (_pool == null || _textInput != null) return;
-        NativeMenu dialog = CreateMenu("Coop Control", "Ввод текста");
+        NativeMenu dialog = CreateMenu("OG Coop", "Ввод текста");
         _textInput = new ResourceTextInput(dialog);
         _pool.Add(dialog);
     }

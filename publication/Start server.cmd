@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
-title Coop Control server
+title OG Coop server
 cd /d "%~dp0"
 for %%F in (RageCoop.Server.dll Bootstrap\CoopAdmin.Startup.dll Bootstrap\0Harmony.dll) do (
   if not exist "%%F" (

@@ -363,7 +363,7 @@ public sealed partial class AdminMenuScript
             }
         }
 
-        if (message != null) { API.LocalChatMessage(UiText.Get("Coop Control"), UiText.Get(message)); }
+        if (message != null) { API.LocalChatMessage(UiText.Get("OG Coop"), UiText.Get(message)); }
     }
 
     private void FallbackPassengerTeleport(string message)

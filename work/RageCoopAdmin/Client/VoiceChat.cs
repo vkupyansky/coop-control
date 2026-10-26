@@ -10,7 +10,7 @@ namespace RageCoopAdmin.Client;
 
 // RageCoop's push-to-talk voice: GTA's "Push to talk" control (N on the
 // keyboard) records the default microphone and the server relays it to every
-// player. Coop Control turns it on by default with an off switch in Settings.
+// player. OG Coop turns it on by default with an off switch in Settings.
 // RageCoop stops recording only at the next key press, so a released key kept
 // the microphone open; here recording stops as soon as the key is released.
 internal sealed class VoiceChat
@@ -39,7 +39,7 @@ internal sealed class VoiceChat
     {
         if (!IsAvailable)
         {
-            if (!_reported) _log("Coop Control: voice chat controls are unavailable in this RageCoop build.");
+            if (!_reported) _log("OG Coop: voice chat controls are unavailable in this RageCoop build.");
             _reported = true;
             return;
         }
@@ -52,7 +52,7 @@ internal sealed class VoiceChat
             if (!current) return;
             VoiceSetting.SetValue(settings, false);
             ClearAll!.Invoke(null, null);
-            _log("Coop Control: voice chat off");
+            _log("OG Coop: voice chat off");
             return;
         }
 
@@ -63,7 +63,7 @@ internal sealed class VoiceChat
             if (!current)
             {
                 VoiceSetting.SetValue(settings, true);
-                _log("Coop Control: voice chat on");
+                _log("OG Coop: voice chat on");
             }
 
             if (!(bool)WasInitialized!.Invoke(null, null)!) Init!.Invoke(null, null);

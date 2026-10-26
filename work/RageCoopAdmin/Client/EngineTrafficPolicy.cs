@@ -1,5 +1,5 @@
 using System;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
@@ -27,6 +27,16 @@ internal static class EngineTrafficPolicy
     // his game, where the two players then crashed into each other's cars.
     internal static bool CreateNearbyCopy(float localDistanceSquared) =>
         Finite.Is(localDistanceSquared) && localDistanceSquared <= ProtectedDistance * ProtectedDistance;
+
+    // Nearby NPCs in cars are always copied: their cars need drivers. Nearby
+    // pedestrians only of the player whose car this player rides in (see
+    // PassengerPopulation); others keep RageCoop's limit.
+    internal static bool CopyNearbyPed(byte speed, int owner, int ridingWith) =>
+        speed >= 4 || (ridingWith != 0 && owner == ridingWith);
+
+    // A copy that went silent is the owner's removal; riding with the owner,
+    // it left this player's view too, so it is not kept as this game's own.
+    internal static bool MayAdopt(int owner, int ridingWith) => ridingWith == 0 || owner != ridingWith;
 
     // Both games create the same parked cars, boats, shop clerks and scenario
     // NPCs at fixed points. A copy of another game's one on top of this

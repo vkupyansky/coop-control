@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace CoopControl.Installer;
+namespace OGCoop.Installer;
 
 // Russian on a Russian Windows, English everywhere else.
 internal static class Text

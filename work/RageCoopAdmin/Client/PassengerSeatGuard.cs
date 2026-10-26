@@ -12,7 +12,7 @@ using GTA.Native;
 using HarmonyLib;
 using RageCoop.Client;
 using RageCoop.Client.Scripting;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
@@ -277,7 +277,7 @@ internal static class PassengerSeatGuard
             if (_lastNoSeatNotice == 0 || now - _lastNoSeatNotice >= Stopwatch.Frequency * 2)
             {
                 _lastNoSeatNotice = now;
-                API.LocalChatMessage(UiText.Get("Coop Control"), UiText.Get("Свободных пассажирских мест нет"));
+                API.LocalChatMessage(UiText.Get("OG Coop"), UiText.Get("Свободных пассажирских мест нет"));
             }
             return;
         }
@@ -334,6 +334,6 @@ internal static class PassengerSeatGuard
     {
         if (_reportedRuntimeFailure) { return; }
         _reportedRuntimeFailure = true;
-        API.Logger.Warning("Coop Control: passenger seat guard failed: " + ex.GetType().Name);
+        API.Logger.Warning("OG Coop: passenger seat guard failed: " + ex.GetType().Name);
     }
 }

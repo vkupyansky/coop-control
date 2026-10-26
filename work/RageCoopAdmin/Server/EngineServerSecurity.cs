@@ -10,7 +10,7 @@ using System.Threading;
 using HarmonyLib;
 using Lidgren.Network;
 using HostServer = RageCoop.Server.Server;
-using CoopControl.Shared;
+using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 

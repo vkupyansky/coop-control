@@ -25,7 +25,7 @@ public sealed partial class AdminMenuScript
         var synced = vehicle == 0 ? null : RuntimeEntityLookup.GetVehicleByHandle(vehicle);
         string ownership = synced == null ? "missing" : synced.IsLocal ? "local" : "remote";
         string Number(float? value) => value?.ToString("0.###", CultureInfo.InvariantCulture) ?? "n/a";
-        logger.Debug("Coop Control: held O state=" + reason +
+        logger.Debug("OG Coop: held O state=" + reason +
             "; observed=" + string.Join(",", _boostDiagnosticReasons.OrderBy(value => value)) +
             "; vehicle=" + vehicle.ToString(CultureInfo.InvariantCulture) +
             "; model=" + model.ToString("X8", CultureInfo.InvariantCulture) +

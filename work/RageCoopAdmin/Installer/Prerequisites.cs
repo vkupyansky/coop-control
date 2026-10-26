@@ -8,7 +8,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32;
 
-namespace CoopControl.Installer;
+namespace OGCoop.Installer;
 
 internal static class Prerequisites
 {

@@ -14,7 +14,7 @@ public sealed partial class AdminMenuScript
     private void BuildAddonVehiclesMenu()
     {
         if (_vehicleMenu == null || _pool == null || _addonVehicles.Count == 0) { return; }
-        _addonVehiclesMenu = CreateMenu("Coop Control", "Добавленные машины");
+        _addonVehiclesMenu = CreateMenu("OG Coop", "Добавленные машины");
         _vehicleMenu.AddSubMenu(_addonVehiclesMenu);
         _pool.Add(_addonVehiclesMenu);
         foreach (AddonVehicleDefinition definition in _addonVehicles)
