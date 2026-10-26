@@ -41,15 +41,14 @@ OG Coop is an unofficial add-on for RageCoop. One installer sets up the game, th
 
 <p align="center">
   <img src="screenshots/10-casino.jpg" width="49%" alt="The Diamond Casino">
-  <img src="screenshots/11-casino-entrance.jpg" width="49%" alt="Guests at the casino entrance">
+  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Cayo Perico">
 </p>
-<p align="center"><sub>The Diamond Casino · Guests and guards, as in GTA Online</sub></p>
+<p align="center"><sub>The Diamond Casino · Cayo Perico</sub></p>
 
 <p align="center">
-  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Cayo Perico">
-  <img src="screenshots/09-map.jpg" width="49%" alt="Entrances on the pause map">
+  <img src="screenshots/09-map.jpg" width="80%" alt="Entrances on the pause map">
 </p>
-<p align="center"><sub>Cayo Perico · Entrances on the pause map. GTA shows only part of the icons at once, so there are many more entrances than you see here</sub></p>
+<p align="center"><sub>Entrances on the pause map. GTA shows only part of the icons at once, so there are many more entrances than you see here</sub></p>
 
 <details>
 <summary>More of the menu</summary>

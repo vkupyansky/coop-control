@@ -41,7 +41,6 @@ SCREENSHOT_FILES = (
     "screenshots/08-cayo-perico.jpg",
     "screenshots/09-map.jpg",
     "screenshots/10-casino.jpg",
-    "screenshots/11-casino-entrance.jpg",
 )
 PROJECT = Path("work/RageCoopAdmin")
 PUBLIC_BUILD = Path("outputs/public-build")

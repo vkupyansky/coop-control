@@ -41,15 +41,14 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 
 <p align="center">
   <img src="screenshots/10-casino.jpg" width="49%" alt="Казино Diamond">
-  <img src="screenshots/11-casino-entrance.jpg" width="49%" alt="Гости у входа в казино">
+  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Кайо-Перико">
 </p>
-<p align="center"><sub>Казино Diamond · Гости и охрана, как в GTA Online</sub></p>
+<p align="center"><sub>Казино Diamond · Кайо-Перико</sub></p>
 
 <p align="center">
-  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Кайо-Перико">
-  <img src="screenshots/09-map.jpg" width="49%" alt="Входы на карте паузы">
+  <img src="screenshots/09-map.jpg" width="80%" alt="Входы на карте паузы">
 </p>
-<p align="center"><sub>Кайо-Перико · Входы на карте паузы. GTA показывает только часть значков сразу, так что входов намного больше, чем видно здесь</sub></p>
+<p align="center"><sub>Входы на карте паузы. GTA показывает только часть значков сразу, так что входов намного больше, чем видно здесь</sub></p>
 
 <details>
 <summary>Ещё разделы меню</summary>
