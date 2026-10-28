@@ -8,7 +8,7 @@ namespace OGCoop.Shared;
 internal static class ProductInfo
 {
     internal const string Name = "OG Coop";
-    internal const string Version = "0.4.0";
+    internal const string Version = "0.4.1";
     internal const string Tag = "v" + Version + "-wip";
     internal const string Author = "Vladislav Kupyansky (vkupyansky)";
     internal const string Telegram = "@skibidessa";

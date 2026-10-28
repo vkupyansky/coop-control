@@ -21,6 +21,7 @@ public sealed partial class AdminMenuScript
     private long _lastPlaceTick;
     private GTA.Math.Vector3? _placeReturn;
     private MapLoad? _mapLoad;
+    private ScriptTimeoutLift? _scriptTimeout;
 
     // Covering the switch to the Online map: the card fades in, the switch and a
     // scene load run behind it, then the card fades out over the reloaded world.
@@ -266,6 +267,7 @@ public sealed partial class AdminMenuScript
                 long clearing = now - load.ClearedAt;
                 if ((clearing >= MapClearMinimum && unloaded && dark) || clearing >= MapClearLimit)
                 {
+                    (_scriptTimeout ??= new ScriptTimeoutLift(message => API.Logger.Info(message))).Lift();
                     _specialPlaces.EnterOnlineMap();
                     Function.Call(Hash.CLEAR_FOCUS);
                     load.FocusAway = false;
@@ -300,8 +302,9 @@ public sealed partial class AdminMenuScript
 
     // Undo the scene load, the frozen player, the screen fade and the spinner;
     // safe to repeat.
-    private static void ReleaseMapLoad(MapLoad load)
+    private void ReleaseMapLoad(MapLoad load)
     {
+        _scriptTimeout?.Restore();
         if (load.Released) return;
         load.Released = true;
         if (load.FocusAway) Function.Call(Hash.CLEAR_FOCUS);

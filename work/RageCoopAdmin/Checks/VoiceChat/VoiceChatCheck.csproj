@@ -13,6 +13,7 @@
     <PackageReference Include="Lib.Harmony" Version="2.4.3" />
     <Compile Include="Program.cs" />
     <Compile Include="../../Client/VoiceChat.cs" Link="VoiceChat.cs" />
+    <Compile Include="../../Client/Palette.cs" Link="Palette.cs" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="RageCoop.Client"><HintPath>$(RageCoopClientDir)/RageCoop.Client.dll</HintPath><Private>true</Private></Reference>
     <Reference Include="RageCoop.Core"><HintPath>$(RageCoopServerDir)/RageCoop.Core.dll</HintPath><Private>true</Private></Reference>

@@ -849,6 +849,24 @@
   <data name="Открытая территория аэродрома." xml:space="preserve">
     <value>Open area at the airfield.</value>
   </data>
+  <data name="Полоса аэропорта Лос-Сантоса" xml:space="preserve">
+    <value>Los Santos Airport runway</value>
+  </data>
+  <data name="Начало главной полосы, носом вдоль неё. Можно сразу взлетать." xml:space="preserve">
+    <value>Start of the main runway, facing along it. Ready for takeoff.</value>
+  </data>
+  <data name="Полоса Сэнди-Шорс" xml:space="preserve">
+    <value>Sandy Shores runway</value>
+  </data>
+  <data name="Восточный край полосы, носом вдоль неё. Можно сразу взлетать." xml:space="preserve">
+    <value>East end of the runway, facing along it. Ready for takeoff.</value>
+  </data>
+  <data name="Полоса McKenzie Field" xml:space="preserve">
+    <value>McKenzie Field runway</value>
+  </data>
+  <data name="Грунтовая полоса в Грейпсиде, носом вдоль неё. Можно сразу взлетать." xml:space="preserve">
+    <value>Dirt runway in Grapeseed, facing along it. Ready for takeoff.</value>
+  </data>
   <data name="Телепорты" xml:space="preserve">
     <value>Teleports</value>
   </data>

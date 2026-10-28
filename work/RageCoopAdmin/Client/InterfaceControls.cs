@@ -520,6 +520,8 @@ public sealed partial class AdminMenuScript
             // LemonUI.Process also draws. Suppress navigation while the opening chord
             // is held, then consume its direction until release, without hiding the menu.
             _processingResourceMenus = true;
+            foreach (var processable in _pool)
+                if (processable is NativeMenu { Visible: true } shown) MenuStyle.Paint(shown);
             _pool.Process();
         }
         finally

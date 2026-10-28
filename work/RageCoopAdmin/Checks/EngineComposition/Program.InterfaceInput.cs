@@ -644,6 +644,7 @@ internal static partial class Program
             Assert(!Harmony.GetPatchInfo(worldTick)!.Owners.Contains("friendslegacy.ragecoop.menuinput") &&
                 Harmony.GetPatchInfo(worldTick)!.Owners.Contains(boundary.Id),
                 "World pause cleanup removes only this resource's patch and preserves the independent boundary patch.");
+            CheckMenuStyle();
             Console.WriteLine("Actual WorldThread/Main/input Tick checks passed: GTA owns pause press/hold/release and closing in both script/native boundary orderings; no resource activation or latch; VK_P uses real ToUnicodeEx while native 200 cannot cancel text or its restored parent. Phone/shop cancellation, Enter/Esc and Xbox A/B preserved. GTA frontend processing, physical devices and runtime script ordering remain isolated.");
         }
         finally
@@ -654,6 +655,47 @@ internal static partial class Program
             foreach (MethodBase method in Harmony.GetAllPatchedMethods().Where(method => Harmony.GetPatchInfo(method)?.Owners.Contains(boundary.Id) == true).ToArray())
                 boundary.Unpatch(method, HarmonyPatchType.All, boundary.Id);
         }
+    }
+
+    // настоящие строки открытого меню рисуют свой фон вместо белой рамки LemonUI
+    private static void CheckMenuStyle()
+    {
+        Type style = Resource.GetType("RageCoopAdmin.Client.MenuStyle", true)!;
+        var colors = (ColorSet)style.GetField("Items", BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
+        NativeMenu menu = BareInputMenu(0);
+        NativeItem[] rows = { new NativeItem("Выбор"), new NativeListItem<string>("Список", "", "А", "Б") };
+        menu.Items.AddRange(rows);
+        MethodInfo paint = style.GetMethod("Paint", BindingFlags.NonPublic | BindingFlags.Static)!;
+        paint.Invoke(null, new object[] { menu });
+        paint.Invoke(null, new object[] { menu });
+        int matte = System.Drawing.Color.FromArgb(230, 0x10, 0x24, 0x22).ToArgb();
+        Assert(rows.All(row => row.UseCustomBackground && ReferenceEquals(row.Colors, colors)) &&
+            colors.BackgroundHovered.ToArgb() == System.Drawing.Color.FromArgb(0xF4, 0xA2, 0x61).ToArgb() &&
+            colors.BackgroundNormal.ToArgb() == matte && colors.BackgroundDisabled.ToArgb() == matte &&
+            colors.BadgeRightHovered.ToArgb() == System.Drawing.Color.White.ToArgb(),
+            "Every row of an open menu draws its own background: orange #F4A261 when selected, matte dark turquoise otherwise; badges and checkboxes keep their colours.");
+
+        // шапка, подзаголовок и фон на настоящих закрытых полях LemonUI 2.2
+        NativeMenu framed = BareInputMenu(0);
+        var name = new LemonUI.Elements.ScaledRectangle(System.Drawing.PointF.Empty, System.Drawing.SizeF.Empty) { Color = System.Drawing.Color.Black };
+        var under = new LemonUI.Elements.ScaledTexture("commonmenu", "gradient_bgd");
+        var description = new LemonUI.Elements.ScaledTexture("commonmenu", "gradient_bgd");
+        var title = new LemonUI.Elements.ScaledText(System.Drawing.PointF.Empty, "OG Coop", 1.02f, GTA.UI.Font.HouseScript);
+        typeof(NativeMenu).GetField("nameImage", Instance)!.SetValue(framed, name);
+        typeof(NativeMenu).GetField("backgroundImage", Instance)!.SetValue(framed, under);
+        typeof(NativeMenu).GetField("descriptionRect", Instance)!.SetValue(framed, description);
+        typeof(NativeMenu).GetField("bannerImage", Instance)!.SetValue(framed,
+            new LemonUI.Elements.ScaledRectangle(System.Drawing.PointF.Empty, System.Drawing.SizeF.Empty));
+        typeof(NativeMenu).GetField("<BannerText>k__BackingField", Instance)!.SetValue(framed, title);
+        style.GetMethod("Frame", BindingFlags.NonPublic | BindingFlags.Static)!.Invoke(null, new object[] { framed });
+        var subtitle = (LemonUI.Elements.ScaledText)typeof(NativeMenu).GetField("nameText", Instance)!.GetValue(framed)!;
+        Assert(title.Font == GTA.UI.Font.Pricedown && title.Outline && title.Color.ToArgb() == System.Drawing.Color.White.ToArgb() &&
+            framed.Banner is LemonUI.Elements.ScaledRectangle &&
+            framed.Banner.Color.ToArgb() == System.Drawing.Color.FromArgb(0x2A, 0x9D, 0x8F).ToArgb() &&
+            name.Color.ToArgb() == System.Drawing.Color.FromArgb(240, 0x0A, 0x1A, 0x18).ToArgb() &&
+            subtitle.Color.ToArgb() == System.Drawing.Color.FromArgb(0x9F, 0xD3, 0xCB).ToArgb() &&
+            under.Color.A == 0 && description.Color.A == 0,
+            "The banner title is white Pricedown with a black outline like the GTA logo; the subtitle and the dark LemonUI gradients become matte.");
     }
 
     // Mirrors AdminMenuScript.CreateMenu: every menu the resource renames is
@@ -670,7 +712,14 @@ internal static partial class Program
     {
         var menu = (NativeMenu)FormatterServices.GetUninitializedObject(typeof(NativeMenu));
         var items = new List<NativeItem>();
-        for (int index = 0; index < itemCount; index++) items.Add((NativeItem)FormatterServices.GetUninitializedObject(typeof(NativeItem)));
+        // у пустой строки нет элементов для покраски, поэтому ей сразу дан общий набор цветов
+        object styled = Resource.GetType("RageCoopAdmin.Client.MenuStyle", true)!.GetField("Items", BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
+        for (int index = 0; index < itemCount; index++)
+        {
+            var bare = (NativeItem)FormatterServices.GetUninitializedObject(typeof(NativeItem));
+            typeof(NativeItem).GetField("colors", Instance)!.SetValue(bare, styled);
+            items.Add(bare);
+        }
         typeof(NativeMenu).GetField("<Items>k__BackingField", Instance)!.SetValue(menu, items);
         typeof(NativeMenu).GetField("visibleItems", Instance)!.SetValue(menu, new List<NativeItem>());
         typeof(NativeMenu).GetField("descriptionText", Instance)!.SetValue(menu, new LemonUI.Elements.ScaledText(System.Drawing.PointF.Empty, string.Empty));

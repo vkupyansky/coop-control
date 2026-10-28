@@ -31,16 +31,14 @@ DOC_NAMES = (
     "THIRD_PARTY.txt",
 )
 SCREENSHOT_FILES = (
-    "screenshots/01-shared-play.png",
-    "screenshots/02-main-menu.jpg",
-    "screenshots/03-transport.jpg",
-    "screenshots/04-teleports.jpg",
+    "screenshots/01-main-menu.jpg",
+    "screenshots/02-transport.jpg",
+    "screenshots/03-teleports.jpg",
+    "screenshots/04-partners.jpg",
     "screenshots/05-character.jpg",
-    "screenshots/06-weapons.jpg",
-    "screenshots/07-yacht.jpg",
-    "screenshots/08-cayo-perico.jpg",
-    "screenshots/09-map.jpg",
-    "screenshots/10-casino.jpg",
+    "screenshots/06-appearance.jpg",
+    "screenshots/07-weapons.jpg",
+    "screenshots/08-settings.jpg",
 )
 PROJECT = Path("work/RageCoopAdmin")
 PUBLIC_BUILD = Path("outputs/public-build")

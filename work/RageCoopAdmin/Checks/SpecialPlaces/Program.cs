@@ -42,6 +42,7 @@ internal static class Program
             CheckYanktonConflicts();
             CheckReset();
             CheckSettle();
+            CheckScriptTimeout();
             Console.WriteLine("Special places checks passed: " + Passes + ". Catalog, protocol and loading rules are the real code; only game calls are isolated.");
             return 0;
         }
@@ -408,10 +409,53 @@ internal static class Program
         return false;
     }
 
+    // на медленном ПК ON_ENTER_MP шёл 5,3 с при пороге SHVDN 5 с, и RageCoop снимало
+    private static void CheckScriptTimeout()
+    {
+        var log = new List<string>();
+        var lift = new ScriptTimeoutLift(log.Add);
+        SHVDN.ScriptDomain.CurrentDomain = null;
+        lift.Lift();
+        Check(log.Count == 1 && log[0].Contains("no current script domain"),
+            "Without SHVDN's script domain the map switch goes on and the reason is logged.");
+
+        var domain = new SHVDN.ScriptDomain { ScriptTimeoutThreshold = 5000 };
+        SHVDN.ScriptDomain.CurrentDomain = domain;
+        lift.Lift();
+        lift.Lift();
+        Check(domain.ScriptTimeoutThreshold == ScriptTimeoutLift.LiftedMilliseconds,
+            "The map switch raises SHVDN's 5 s blocking limit, which a 5.3 s switch on a slower PC exceeded.");
+        lift.Restore();
+        lift.Restore();
+        Check(domain.ScriptTimeoutThreshold == 5000, "Once the map has loaded the player's own limit is back.");
+
+        domain.ScriptTimeoutThreshold = 90_000;
+        lift.Lift();
+        lift.Restore();
+        Check(domain.ScriptTimeoutThreshold == 90_000, "A higher limit set by the player is left alone.");
+
+        domain.ScriptTimeoutThreshold = 5000;
+        lift.Lift();
+        domain.ScriptTimeoutThreshold = 7000;
+        lift.Restore();
+        Check(domain.ScriptTimeoutThreshold == 7000, "A limit changed meanwhile by someone else is not overwritten.");
+        SHVDN.ScriptDomain.CurrentDomain = null;
+    }
+
     private static void Check(bool ok, string message)
     {
         if (!ok) throw new InvalidOperationException(message);
         Passes++;
         Console.WriteLine("PASS " + message);
+    }
+}
+
+namespace SHVDN
+{
+    // те же открытые члены, что у SHVDN.ScriptDomain в ScriptHookVDotNet.asi 3.7.0-nightly.188
+    public sealed class ScriptDomain
+    {
+        public static ScriptDomain? CurrentDomain { get; set; }
+        public uint ScriptTimeoutThreshold { get; set; }
     }
 }

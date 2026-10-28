@@ -246,6 +246,7 @@ internal static class Program
     {
         Type inputType = Resource.GetType("RageCoopAdmin.Client.ResourceTextInput", true)!;
         var inputMenu = (NativeMenu)scriptType.GetMethod("CreateMenu", Static)!.Invoke(null, new object[] { "OG Coop", "Название машины" })!;
+        Check(inputMenu.BannerText.Text == "OG COOP", "The banner reads OG COOP in capitals of one height, like the GTA logo.");
         object input = Activator.CreateInstance(inputType, Instance, null, new object[] { inputMenu }, null)!;
         scriptType.GetField("_textInput", Instance)!.SetValue(script, input);
         object pool = scriptType.GetField("_pool", Instance)!.GetValue(script)!;

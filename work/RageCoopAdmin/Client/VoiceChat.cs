@@ -101,7 +101,7 @@ internal static class VoiceIndicator
 
     internal static void Draw(string caption)
     {
-        _text ??= new TextElement(caption, new PointF(640f, 680f), 0.38f, Color.FromArgb(230, 255, 167, 46), GTA.UI.Font.ChaletLondon, Alignment.Center, true, true);
+        _text ??= new TextElement(caption, new PointF(640f, 680f), 0.38f, Palette.WithAlpha(Palette.Orange, 230), GTA.UI.Font.ChaletLondon, Alignment.Center, true, true);
         if (_text.Caption != caption) _text.Caption = caption;
         _text.Draw();
     }

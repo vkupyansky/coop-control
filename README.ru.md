@@ -4,20 +4,23 @@
 
 Интерьеры GTA Online, свой персонаж, яхта и жильё и удобное меню для игры в GTA V Legacy с друзьями через [RageCoop](https://ragecoop.com/).
 
-[![Выпуск](https://img.shields.io/github/v/release/vkupyansky/og-coop?include_prereleases&label=release)](https://github.com/vkupyansky/og-coop/releases/latest)
-![GTA V Legacy 1.0.3889](https://img.shields.io/badge/GTA%20V%20Legacy-1.0.3889-f28c28)
-![RageCoop 1.5.12.15](https://img.shields.io/badge/RageCoop-1.5.12.15-4a7bd0)
-[![Лицензия MIT](https://img.shields.io/badge/license-MIT-3c9a4c)](LICENSE)
+[![Выпуск](https://img.shields.io/github/v/release/vkupyansky/og-coop?include_prereleases&label=release&color=2A9D8F)](https://github.com/vkupyansky/og-coop/releases/latest)
+![GTA V Legacy 1.0.3889](https://img.shields.io/badge/GTA%20V%20Legacy-1.0.3889-F4A261)
+![RageCoop 1.5.12.15](https://img.shields.io/badge/RageCoop-1.5.12.15-2A9D8F)
+[![Лицензия MIT](https://img.shields.io/badge/license-MIT-F4A261)](LICENSE)
 
 **[Скачать](https://github.com/vkupyansky/og-coop/releases/latest)** · [Установка](#установка) · [Свой сервер](#свой-сервер) · [Управление](#управление) · [Сообщить о проблеме](https://github.com/vkupyansky/og-coop/issues/new/choose)
 
-![Свободная игра с другом](screenshots/01-shared-play.png)
+![Меню OG Coop, игра с другом](screenshots/01-main-menu.jpg)
 
 OG Coop это неофициальное дополнение к RageCoop. Один установщик ставит всё нужное в игру, сервер сам раздаёт меню каждому, кто подключился, а файлы RageCoop не меняются. Меню на русском или английском, с клавиатуры или геймпада. Проект в разработке, автор Vladislav Kupyansky ([GitHub](https://github.com/vkupyansky), Telegram [@skibidessa](https://t.me/skibidessa)).
 
+<h3 align="center">Онлайн, который можно поставить на паузу</h3>
+<p align="center">Нажмите Esc, и игра встанет только у вас, как в одиночной игре: вы замираете на месте, а у друзей пропадаете. Снимите паузу и продолжайте с того же места, даже посреди полёта.</p>
+
 ## Возможности
 
-- **Интерьеры GTA Online.** 82 интерьера за 158 дверями с улицы, у каждой двери значок, как в Online: казино Diamond и пентхаус, апартаменты, дома и особняки, офисы CEO, клубы байкеров, бункеры, ночные клубы, LS Car Meet с тестовой трассой, залы Kortz Center, особняк Эль Рубио на Кайо-Перико и многое другое. Зайдите в жёлтый круг у двери, и вы внутри. Выход всегда там, где вы появились, как бы вы ни попали внутрь.
+- **Интерьеры GTA Online.** 82 интерьера за 158 дверями с улицы, у каждой двери значок, как в Online: казино Diamond и пентхаус, апартаменты, дома и особняки, офисы CEO, клубы байкеров, бункеры, ночные клубы, LS Car Meet с тестовой трассой, залы Kortz Center, особняк Эль Рубио на Кайо-Перико и многое другое. Зайдите в оранжевый круг у двери, и вы внутри. Выход всегда там, где вы появились, как бы вы ни попали внутрь.
 - **Люди внутри**, как в GTA Online: охрана, кассиры, бармены, танцующие и гости на тех же местах и с тем же делом. А на пляже Кайо-Перико вечеринка.
 - **Свой персонаж.** Редактор как в GTA Online: наследственность, лицо, волосы, макияж, вся одежда и татуировки Online. Открывается сам при первом входе, хранится на сервере по нику, и друзья видят вас таким же.
 - **Своя яхта.** Galaxy Super Yacht на одной из 35 стоянок вдоль берега: модель, цвет, перила, подсветка и флаг на выбор. Капитан перегоняет её на другую стоянку.
@@ -34,35 +37,27 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 ## Скриншоты
 
 <p align="center">
-  <img src="screenshots/02-main-menu.jpg" width="49%" alt="Меню OG Coop">
-  <img src="screenshots/07-yacht.jpg" width="49%" alt="Своя яхта">
+  <img src="screenshots/02-transport.jpg" width="49%" alt="Транспорт">
+  <img src="screenshots/03-teleports.jpg" width="49%" alt="Телепорты">
 </p>
-<p align="center"><sub>Меню на J · Своя яхта и её настройки</sub></p>
+<p align="center"><sub>Транспорт · Телепорты</sub></p>
 
 <p align="center">
-  <img src="screenshots/10-casino.jpg" width="49%" alt="Казино Diamond">
-  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Кайо-Перико">
-</p>
-<p align="center"><sub>Казино Diamond · Кайо-Перико</sub></p>
-
-<p align="center">
-  <img src="screenshots/09-map.jpg" width="80%" alt="Входы на карте паузы">
-</p>
-<p align="center"><sub>Входы на карте паузы. GTA показывает только часть значков сразу, так что входов намного больше, чем видно здесь</sub></p>
-
-<details>
-<summary>Ещё разделы меню</summary>
-
-<p align="center">
-  <img src="screenshots/03-transport.jpg" width="49%" alt="Транспорт">
-  <img src="screenshots/04-teleports.jpg" width="49%" alt="Телепорты">
-</p>
-<p align="center">
+  <img src="screenshots/04-partners.jpg" width="49%" alt="Напарники">
   <img src="screenshots/05-character.jpg" width="49%" alt="Персонаж">
-  <img src="screenshots/06-weapons.jpg" width="49%" alt="Оружие">
 </p>
+<p align="center"><sub>Напарники · Персонаж</sub></p>
 
-</details>
+<p align="center">
+  <img src="screenshots/06-appearance.jpg" width="49%" alt="Редактор персонажа">
+  <img src="screenshots/07-weapons.jpg" width="49%" alt="Оружие">
+</p>
+<p align="center"><sub>Редактор персонажа · Оружие</sub></p>
+
+<p align="center">
+  <img src="screenshots/08-settings.jpg" width="80%" alt="Настройки на русском">
+</p>
+<p align="center"><sub>Настройки. Меню на русском или английском</sub></p>
 
 ## Установка
 
@@ -120,7 +115,7 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 | Голосовой чат | Удерживать N | |
 | Пауза и карта GTA | Esc | Menu / Start |
 
-Язык: Настройки > "Язык / Language", у каждого игрока свой. Esc ставит на паузу только вашу игру: пока вы в меню паузы, ваш персонаж и трафик вашей игры у других стоят.
+Язык: Настройки > "Язык / Language", у каждого игрока свой. Esc ставит на паузу только вашу игру: пока вы в меню паузы, ваш персонаж у других пропадает, а трафик вашей игры стоит.
 
 ## Обновления
 

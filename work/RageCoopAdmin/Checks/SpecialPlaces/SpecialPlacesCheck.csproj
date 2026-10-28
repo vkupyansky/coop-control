@@ -14,6 +14,7 @@
     <Compile Include="../../Shared/SpecialPlaceProtocol.cs" Link="SpecialPlaceProtocol.cs" />
     <Compile Include="../../Client/SpecialPlaces.cs" Link="SpecialPlaces.cs" />
     <Compile Include="../../Client/SpecialPlaceNatives.cs" Link="SpecialPlaceNatives.cs" />
+    <Compile Include="../../Client/ScriptTimeout.cs" Link="ScriptTimeout.cs" />
     <Reference Include="ScriptHookVDotNet3"><HintPath>$(RageCoopServerDir)/ScriptHookVDotNet3.dll</HintPath><Private>true</Private></Reference>
   </ItemGroup>
 </Project>

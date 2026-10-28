@@ -586,14 +586,14 @@ public sealed partial class AdminMenuScript : ClientScript
 
     private static NativeMenu CreateMenu(string title, string subtitle)
     {
+        // в шапке все буквы одной высоты: строчные у Pricedown мельче заглавных
+        title = title.ToUpperInvariant();
         NativeMenu menu = new NativeMenu(title, subtitle)
         {
             MaxItems = 10
         };
         UiMenu.Bind(menu, title, subtitle);
-        menu.Banner.Color = Color.FromArgb(235, 14, 18, 24);
-        menu.BannerText.Color = Color.FromArgb(255, 255, 167, 46);
-        menu.BannerText.Font = GTA.UI.Font.ChaletLondon;
+        MenuStyle.Frame(menu);
         FitMenuBanner(menu);
         menu.NoItemsText = UiText.Get("Пока пусто");
         menu.Buttons.Clear();
@@ -604,7 +604,8 @@ public sealed partial class AdminMenuScript : ClientScript
 
     private static void FitMenuBanner(NativeMenu menu)
     {
-        menu.BannerText.Scale = 0.62f;
+        // Pricedown крупный, как на логотипе GTA, длинное название ужимается под шапку
+        menu.BannerText.Scale = 0.85f;
         float bannerBudget = 2f * (Math.Min(209f, menu.Width - 209f) - 16f);
         float bannerWidth = menu.BannerText.Width;
         if (bannerBudget > 0f && bannerWidth > bannerBudget)
@@ -1220,6 +1221,13 @@ public sealed partial class AdminMenuScript : ClientScript
             surface.Z + (vehicle != null ? 2.0f : 1.2f));
         target.Position = arrival;
         target.Velocity = GTA.Math.Vector3.Zero;
+        if (pending.Heading is float heading)
+        {
+            target.Heading = heading;
+            // у самолёта шасси ниже обычной высоты машины
+            if (target is Vehicle placed) placed.PlaceOnGround();
+        }
+
         if (GTA.Math.Vector3.Distance(target.Position, arrival) < 10f && pending.LoadScene)
         {
             pending.HeldWasFrozen = target.IsPositionFrozen;
@@ -1250,6 +1258,12 @@ public sealed partial class AdminMenuScript : ClientScript
         if (pending.FloorKnown)
         {
             return TryFindFloor(target, out surface);
+        }
+
+        if (pending.Heading.HasValue)
+        {
+            // самолёт с ближайшей дорогой увело бы с полосы
+            return TrySurfaceRay(target, target.Z + 3f, target.Z - 5f, out surface);
         }
 
         if (pending.ForRecall)
@@ -2071,6 +2085,8 @@ public sealed partial class AdminMenuScript : ClientScript
         public int Interior { get; set; } = -1;
         // The floor lies just below the point (an interior or its door).
         public bool FloorKnown { get; set; }
+        // курс на месте: ставим ровно в точку, без поиска дороги рядом
+        public float? Heading { get; set; }
         // что сделать на месте: машина из дома появляется у двери
         public Action? Arrived { get; set; }
     }

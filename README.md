@@ -4,20 +4,23 @@
 
 GTA Online interiors, your own character, yacht and home, and a handy menu for playing GTA V Legacy with friends on [RageCoop](https://ragecoop.com/).
 
-[![Release](https://img.shields.io/github/v/release/vkupyansky/og-coop?include_prereleases&label=release)](https://github.com/vkupyansky/og-coop/releases/latest)
-![GTA V Legacy 1.0.3889](https://img.shields.io/badge/GTA%20V%20Legacy-1.0.3889-f28c28)
-![RageCoop 1.5.12.15](https://img.shields.io/badge/RageCoop-1.5.12.15-4a7bd0)
-[![License: MIT](https://img.shields.io/badge/license-MIT-3c9a4c)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/vkupyansky/og-coop?include_prereleases&label=release&color=2A9D8F)](https://github.com/vkupyansky/og-coop/releases/latest)
+![GTA V Legacy 1.0.3889](https://img.shields.io/badge/GTA%20V%20Legacy-1.0.3889-F4A261)
+![RageCoop 1.5.12.15](https://img.shields.io/badge/RageCoop-1.5.12.15-2A9D8F)
+[![License: MIT](https://img.shields.io/badge/license-MIT-F4A261)](LICENSE)
 
 **[Download](https://github.com/vkupyansky/og-coop/releases/latest)** · [Install](#install) · [Host a server](#host-a-server) · [Controls](#controls) · [Report a problem](https://github.com/vkupyansky/og-coop/issues/new/choose)
 
-![Free roam with a friend](screenshots/01-shared-play.png)
+![The OG Coop menu, playing with a friend](screenshots/01-main-menu.jpg)
 
 OG Coop is an unofficial add-on for RageCoop. One installer sets up the game, the server sends the menu to everyone who joins, and RageCoop's own files stay untouched. The menu speaks English or Russian and works with a keyboard or a gamepad. Work in progress by Vladislav Kupyansky ([GitHub](https://github.com/vkupyansky), Telegram [@skibidessa](https://t.me/skibidessa)).
 
+<h3 align="center">Online play you can pause</h3>
+<p align="center">Press Esc and only your game stops, like in single player: you freeze in place and vanish for your friends. Unpause and carry on from the same spot, even in mid-flight.</p>
+
 ## Features
 
-- **GTA Online interiors.** 82 interiors behind 158 street doors, each with its Online map icon: the Diamond Casino and its penthouse, apartments, houses and mansions, CEO offices, biker clubhouses, bunkers, nightclubs, the LS Car Meet and its test track, the Kortz Center halls, El Rubio's mansion on Cayo Perico and many more. Walk into the yellow circle at a door to go in. The way out is a circle where you appear, however you got inside.
+- **GTA Online interiors.** 82 interiors behind 158 street doors, each with its Online map icon: the Diamond Casino and its penthouse, apartments, houses and mansions, CEO offices, biker clubhouses, bunkers, nightclubs, the LS Car Meet and its test track, the Kortz Center halls, El Rubio's mansion on Cayo Perico and many more. Walk into the orange circle at a door to go in. The way out is a circle where you appear, however you got inside.
 - **People inside**, as in GTA Online: guards, cashiers, bartenders, dancers and guests in the same spots, doing the same things. And a beach party on Cayo Perico.
 - **Your character.** A creator like the one in GTA Online: heritage, face, hair, make-up, every Online outfit and tattoo. It opens the first time you join, is kept on the server under your name, and friends see you exactly as you made yourself.
 - **Your yacht.** A Galaxy Super Yacht at one of 35 berths along the coast, with your choice of model, colour, railings, lights and flag. Its captain moves it to another berth.
@@ -34,35 +37,27 @@ OG Coop is an unofficial add-on for RageCoop. One installer sets up the game, th
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/02-main-menu.jpg" width="49%" alt="The OG Coop menu">
-  <img src="screenshots/07-yacht.jpg" width="49%" alt="Your own yacht">
+  <img src="screenshots/02-transport.jpg" width="49%" alt="Transport">
+  <img src="screenshots/03-teleports.jpg" width="49%" alt="Teleports">
 </p>
-<p align="center"><sub>The menu on J · Your own yacht and its options</sub></p>
+<p align="center"><sub>Transport · Teleports</sub></p>
 
 <p align="center">
-  <img src="screenshots/10-casino.jpg" width="49%" alt="The Diamond Casino">
-  <img src="screenshots/08-cayo-perico.jpg" width="49%" alt="Cayo Perico">
-</p>
-<p align="center"><sub>The Diamond Casino · Cayo Perico</sub></p>
-
-<p align="center">
-  <img src="screenshots/09-map.jpg" width="80%" alt="Entrances on the pause map">
-</p>
-<p align="center"><sub>Entrances on the pause map. GTA shows only part of the icons at once, so there are many more entrances than you see here</sub></p>
-
-<details>
-<summary>More of the menu</summary>
-
-<p align="center">
-  <img src="screenshots/03-transport.jpg" width="49%" alt="Transport">
-  <img src="screenshots/04-teleports.jpg" width="49%" alt="Teleports">
-</p>
-<p align="center">
+  <img src="screenshots/04-partners.jpg" width="49%" alt="Partners">
   <img src="screenshots/05-character.jpg" width="49%" alt="Character">
-  <img src="screenshots/06-weapons.jpg" width="49%" alt="Weapons">
 </p>
+<p align="center"><sub>Partners · Character</sub></p>
 
-</details>
+<p align="center">
+  <img src="screenshots/06-appearance.jpg" width="49%" alt="Character creator">
+  <img src="screenshots/07-weapons.jpg" width="49%" alt="Weapons">
+</p>
+<p align="center"><sub>Character creator · Weapons</sub></p>
+
+<p align="center">
+  <img src="screenshots/08-settings.jpg" width="80%" alt="Settings in Russian">
+</p>
+<p align="center"><sub>Settings. The menu speaks English or Russian</sub></p>
 
 ## Install
 
@@ -120,7 +115,7 @@ On VK Play, do all of this inside the cloud PC, on its persistent game drive. If
 | Voice chat | Hold N | |
 | GTA pause and map | Esc | Menu / Start |
 
-Language: Settings > Language. Each player picks their own. Esc pauses only your own game: while you are in the pause menu, your character and the traffic your game controls stand still for others.
+Language: Settings > Language. Each player picks their own. Esc pauses only your own game: while you are in the pause menu, your character disappears for others and the traffic your game controls stands still.
 
 ## Stay up to date
 

@@ -20,7 +20,7 @@ public sealed partial class AdminMenuScript
     private const float DoorDrawDistance = 40f;
     private const float DoorHeightReach = 2.5f;
     private const float InsideLeaveDistance = 150f;
-    private static readonly Color DoorColor = Color.FromArgb(150, 240, 200, 80);
+    private static readonly Color DoorColor = Palette.WithAlpha(Palette.Orange, 150);
     private readonly InteriorRuntime _interiors = new InteriorRuntime(OnlineInteriors.All);
     private InteriorPeople? _interiorPeople;
     private readonly DoorTrigger[] _doors = OnlineInteriors.Doors.Select(_ => new DoorTrigger()).ToArray();

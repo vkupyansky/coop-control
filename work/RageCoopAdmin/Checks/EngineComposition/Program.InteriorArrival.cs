@@ -38,6 +38,24 @@ internal static partial class Program
                 "Until the interior's floor has collision the arrival waits instead of using the roof.");
             Assert(Arrive(924.021f, 45.981f, 81.1f, 86.5f, 80.1f) == 80.1f,
                 "Leaving through a covered door lands on the street, not on the awning above it.");
+
+            // полосы: самолёт ставится в саму точку, поиск дороги рядом не вызывается
+            Type locationType = script.GetNestedType("TeleportLocation", BindingFlags.NonPublic)!;
+            object?[] runways = ((Array)script.GetField("InterestingLocations", Static)!.GetValue(null)!).Cast<object?>()
+                .Where(location => locationType.GetProperty("Heading", Instance)!.GetValue(location) != null).ToArray();
+            Assert(runways.Length == 3, "The three airfield runways have a takeoff heading.");
+            foreach (object? runway in runways)
+            {
+                float Value(string name) => (float)locationType.GetProperty(name, Instance)!.GetValue(runway)!;
+                _arrivalSurfaces = new[] { Value("Z") - 1f };
+                object pending = create.Invoke(new object?[] { Value("X"), Value("Y"), Value("Z"), "runway", Stopwatch.GetTimestamp(), false, 8.0 });
+                pendingType.GetProperty("Heading", Instance)!.SetValue(pending, Value("Heading"));
+                object?[] arguments = { pending, true, null };
+                Assert((bool)find.Invoke(null, arguments)!, "A runway point with collision is accepted at once.");
+                Vector3 at = (Vector3)arguments[2]!;
+                Assert(at.X == Value("X") && at.Y == Value("Y") && at.Z == Value("Z") - 1f,
+                    "A plane teleported to a runway lands on the runway point itself, not on the nearest road.");
+            }
         }
         finally { boundary.UnpatchAll(boundary.Id); }
     }

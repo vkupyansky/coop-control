@@ -10,6 +10,7 @@ public sealed partial class AdminMenuScript
     // Outdoor coordinates: gta5.photography/manuals/teleporting;
     // airfields: gtahash.com/tools/coord and vice-forge.com/tools/fivem-teleport-coordinates.
     // They remain hints: the existing teleport pipeline loads and validates collision.
+    // полосы: точка и курс взлёта из скриптов игры pilot_school, pm_plane_promotion и traffick_air
     private static readonly TeleportLocation[] InterestingLocations =
     {
         new TeleportLocation("Город", "Пирс Дель-Перро", "Парк аттракционов у океана. Пешком.", -1850.127f, -1231.751f, 13.017f, true),
@@ -25,7 +26,13 @@ public sealed partial class AdminMenuScript
         new TeleportLocation("За городом", "Карьер", "Открытый карьер в восточной части карты.", 2954.196f, 2783.410f, 41.004f),
         new TeleportLocation("За городом", "Радиостанция Rebel Radio", "Радиостанция в пустыне.", 736.153f, 2583.143f, 79.634f),
         new TeleportLocation("Аэродромы", "Аэропорт Лос-Сантоса", "Подъезд к терминалу аэропорта.", -1037.700f, -2737.700f, 20.160f),
-        new TeleportLocation("Аэродромы", "Аэродром Сэнди-Шорс", "Открытая территория аэродрома.", 1710.200f, 3256.000f, 41.100f)
+        new TeleportLocation("Аэродромы", "Полоса аэропорта Лос-Сантоса", "Начало главной полосы, носом вдоль неё. Можно сразу взлетать.",
+            -1601.212f, -2990.600f, 12.969f, heading: 240f),
+        new TeleportLocation("Аэродромы", "Аэродром Сэнди-Шорс", "Открытая территория аэродрома.", 1710.200f, 3256.000f, 41.100f),
+        new TeleportLocation("Аэродромы", "Полоса Сэнди-Шорс", "Восточный край полосы, носом вдоль неё. Можно сразу взлетать.",
+            1678.800f, 3229.600f, 41.800f, heading: 106.091f),
+        new TeleportLocation("Аэродромы", "Полоса McKenzie Field", "Грунтовая полоса в Грейпсиде, носом вдоль неё. Можно сразу взлетать.",
+            2042.050f, 4772.592f, 40.096f, heading: 114.440f)
     };
 
     private void BuildTeleportMenu()
@@ -99,12 +106,13 @@ public sealed partial class AdminMenuScript
         }
 
         BeginTeleport(location.X, location.Y, location.Z, "месту «" + location.Name + "»");
+        if (_pendingTeleport != null) _pendingTeleport.Heading = location.Heading;
     }
 
     private sealed class TeleportLocation
     {
         internal TeleportLocation(string category, string name, string description,
-            float x, float y, float z, bool onFootOnly = false)
+            float x, float y, float z, bool onFootOnly = false, float? heading = null)
         {
             Category = category;
             Name = name;
@@ -113,6 +121,7 @@ public sealed partial class AdminMenuScript
             Y = y;
             Z = z;
             OnFootOnly = onFootOnly;
+            Heading = heading;
         }
 
         internal string Category { get; }
@@ -122,5 +131,7 @@ public sealed partial class AdminMenuScript
         internal float Y { get; }
         internal float Z { get; }
         internal bool OnFootOnly { get; }
+        // есть курс: ровно в эту точку и носом по курсу, как на полосе
+        internal float? Heading { get; }
     }
 }
