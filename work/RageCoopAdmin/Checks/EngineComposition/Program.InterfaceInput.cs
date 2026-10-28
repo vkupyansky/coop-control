@@ -359,6 +359,20 @@ internal static partial class Program
             Assert(main.Visible && main.SelectedIndex == 0 && InputDisabled.Contains((0, 19)) && InputDisabled.Contains((0, 20)),
                 "Xbox gameplay LB/RB/Down opens the actual menu without requiring inactive script or frontend actions and reserves the character wheel/list.");
             main.Visible = false; Release();
+            script.GetField("_lastMenuShortcut", Instance)!.SetValue(instance, 0L);
+            _inputChat = true;
+            Call(instance, "HandleMenuKey", new KeyEventArgs(Keys.J | Keys.Shift)); Frame();
+            Assert(!main.Visible, "A capital J typed in the chat stays text and cannot open the menu.");
+            _inputChat = false;
+            Call(instance, "HandleMenuKey", new KeyEventArgs(Keys.J | Keys.Shift)); Frame();
+            Assert(main.Visible, "J opens the actual menu while Shift is held for running.");
+            main.Visible = false;
+            Call(instance, "OnKeyUp", hostInstance, new KeyEventArgs(Keys.J));
+            script.GetField("_lastMenuShortcut", Instance)!.SetValue(instance, 0L);
+            Call(instance, "HandleMenuKey", new KeyEventArgs(Keys.J | Keys.Alt)); Frame();
+            Assert(!main.Visible, "Alt+J leaves the menu closed.");
+            Call(instance, "OnKeyUp", hostInstance, new KeyEventArgs(Keys.J));
+            Release();
             foreach (var bumpers in new[] { (left: 68, right: 76), (left: 89, right: 90) })
             {
                 script.GetField("_lastRepairShortcut", Instance)!.SetValue(instance, 0L);

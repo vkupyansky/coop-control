@@ -29,7 +29,7 @@ body:
     attributes:
       label: "OG Coop version / Версия OG Coop"
       description: "Menu J → Settings → About, the installer's first line, or the release name. / Меню J → Настройки → «О дополнении», первая строка установщика или название выпуска."
-      placeholder: "0.4.2"
+      placeholder: "0.4.3"
   - type: dropdown
     id: platform
     attributes:

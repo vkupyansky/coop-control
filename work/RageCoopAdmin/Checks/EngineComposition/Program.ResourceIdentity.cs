@@ -129,26 +129,6 @@ internal static partial class Program
                 presetBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "vehicle-presets.xml"))) && warnings.Count == 0,
                 "Cache cleanup removes an empty temporary folder without rewriting settings or saved vehicles.");
 
-            // Before the product became OG Coop the resource was CoopControl:
-            // its profile moves over once and its downloads are cache.
-            string former = Path.Combine(data, "CoopControl");
-            Directory.Move(canonical, former);
-            string formerArchive = Path.Combine(root, "CoopControl." + new string('b', 64) + ".res");
-            File.WriteAllText(formerArchive, "download of the former name");
-            Normalize(next);
-            Assert(next.DataFolder == canonical && !Directory.Exists(former) &&
-                interfaceBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "interface.xml"))),
-                "The settings folder of the former CoopControl name moves to OGCoop unchanged on the first start after the rename.");
-            Cleanup(next);
-            Assert(!File.Exists(formerArchive) && File.Exists(nextPath) && warnings.Count == 0,
-                "Downloads of the former CoopControl name are removed as cache.");
-            Directory.CreateDirectory(former);
-            File.WriteAllText(Path.Combine(former, "interface.xml"), "older copy");
-            Normalize(next);
-            Assert(interfaceBytes.SequenceEqual(File.ReadAllBytes(Path.Combine(canonical, "interface.xml"))) && Directory.Exists(former),
-                "A former folder found after the move never replaces the current profile.");
-            Directory.Delete(former, recursive: true);
-
             var foreign = new ClientResource();
             typeof(ClientResource).GetProperty("Name")!.SetValue(foreign, "OtherResource." + new string('a', 64));
             string foreignFolder = Path.Combine(data, foreign.Name);

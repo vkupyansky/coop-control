@@ -118,7 +118,6 @@ internal static class Program
         CopyResult copied = GameFiles.Install(payload, game.Path, apply: !options.Check);
         Say(Text.Get("Файлы игры: ", "Game files: ") + copied.Added + Text.Get(" новых, ", " new, ") + copied.Updated +
             Text.Get(" обновлено, ", " updated, ") + copied.Settings + Text.Get(" настроек дополнено, ", " settings merged, ") +
-            copied.Removed + Text.Get(" старых убрано, ", " old removed, ") +
             copied.Unchanged + Text.Get(" без изменений.", " unchanged."));
         foreach (string changed in copied.Changed) Log("  " + changed);
 

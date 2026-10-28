@@ -11,9 +11,6 @@ namespace RageCoopAdmin.Client;
 internal static class ResourceIdentity
 {
     private const string Name = "OGCoop";
-    // The resource's name before the product became OG Coop: its settings
-    // folder moves over once, its downloaded archives are cache.
-    private const string FormerName = "CoopControl";
     private const int HashLength = 64;
     private static readonly PropertyInfo DataFolder = typeof(ClientResource).GetProperty(nameof(ClientResource.DataFolder)) ??
         throw new InvalidOperationException("The installed RageCoop resource data-folder contract is unavailable.");
@@ -24,9 +21,6 @@ internal static class ResourceIdentity
         string canonical = Path.Combine(parent, Name);
         if (DataFolder.PropertyType != typeof(string) || DataFolder.GetSetMethod(true) == null)
             throw new InvalidOperationException("The installed RageCoop resource data folder cannot be assigned.");
-        string former = Path.Combine(parent, FormerName);
-        if (!Directory.Exists(canonical) && Directory.Exists(former) && (File.GetAttributes(former) & FileAttributes.ReparsePoint) == 0)
-            Directory.Move(former, canonical);
         Directory.CreateDirectory(canonical);
         DataFolder.SetValue(resource, canonical);
     }
@@ -43,18 +37,15 @@ internal static class ResourceIdentity
                 throw new InvalidOperationException("The resource data folder has not been normalized.");
             string root = Path.GetDirectoryName(parent) ?? throw new InvalidOperationException("The resource cache folder is unavailable.");
             string current = resource.Name + ".res";
-            foreach (string prefix in new[] { Name, FormerName })
+            foreach (string path in Directory.EnumerateFiles(root, Name + ".*.res", SearchOption.TopDirectoryOnly))
             {
-                foreach (string path in Directory.EnumerateFiles(root, prefix + ".*.res", SearchOption.TopDirectoryOnly))
-                {
-                    string filename = Path.GetFileName(path);
-                    if (filename.Length != prefix.Length + 1 + HashLength + 4 ||
-                        !filename.EndsWith(".res", StringComparison.Ordinal) ||
-                        !IsHashedName(Path.GetFileNameWithoutExtension(filename), prefix) ||
-                        string.Equals(filename, current, StringComparison.OrdinalIgnoreCase) ||
-                        (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0) continue;
-                    File.Delete(path);
-                }
+                string filename = Path.GetFileName(path);
+                if (filename.Length != Name.Length + 1 + HashLength + 4 ||
+                    !filename.EndsWith(".res", StringComparison.Ordinal) ||
+                    !IsHashedName(Path.GetFileNameWithoutExtension(filename)) ||
+                    string.Equals(filename, current, StringComparison.OrdinalIgnoreCase) ||
+                    (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0) continue;
+                File.Delete(path);
             }
             if (IsHashedName(resource.Name))
             {
@@ -83,9 +74,7 @@ internal static class ResourceIdentity
         return parent;
     }
 
-    private static bool IsHashedName(string? name) => IsHashedName(name, Name);
-
-    private static bool IsHashedName(string? name, string prefix) => name != null && name.Length == prefix.Length + 1 + HashLength &&
-        name.StartsWith(prefix + ".", StringComparison.Ordinal) && name.Skip(prefix.Length + 1).All(character =>
+    private static bool IsHashedName(string? name) => name != null && name.Length == Name.Length + 1 + HashLength &&
+        name.StartsWith(Name + ".", StringComparison.Ordinal) && name.Skip(Name.Length + 1).All(character =>
             (character >= '0' && character <= '9') || (character >= 'a' && character <= 'f') || (character >= 'A' && character <= 'F'));
 }

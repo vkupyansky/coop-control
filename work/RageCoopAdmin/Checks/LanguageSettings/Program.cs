@@ -74,18 +74,20 @@ internal static class Program
                 "<FutureOption>false</FutureOption></Interface>";
             File.WriteAllText(path, original);
             InterfaceSettings loaded = store.Load();
-            bool expectedBoost = version >= 1 && version <= 2;
+            // Only the current version keeps its choices, an older file starts from the defaults.
+            bool current = version == 5;
             Assert(loaded.Version == 5 && loaded.MenuLanguage == UiLanguage.Russian &&
-                loaded.RepairShortcut == 1 && !loaded.GamepadShortcuts && loaded.KeyboardBoost == expectedBoost,
-                $"profile v{version} migrates existing choices and defaults only the missing language");
+                loaded.RepairShortcut == (current ? 1 : 0) && loaded.GamepadShortcuts != current && loaded.KeyboardBoost != current,
+                $"profile v{version} keeps its choices only in the current format and defaults the missing language");
             Assert(File.ReadAllText(path) == original, $"reading profile v{version} does not rewrite player settings");
             store.Update(value => value.MenuLanguage = UiLanguage.English);
             InterfaceSettings reopened = new InterfaceSettingsStore(directory).Load();
             Assert(reopened.Version == 5 && reopened.MenuLanguage == UiLanguage.English &&
-                reopened.RepairShortcut == 1 && !reopened.GamepadShortcuts && reopened.KeyboardBoost == expectedBoost,
-                $"saving the language in profile v{version} preserves existing control migration");
-            Assert(reopened.OtherOptions?.Single().InnerText == "false",
-                $"language selection keeps an option another version wrote, from v{version}");
+                reopened.RepairShortcut == loaded.RepairShortcut && reopened.GamepadShortcuts == loaded.GamepadShortcuts &&
+                reopened.KeyboardBoost == loaded.KeyboardBoost,
+                $"saving the language over profile v{version} keeps the choices it was read with");
+            Assert(current ? reopened.OtherOptions?.Single().InnerText == "false" : reopened.OtherOptions == null,
+                $"an option another version wrote is kept only from the current format, v{version}");
         }
     }
 

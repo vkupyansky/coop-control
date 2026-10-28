@@ -70,7 +70,7 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 
 **Обновление:** скачайте новый `OGCoop-Addon.zip` и запустите его **Install.exe**. Он заменит только изменившееся и сохранит ваши настройки. Затем запустите GTA заново.
 
-В VK Play делайте всё внутри облачного компьютера, на его постоянном игровом диске. Если установщик там не запускается, скопируйте всё из папки `client` рядом с `GTA5.exe`, а также `ScriptHookV.dll` и `dinput8.dll` из ScriptHookV. Если так обновляетесь с Coop Control, удалите `scripts\CoopControl.EarlyClient.dll`, если он есть.
+В VK Play делайте всё внутри облачного компьютера, на его постоянном игровом диске. Если установщик там не запускается, скопируйте всё из папки `client` рядом с `GTA5.exe`, а также `ScriptHookV.dll` и `dinput8.dll` из ScriptHookV. Обновляетесь с Coop Control (v0.3.x)? Удалите `scripts\CoopControl.EarlyClient.dll` в папке игры и `Resources\Client\CoopControl` в папке сервера, иначе загрузятся два меню.
 
 ## Свой сервер
 

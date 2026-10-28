@@ -47,45 +47,22 @@ internal sealed class InterfaceSettingsStore
             MaxCharactersInDocument = MaximumFileBytes
         });
         reader.MoveToContent();
-        // Before v4, an omitted version was interpreted as v3 by the serializer's default.
+        // Without the attribute the serializer keeps the current version, so it is read first.
         bool unversioned = reader.GetAttribute("version") == null;
         if (Serializer.Deserialize(reader) is not InterfaceSettings settings)
         {
             throw new InvalidDataException("The interface settings format is invalid.");
         }
 
-        if (unversioned)
+        // A file of an older version starts over from the defaults and is replaced on the next save.
+        if (unversioned || settings.Version < InterfaceSettings.CurrentVersion)
         {
-            settings.Version = 3;
+            return new InterfaceSettings();
         }
 
-        if (settings.Version >= 1 && settings.Version <= 3)
-        {
-            ValidateChoices(settings, maximumChoice: 2);
-            if (settings.Version <= 2)
-            {
-                // Preserve the v3 migration from an impulse to held boost for older profiles.
-                settings.KeyboardBoost = true;
-            }
-
-            // Legacy I now uses K, a disabled repair binding stays disabled.
-            settings.RepairShortcut = settings.RepairShortcut == 2 ? 1 : 0;
-            settings.Version = 5;
-        }
-        else if (settings.Version == 4)
-        {
-            settings.Version = 5;
-        }
-
-        // Retired options of our own older versions are dropped, options of
-        // other versions are kept.
-        XmlElement[]? other = settings.OtherOptions?.Where(option => Array.IndexOf(RetiredOptions, option.Name) < 0).ToArray();
-        settings.OtherOptions = other is { Length: > 0 } ? other : null;
         Validate(settings);
         return settings;
     }
-
-    private static readonly string[] RetiredOptions = { "MenuShortcut", "ShowPlayersHud" };
 
     internal void Save(InterfaceSettings settings)
     {
@@ -113,12 +90,11 @@ internal sealed class InterfaceSettingsStore
 
     private static void Validate(InterfaceSettings settings)
     {
-        if (settings.Version != 5)
+        if (settings.Version != InterfaceSettings.CurrentVersion || settings.RepairShortcut < 0 || settings.RepairShortcut > 1)
         {
             throw new InvalidDataException("Unsupported interface settings.");
         }
 
-        ValidateChoices(settings, maximumChoice: 1);
         if (settings.MenuLanguage != UiLanguage.Russian && settings.MenuLanguage != UiLanguage.English)
         {
             throw new InvalidDataException("Unsupported menu language.");
@@ -130,23 +106,17 @@ internal sealed class InterfaceSettingsStore
             throw new InvalidDataException("Unsupported menu switches.");
         }
     }
-
-    private static void ValidateChoices(InterfaceSettings settings, int maximumChoice)
-    {
-        if (settings.RepairShortcut < 0 || settings.RepairShortcut > maximumChoice)
-        {
-            throw new InvalidDataException("Unsupported interface settings.");
-        }
-    }
 }
 
 [XmlRoot("Interface")]
 public sealed partial class InterfaceSettings
 {
-    [XmlAttribute("version")]
-    public int Version { get; set; } = 5;
+    internal const int CurrentVersion = 5;
 
-    // v4-v5: 0 enables K, 1 disables it. v1-v3 are converted while loading.
+    [XmlAttribute("version")]
+    public int Version { get; set; } = CurrentVersion;
+
+    // 0 enables K, 1 disables it.
     public int RepairShortcut { get; set; }
     public bool GamepadShortcuts { get; set; } = true;
     public bool KeyboardBoost { get; set; } = true;

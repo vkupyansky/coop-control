@@ -70,7 +70,7 @@ You need **GTA V Legacy 1.0.3889** on Windows. Enhanced is not supported. RageCo
 
 **Updating:** download the new `OGCoop-Addon.zip` and run its **Install.exe**. It replaces only what changed and keeps your settings. Then start GTA again.
 
-On VK Play, do all of this inside the cloud PC, on its persistent game drive. If the installer cannot run there, copy everything from the `client` folder next to `GTA5.exe`, together with `ScriptHookV.dll` and `dinput8.dll` from ScriptHookV. When updating from Coop Control this way, delete `scripts\CoopControl.EarlyClient.dll` if it is there.
+On VK Play, do all of this inside the cloud PC, on its persistent game drive. If the installer cannot run there, copy everything from the `client` folder next to `GTA5.exe`, together with `ScriptHookV.dll` and `dinput8.dll` from ScriptHookV. Updating from Coop Control (v0.3.x)? Delete `scripts\CoopControl.EarlyClient.dll` in the game folder and `Resources\Client\CoopControl` in the server folder, otherwise two menus load.
 
 ## Host a server
 

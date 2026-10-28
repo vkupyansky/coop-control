@@ -96,14 +96,6 @@ internal static class CheckProgram
                 "A settings file in the Windows code page keeps its Russian comments after the update.");
         }
         Assert(!Directory.EnumerateFiles(game, "*.coop-new", SearchOption.AllDirectories).Any(), "No temporary file is left after an update.");
-        string former = Path.Combine(game, @"scripts\CoopControl.EarlyClient.dll");
-        Directory.CreateDirectory(Path.GetDirectoryName(former)!);
-        File.WriteAllText(former, "old early module");
-        CopyResult checkRemoval = GameFiles.Install(payload, game, apply: false);
-        Assert(checkRemoval.Removed == 1 && File.Exists(former), "Check mode reports the early module of the former name without removing it.");
-        CopyResult renamed = GameFiles.Install(payload, game, apply: true);
-        Assert(renamed.Removed == 1 && renamed.AnyChange && !File.Exists(former) && renamed.Changed.Contains(@"scripts\CoopControl.EarlyClient.dll"),
-            "Updating from before the rename removes the early module of the former name, so only one loads.");
     }
 
     private static void CheckGameFolders(string root)

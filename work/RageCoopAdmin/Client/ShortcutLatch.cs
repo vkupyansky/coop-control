@@ -25,7 +25,8 @@ internal static class InterfaceShortcutMatcher
 {
     internal static InterfaceShortcut Match(Keys key, Keys modifiers, InterfaceSettings settings)
     {
-        if (modifiers != Keys.None)
+        // Shift runs and Ctrl sneaks in GTA, so players often hold them. Only Alt keeps the keys silent.
+        if ((modifiers & Keys.Alt) == Keys.Alt)
         {
             return InterfaceShortcut.None;
         }

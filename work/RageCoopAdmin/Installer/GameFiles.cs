@@ -13,32 +13,18 @@ internal sealed class CopyResult
     internal int Updated { get; set; }
     internal int Unchanged { get; set; }
     internal int Settings { get; set; }
-    internal int Removed { get; set; }
     internal List<string> Changed { get; } = new List<string>();
-    internal bool AnyChange => Added + Updated + Settings + Removed > 0;
+    internal bool AnyChange => Added + Updated + Settings > 0;
 }
 
 // Files already identical are left alone. Settings files keep the player's own
 // lines and only get our keys.
 internal static class GameFiles
 {
-    // Files an earlier version put next to GTA5.exe under another name. The
-    // early module before the rename to OG Coop must go: two copies would
-    // both load into the game.
-    internal static readonly string[] Retired = { @"scripts\CoopControl.EarlyClient.dll" };
-
     internal static CopyResult Install(string payload, string game, bool apply)
     {
         string root = Path.GetFullPath(payload).TrimEnd('\\', '/') + Path.DirectorySeparatorChar;
         var result = new CopyResult();
-        foreach (string retired in Retired)
-        {
-            string target = Path.Combine(game, retired);
-            if (!File.Exists(target)) continue;
-            result.Removed++;
-            result.Changed.Add(retired);
-            if (apply) File.Delete(target);
-        }
         foreach (string source in Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories).OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
         {
             if ((File.GetAttributes(source) & FileAttributes.ReparsePoint) != 0)

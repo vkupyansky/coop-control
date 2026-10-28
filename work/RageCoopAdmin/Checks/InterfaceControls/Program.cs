@@ -82,7 +82,7 @@ internal static class Program
         MustReject(() => store.Save(new InterfaceSettings { RepairShortcut = -1 }), "negative repair shortcut choice rejected");
         MustReject(() => store.Save(new InterfaceSettings { Version = 4 }), "saving requires the current settings format");
         Assert(File.ReadAllText(path) == previous, "invalid save preserves previous choices");
-        CheckLegacyStorage(store, path);
+        CheckOlderStorage(store, path);
         File.WriteAllText(path, "<Interface version=\"5\"><RepairShortcut>2</RepairShortcut></Interface>");
         MustReject(() => store.Load(), "current format cannot restore a removed repair shortcut choice");
         File.WriteAllText(path, "<Interface version=\"99\"><MenuShortcut>0</MenuShortcut></Interface>");
@@ -98,72 +98,24 @@ internal static class Program
             "settings operations preserve unrelated files and create no duplicate profiles");
     }
 
-    private static void CheckLegacyStorage(InterfaceSettingsStore store, string path)
+    private static void CheckOlderStorage(InterfaceSettingsStore store, string path)
     {
-        for (int version = 1; version <= 4; version++)
+        foreach (string older in new[]
         {
-            int maximumChoice = version <= 3 ? 2 : 1;
-            for (int menu = 0; menu <= maximumChoice; menu++)
-            {
-                for (int repair = 0; repair <= maximumChoice; repair++)
-                {
-                    string legacy = LegacyProfileXml(version, menu, repair);
-                    File.WriteAllText(path, legacy);
-                    InterfaceSettings migrated = store.Load();
-                    int expectedRepair = version <= 3 ? (repair == 2 ? 1 : 0) : repair;
-                    Assert(migrated.Version == 5 && migrated.RepairShortcut == expectedRepair &&
-                        !migrated.GamepadShortcuts && !migrated.VoiceChat &&
-                        migrated.KeyboardBoost == (version <= 2),
-                        $"v{version} migrates menu choice {menu} and repair choice {repair} without resetting preferences");
-                    Assert(InterfaceShortcutMatcher.Match(Keys.J, Keys.None, migrated) ==
-                        InterfaceShortcut.Menu &&
-                        InterfaceShortcutMatcher.Match(Keys.K, Keys.None, migrated) ==
-                        (expectedRepair == 1 ? InterfaceShortcut.None : InterfaceShortcut.Repair) &&
-                        InterfaceShortcutMatcher.Match(Keys.U, Keys.None, migrated) == InterfaceShortcut.None &&
-                        InterfaceShortcutMatcher.Match(Keys.I, Keys.None, migrated) == InterfaceShortcut.None,
-                        "migrated profile always opens on J and preserves whether K is enabled");
-                    Assert(File.ReadAllText(path) == legacy, "migration read preserves the stored profile");
-                    store.Save(migrated);
-                    InterfaceSettings reopened = store.Load();
-                    string saved = File.ReadAllText(path);
-                    Assert(reopened.Version == 5 && reopened.RepairShortcut == migrated.RepairShortcut &&
-                        reopened.KeyboardBoost == migrated.KeyboardBoost &&
-                        !reopened.GamepadShortcuts && !reopened.VoiceChat &&
-                        InterfaceShortcutMatcher.Match(Keys.J, Keys.None, reopened) == InterfaceShortcut.Menu &&
-                        saved.Contains("version=\"5\"") && !saved.Contains("MenuShortcut") &&
-                        !saved.Contains("ShowPlayersHud"),
-                        "next save drops the obsolete menu choice and preserves preferences across reopen");
-                }
-            }
-        }
-
-        File.WriteAllText(path, LegacyProfileXml(3, 1, 2).Replace(" version=\"3\"", string.Empty));
-        InterfaceSettings unversioned = store.Load();
-        Assert(unversioned.Version == 5 && unversioned.RepairShortcut == 1 &&
-            !unversioned.KeyboardBoost,
-            "unversioned profiles retain the previous v3 interpretation during migration");
-        for (int version = 1; version <= 4; version++)
+            "<Interface version=\"4\"><RepairShortcut>1</RepairShortcut><GamepadShortcuts>false</GamepadShortcuts></Interface>",
+            "<Interface><RepairShortcut>2</RepairShortcut><KeyboardBoost>false</KeyboardBoost></Interface>",
+        })
         {
-            string obsoleteMenu = LegacyProfileXml(version, 0, 0).Replace("<MenuShortcut>0</MenuShortcut>",
-                "<MenuShortcut>unused</MenuShortcut>");
-            File.WriteAllText(path, obsoleteMenu);
-            InterfaceSettings migrated = store.Load();
-            Assert(InterfaceShortcutMatcher.Match(Keys.J, Keys.None, migrated) == InterfaceShortcut.Menu &&
-                File.ReadAllText(path) == obsoleteMenu,
-                $"v{version} ignores the obsolete menu setting without rewriting the profile");
+            File.WriteAllText(path, older);
+            InterfaceSettings loaded = store.Load();
+            Assert(loaded.Version == 5 && loaded.RepairShortcut == 0 && loaded.GamepadShortcuts && loaded.KeyboardBoost &&
+                InterfaceShortcutMatcher.Match(Keys.J, Keys.None, loaded) == InterfaceShortcut.Menu && File.ReadAllText(path) == older,
+                "an older settings file is read as the defaults and stays untouched until the next save");
+            store.Save(loaded);
+            Assert(File.ReadAllText(path).Contains("version=\"5\"") && store.Load().GamepadShortcuts,
+                "the next save replaces an older file with the current format");
         }
-        File.WriteAllText(path, LegacyProfileXml(3, 0, 3));
-        string invalid = File.ReadAllText(path);
-        MustReject(() => store.Load(), "unknown legacy repair choice rejected before migration");
-        Assert(File.ReadAllText(path) == invalid, "invalid legacy profile remains intact");
-        File.WriteAllText(path, LegacyProfileXml(4, 1, 2));
-        MustReject(() => store.Load(), "v4 rejects invalid repair choices");
     }
-
-    private static string LegacyProfileXml(int version, int menu, int repair) =>
-        $"<Interface version=\"{version}\"><MenuShortcut>{menu}</MenuShortcut><RepairShortcut>{repair}</RepairShortcut>" +
-        "<GamepadShortcuts>false</GamepadShortcuts><KeyboardBoost>false</KeyboardBoost>" +
-        "<ShowPlayersHud>false</ShowPlayersHud><VoiceChat>false</VoiceChat></Interface>";
 
     private static void CheckHeldShortcut()
     {
@@ -184,12 +136,19 @@ internal static class Program
         Assert(InterfaceShortcutMatcher.Match(Keys.J, Keys.None, settings) == InterfaceShortcut.Menu &&
             InterfaceShortcutMatcher.Match(Keys.K, Keys.None, settings) == InterfaceShortcut.Repair,
             "unmodified J and K trigger the default actions");
-        foreach (Keys modifier in new[] { Keys.Control, Keys.Shift, Keys.Alt })
+        foreach (Keys modifier in new[] { Keys.Shift, Keys.Control, Keys.Shift | Keys.Control })
+        {
+            Assert(InterfaceShortcutMatcher.Match(Keys.J, modifier, settings) == InterfaceShortcut.Menu &&
+                InterfaceShortcutMatcher.Match(Keys.K, modifier, settings) == InterfaceShortcut.Repair &&
+                InterfaceShortcutMatcher.Match(Keys.O, modifier, settings) == InterfaceShortcut.Boost,
+                $"J, K and O work while {modifier} is held: running and sneaking do not block them");
+        }
+        foreach (Keys modifier in new[] { Keys.Alt, Keys.Alt | Keys.Shift, Keys.Alt | Keys.Control })
         {
             Assert(InterfaceShortcutMatcher.Match(Keys.J, modifier, settings) == InterfaceShortcut.None &&
                 InterfaceShortcutMatcher.Match(Keys.K, modifier, settings) == InterfaceShortcut.None &&
                 InterfaceShortcutMatcher.Match(Keys.O, modifier, settings) == InterfaceShortcut.None,
-                "modified J, K and O cannot trigger shortcuts");
+                $"J, K and O stay silent with {modifier}");
         }
         Assert(InterfaceShortcutMatcher.Match(Keys.M, Keys.Control, settings) == InterfaceShortcut.None &&
             InterfaceShortcutMatcher.Match(Keys.R, Keys.Control, settings) == InterfaceShortcut.None,
@@ -200,8 +159,8 @@ internal static class Program
             "held vehicle boost is enabled by default");
         settings.KeyboardBoost = true;
         Assert(InterfaceShortcutMatcher.Match(Keys.O, Keys.None, settings) == InterfaceShortcut.Boost &&
-            InterfaceShortcutMatcher.Match(Keys.O, Keys.Control, settings) == InterfaceShortcut.None,
-            "only bare O requests the enabled vehicle boost");
+            InterfaceShortcutMatcher.Match(Keys.O, Keys.Alt, settings) == InterfaceShortcut.None,
+            "O requests the enabled vehicle boost, Alt+O does not");
         Assert(InterfaceShortcutMatcher.Match(Keys.U, Keys.None, settings) == InterfaceShortcut.None &&
             InterfaceShortcutMatcher.Match(Keys.I, Keys.None, settings) == InterfaceShortcut.None,
             "U and I have no binding when keyboard shortcuts are enabled");
