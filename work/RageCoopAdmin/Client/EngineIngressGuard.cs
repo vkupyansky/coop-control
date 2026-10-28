@@ -14,7 +14,7 @@ using OGCoop.Shared;
 namespace RageCoopAdmin.Client;
 
 // Direct peers exchange game snapshots. Resource/control messages belong only
-// to the current server; a download name never authorizes leaving its root.
+// to the current server, and a download name never authorizes leaving its root.
 internal static class EngineIngressGuard
 {
     private const string PatchId = "friendslegacy.ragecoop.engineingress";

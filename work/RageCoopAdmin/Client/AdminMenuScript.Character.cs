@@ -11,11 +11,10 @@ using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;
 
-// The player's character: body, face, hair, clothes and tattoos. The server keeps it
-// per RageCoop name; it is put on at every join and again whenever the game
-// gives the player another body (after death, say). Without a saved character
-// the editor opens by itself once the map has loaded; «Позже» offers it again
-// at the next join. J → Персонаж → Внешность changes it.
+// The server keeps the character per RageCoop name. It is put on at every join
+// and again whenever the game gives the player another body (after death, say).
+// Without a saved character the editor opens by itself once the map has loaded,
+// and Later offers it again at the next join.
 public sealed partial class AdminMenuScript
 {
     private const long CharacterCheckMilliseconds = 500;
@@ -53,7 +52,7 @@ public sealed partial class AdminMenuScript
         (9, "Ethan"), (10, "Vincent"), (11, "Angel"), (12, "Diego"), (13, "Adrian"), (14, "Gabriel"), (15, "Michael"), (16, "Santiago"),
         (17, "Kevin"), (18, "Louis"), (19, "Samuel"), (20, "Anthony"), (42, "Claude"), (43, "Niko"), (44, "John"),
     };
-    // GTA's face features 0–19 in order.
+    // GTA's face features 0-19 in order.
     private static readonly string[] CreatorFeatures =
     {
         "Ширина носа", "Высота кончика носа", "Длина кончика носа", "Высота переносицы", "Опущенность кончика носа", "Изгиб переносицы",
@@ -88,7 +87,7 @@ public sealed partial class AdminMenuScript
     private NativeMenu[] _creatorTattooZones = Array.Empty<NativeMenu>();
     private NativeSubmenuItem? _creatorTattooEntry;
     private List<(NativeCheckboxItem Item, TattooOption Option)> _creatorTattooItems = new List<(NativeCheckboxItem, TattooOption)>();
-    // The body the tattoo lists were made for; 0 for none.
+    // The body the tattoo lists were made for, 0 for none.
     private int _creatorTattooModel;
     private NativeListItem<string>? _creatorBody;
     private NativeListItem<string>? _creatorView;
@@ -122,6 +121,7 @@ public sealed partial class AdminMenuScript
         if (!CharacterReplicas.Install(username => _characters?.Of(username), Logger.Warning))
             Logger.Warning("OG Coop: other players' characters are unavailable; RageCoop clothing contract changed.");
         _characters.Request();
+        _answers.Await("character", () => _characters?.Request(), () => _characters?.OwnKnown == true, NowMilliseconds());
     }
 
     private void QueueCharacterEvent(CustomEventReceivedArgs e, int kind)
@@ -169,7 +169,6 @@ public sealed partial class AdminMenuScript
         {
             _creatorMenu.AddSubMenu(section);
             NativeMenu shown = section;
-            // The face sections look at the face, clothes at the whole body.
             section.Shown += (_, _) => SetCreatorView(ReferenceEquals(shown, _creatorClothesMenu) ? 0 : 1);
         }
         BuildCreatorTattoos(_creatorMenu);
@@ -232,7 +231,7 @@ public sealed partial class AdminMenuScript
         menu.Add(random);
     }
 
-    // Tattoos by body part, as GTA Online's parlours sell them; the lists are
+    // Tattoos by body part, as GTA Online's parlours sell them. The lists are
     // filled for the body when the editor shows it.
     private void BuildCreatorTattoos(NativeMenu editor)
     {
@@ -286,8 +285,8 @@ public sealed partial class AdminMenuScript
         head.SetOverlay(overlay);
     }
 
-    // A face row: its options are read from the game when the editor opens,
-    // and a choice changes the editor's face and puts it on at once.
+    // Options are read from the game when the editor opens, and a choice puts
+    // the face on at once.
     private void AddHeadRow(NativeMenu menu, Func<string> title, Func<string> description, Func<string[]> options,
         Func<CharacterHead, int> read, Action<CharacterHead, int> write)
     {
@@ -313,6 +312,12 @@ public sealed partial class AdminMenuScript
 
     private bool CreatorMenuVisible() => CreatorMenus().Any(menu => menu.Visible);
 
+    private enum CreatorHidden { Leave, Wait, Reshow }
+
+    // A hidden editor menu was either closed by the player (edits revert) or taken by the host and comes back.
+    private static CreatorHidden OnCreatorHidden(bool hiddenForHost, bool inputBlocked) =>
+        !hiddenForHost ? CreatorHidden.Leave : inputBlocked ? CreatorHidden.Wait : CreatorHidden.Reshow;
+
     private void HideCreatorMenus()
     {
         foreach (NativeMenu menu in CreatorMenus()) menu.Visible = false;
@@ -333,7 +338,7 @@ public sealed partial class AdminMenuScript
         Ped player = Game.Player.Character;
         if (player == null || !player.Exists()) return;
         if (_modelChange == null) _heroLink?.Sync(StoryModel(), player.Model.Hash);
-        // The game's respawn dresses a hero in its own default clothes; the
+        // The game's respawn dresses a hero in its own default clothes. The
         // saved character's clothes go on again once the player is back.
         if (player.IsDead)
         {
@@ -350,7 +355,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        // The game gives a story hero back after death; the server's character
+        // The game gives a story hero back after death, and the server's character
         // goes on again. A story hero choice brings back the hero the player had.
         int model = player.Model.Hash;
         int wanted = own.IsOnline ? own.Model : CharacterModels.IsOnline(model) ? StoryModel() : model;
@@ -390,8 +395,8 @@ public sealed partial class AdminMenuScript
         if (player != null && player.Exists() && !CharacterModels.IsOnline(player.Model.Hash)) _storyModel = player.Model.Hash;
     }
 
-    // The hero the player came from; after a resource restart in an Online
-    // body the game's hero table still tells which one it was.
+    // After a resource restart in an Online body the game's hero table still
+    // tells which hero the player came from.
     private int StoryModel()
     {
         if (_storyModel != 0) return _storyModel;
@@ -399,7 +404,7 @@ public sealed partial class AdminMenuScript
         return linked >= 0 ? HeroLink.Heroes[linked] : FranklinModel;
     }
 
-    // SET_PLAYER_MODEL needs the model in memory, which takes a few frames; the
+    // SET_PLAYER_MODEL needs the model in memory, which takes a few frames. The
     // new body then gets the old one's weapons, health and armour.
     private void ChangeModel(int model, Action<Ped> then)
     {
@@ -522,11 +527,23 @@ public sealed partial class AdminMenuScript
                 HoldCreatorPed(session, player);
                 if (session.Stage == CreatorStage.Saving)
                 {
-                    // The answer decides how the editor ends; until then it stays open.
+                    // The answer decides how the editor ends. Until then it stays open.
                     if (now - session.StageAt >= CharacterSaveLimit) FinishCharacterSave(false);
                     else if (!CreatorMenuVisible() && _creatorMenu != null) _creatorMenu.Visible = true;
                 }
-                else if (!CreatorMenuVisible() && _modelChange == null) LeaveCreator(revert: true);
+                else if (!CreatorMenuVisible() && _modelChange == null)
+                {
+                    switch (OnCreatorHidden(session.HiddenForHost != null, IsInputBlocked()))
+                    {
+                        case CreatorHidden.Reshow:
+                            session.HiddenForHost!.Visible = true;
+                            session.HiddenForHost = null;
+                            break;
+                        case CreatorHidden.Leave:
+                            LeaveCreator(revert: true);
+                            break;
+                    }
+                }
                 break;
             case CreatorStage.Reverting:
                 Function.Call(Hash.HIDE_HUD_AND_RADAR_THIS_FRAME);
@@ -598,8 +615,7 @@ public sealed partial class AdminMenuScript
             Notification.PostTicker(UiText.Get("~b~Персонаж:~s~ создайте своего персонажа. Его увидит напарник, и он сохранится на сервере."), false);
     }
 
-    // The body stays still facing the camera; a new body after a model change
-    // is put back the same way.
+    // A new body after a model change is put back facing the camera too.
     private void HoldCreatorPed(CreatorSession session, Ped player)
     {
         if (!player.IsInVehicle())
@@ -622,7 +638,7 @@ public sealed partial class AdminMenuScript
             _ => (2.6f, 0.2f, 0f),
         };
         double angle = session.Heading * Math.PI / 180.0;
-        // GTA's heading 0 faces north (+Y); the camera stands in front of the body.
+        // GTA's heading 0 faces north (+Y), and the camera stands in front of the body.
         var front = new Vector3((float)-Math.Sin(angle), (float)Math.Cos(angle), 0f);
         Vector3 at = session.Anchor + front * distance + new Vector3(0f, 0f, height);
         Function.Call(Hash.SET_CAM_COORD, session.Camera, at.X, at.Y, at.Z);
@@ -707,8 +723,8 @@ public sealed partial class AdminMenuScript
         if (_creator?.Stage != CreatorStage.Editing || !CharacterModels.IsOnline(player.Model.Hash)) return;
         int drawable = prop ? index - 1 : index;
         CharacterNatives.Set(player.Handle, slot, prop, drawable, 0);
-        // The parts an item needs (a top's arms) come with it; the rows then
-        // show what changed.
+        // The parts an item needs (a top's arms) come with it, so the rows are
+        // refreshed.
         if (!prop && CharacterNatives.WearForcedParts(player.Handle, slot, drawable, 0) > 0) RefreshCreatorRows(player);
         else DescribeCreatorPart(item, player, slot, prop);
     }
@@ -725,9 +741,7 @@ public sealed partial class AdminMenuScript
         DescribeCreatorPart(item, player, slot, prop);
     }
 
-    // Each clothing row lists the items this body has, with the current one
-    // selected; each face row shows the editor's face. A story hero keeps the
-    // game's own face and clothes, so those rows are off.
+    // A story hero keeps the game's own face and clothes, so those rows are off.
     private void RefreshCreatorRows(Ped player)
     {
         bool online = CharacterModels.IsOnline(player.Model.Hash);
@@ -766,8 +780,8 @@ public sealed partial class AdminMenuScript
         finally { _creatorUpdating = false; }
     }
 
-    // The lists follow the body (the man's and the woman's tattoos differ);
-    // the marks follow the editor's tattoos. A story hero keeps the game's own.
+    // The lists follow the body (the man's and the woman's tattoos differ).
+    // A story hero keeps the game's own.
     private void RefreshCreatorTattoos(Ped player, bool online)
     {
         int model = online ? player.Model.Hash : 0;
@@ -853,7 +867,7 @@ public sealed partial class AdminMenuScript
 
     private const int ArmsSlot = 3;
 
-    // Off while a body loads or the server saves; back on, the face and
+    // Off while a body loads or the server saves. Back on, the face and
     // clothing rows follow the current body.
     private void SetCreatorEnabled(bool enabled)
     {
@@ -929,8 +943,7 @@ public sealed partial class AdminMenuScript
         if (session.First) Notification.PostTicker(UiText.Get("~b~Персонаж:~s~ создать его можно позже: J → Персонаж → Внешность."), false);
     }
 
-    // Puts the player back where they stood; the caller keeps them frozen
-    // until the ground there has loaded.
+    // The caller keeps the player frozen until the ground there has loaded.
     private void ReturnFromCreator(CreatorSession session, Ped player)
     {
         if (!session.InRoom) return;
@@ -944,7 +957,6 @@ public sealed partial class AdminMenuScript
         Function.Call(Hash.REQUEST_COLLISION_AT_COORD, back.X, back.Y, back.Z);
     }
 
-    // Undo everything the editor holds: the camera, the frozen body, the room.
     // Also runs when the resource stops in the middle of editing.
     private void EndCreator(CreatorSession session)
     {
@@ -1006,7 +1018,7 @@ public sealed partial class AdminMenuScript
         internal int OriginalModel { get; }
         internal CharacterLook Original { get; }
         internal CharacterHead? OriginalHead { get; }
-        // The face being edited; null until the body is an Online one.
+        // Null until the body is an Online one.
         internal CharacterHead? Head { get; set; }
         internal List<CharacterTattoo> OriginalTattoos { get; }
         internal Vector3 ReturnPosition { get; }
@@ -1019,6 +1031,8 @@ public sealed partial class AdminMenuScript
         internal bool InRoom { get; set; }
         internal Vector3 Anchor { get; set; }
         internal float Heading { get; set; }
+        // Taken away by the chat, RageCoop's menu or the pause menu: the edits stay and it comes back.
+        internal NativeMenu? HiddenForHost { get; set; }
         internal int Camera { get; set; }
         internal CharacterLook? Saving { get; set; }
 

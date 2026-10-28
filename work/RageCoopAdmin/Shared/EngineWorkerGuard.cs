@@ -12,7 +12,7 @@ using RageCoop.Core;
 namespace OGCoop.Shared;
 
 // Worker.Stop promises to finish the current job, rather than drain the queue.
-// Serialize producers with the stop transition; never hold this gate across Join.
+// Producers serialize with the stop transition. This gate is never held across Join.
 internal static class EngineWorkerGuard
 {
     private const string PatchId = "friendslegacy.ragecoop.engineworker";
@@ -88,7 +88,7 @@ internal static class EngineWorkerGuard
             if (state.Disposed) { throw new ObjectDisposedException(nameof(Worker)); }
             if ((bool)Stopping.GetValue(__instance)!) { throw new InvalidOperationException("Cannot queue a job after the worker has stopped."); }
             // Preserve the installed active-worker queue contract. In particular,
-            // maxJobs remains the semaphore limit; this is not a dropping queue.
+            // maxJobs remains the semaphore limit, this is not a dropping queue.
             QueueOf(__instance).Enqueue(work);
             SemaphoreOf(__instance).Release();
         }

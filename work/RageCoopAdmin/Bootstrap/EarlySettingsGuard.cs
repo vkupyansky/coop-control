@@ -85,12 +85,22 @@ internal static class EarlySettingsGuard
 
     // Voice chat is on: RageCoop relays push-to-talk voice only with UseVoice.
     // Its own default is false and nobody chose it, so the setting is applied in
-    // memory, never written; OG_COOP_VOICE=0 keeps the file's value.
+    // memory, never written. OG_COOP_VOICE=0 keeps the file's value.
     internal const string VoiceVariable = "OG_COOP_VOICE";
 
     internal static void ApplyVoice(Settings settings, string? variable)
     {
         if (variable != "0") { settings.UseVoice = true; }
+    }
+
+    // A public server keeps running after its first start.
+    private static bool ContinuesAfterFirstSettings()
+    {
+        bool continues = false;
+#if PUBLIC_RELEASE
+        continues = true;
+#endif
+        return continues;
     }
 
     internal static Settings ReadFile(string path)
@@ -99,17 +109,15 @@ internal static class EarlySettingsGuard
         try { input = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read); }
         catch (FileNotFoundException)
         {
-#if PUBLIC_RELEASE
-            CreateInitialFile(path);
+            bool created = CreateInitialFile(path);
+            // A private server stops after creating the file so its owner can check the settings.
+            if (!ContinuesAfterFirstSettings())
+                throw new InvalidOperationException(created
+                    ? "Settings.xml отсутствовал. Создан начальный файл; проверьте настройки и перезапустите сервер."
+                    : "Settings.xml появился при первоначальной настройке; проверьте его и перезапустите сервер.");
             // Read the actual atomically published file, including another creator's
             // complete file if it won the race. A failed reopen must remain an error.
             input = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-#else
-            bool created = CreateInitialFile(path);
-            throw new InvalidOperationException(created
-                ? "Settings.xml отсутствовал. Создан начальный файл; проверьте настройки и перезапустите сервер."
-                : "Settings.xml появился при первоначальной настройке; проверьте его и перезапустите сервер.");
-#endif
         }
         using (input)
         {
@@ -173,10 +181,19 @@ internal static class EarlySettingsGuard
             if (Link(temporary, path) == 0) { return true; }
             int error = Marshal.GetLastPInvokeError();
             if (error == 17) { return false; } // POSIX EEXIST: another creator won.
+            if (LinkUnsupported(error))
+            {
+                try { File.Move(temporary, path, overwrite: false); return true; }
+                catch (IOException) when (File.Exists(path)) { return false; }
+            }
             throw new IOException("Не удалось атомарно создать Settings.xml.", new Win32Exception(error));
         }
         finally { if (File.Exists(temporary)) { File.Delete(temporary); } }
     }
+
+    // exFAT, FAT32 and some network drives have no hard links: EPERM, EXDEV, EMLINK,
+    // ENOTSUP (macOS 45, Linux 95) and EOPNOTSUPP (macOS 102). There the file is moved normally.
+    internal static bool LinkUnsupported(int error) => error is 1 or 18 or 31 or 45 or 95 or 102;
 
     [DllImport("libc", EntryPoint = "link", SetLastError = true)]
     private static extern int Link([MarshalAs(UnmanagedType.LPUTF8Str)] string source, [MarshalAs(UnmanagedType.LPUTF8Str)] string destination);

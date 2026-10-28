@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RageCoopAdmin.Client;
 
-// Freeze log: the real monitor runs on a simulated clock; nothing touches GTA.
+// Freeze log: the real monitor runs on a simulated clock, nothing touches GTA.
 internal static class Program
 {
     private static int Passes;

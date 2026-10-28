@@ -14,7 +14,7 @@ namespace RageCoopAdmin.Client;
 internal static class CharacterNatives
 {
     // Shop item records: the text label starts at field 9 (8-byte fields) and
-    // holds up to 63 characters; the buffer is far larger than the record.
+    // holds up to 63 characters. The buffer is far larger than the record.
     private const int ShopRecordBytes = 512;
     private const int ShopLabelOffset = 9 * 8;
     private static readonly Regex Label = new Regex("^[A-Za-z0-9_]{1,63}$", RegexOptions.CultureInvariant);
@@ -51,7 +51,7 @@ internal static class CharacterNatives
         }
     }
 
-    // An Online body has no face until its parents are set; the blend comes
+    // An Online body has no face until its parents are set. The blend comes
     // first, then the features, overlays, hair and eye colours on top of it.
     internal static void ApplyHead(int ped, int model, CharacterHead? head)
     {
@@ -95,7 +95,7 @@ internal static class CharacterNatives
         Function.Call(Hash.SET_PED_RANDOM_COMPONENT_VARIATION, ped, 0);
         Function.Call(Hash.CLEAR_ALL_PED_PROPS, ped, 1);
         Function.Call(Hash.SET_PED_RANDOM_PROPS, ped);
-        // The face comes from the parents; the head slot stays GTA's plain head.
+        // The face comes from the parents, the head slot stays GTA's plain head.
         SetComponent(ped, 0, 0, 0);
         ApplyHead(ped, model, head);
     }
@@ -114,7 +114,7 @@ internal static class CharacterNatives
     }
 
     // GTA Online's shops put an item on together with the parts it needs (a
-    // jacket forces its arms and undershirt); without them the body shows
+    // jacket forces its arms and undershirt). Without them the body shows
     // holes. The shop data lists them as a shop item or a plain number for a
     // clothing slot. Returns how many parts were put on.
     internal static int WearForcedParts(int ped, int slot, int drawable, int texture)
@@ -158,8 +158,7 @@ internal static class CharacterNatives
         finally { Marshal.FreeHGlobal(record); }
     }
 
-    // Puts back every clothing slot (but `keep`) that differs from the look;
-    // returns how many were changed.
+    // Returns how many slots (other than `keep`) were put back.
     internal static int RestoreClothes(int ped, CharacterLook look, int keep)
     {
         int changed = 0;
@@ -204,7 +203,7 @@ internal static class CharacterNatives
         ? Function.Call<int>(Hash.GET_PED_PROP_TEXTURE_INDEX, ped, slot)
         : Function.Call<int>(Hash.GET_PED_TEXTURE_VARIATION, ped, slot);
 
-    // The item's name in the game's language, as GTA Online's shops show it;
+    // The item's name in the game's language, as GTA Online's shops show it,
     // null for items the shops do not sell.
     internal static string? ShopName(int ped, int slot, bool prop, int drawable, int texture)
     {

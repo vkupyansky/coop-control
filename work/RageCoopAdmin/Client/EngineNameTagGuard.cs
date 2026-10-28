@@ -16,7 +16,7 @@ namespace RageCoopAdmin.Client;
 // RageCoop converts the head to pixels from the game resolution, draws in
 // LemonUI's own scaled space and lifts the name 100 px: on a non-16:9 screen
 // the name drifts sideways, and at distance it floats high above the player.
-// Keep its visibility rules; let the game anchor the text above the head.
+// Its visibility rules stay, and the game anchors the text above the head.
 internal static class EngineNameTagGuard
 {
     private const string PatchId = "friendslegacy.ragecoop.enginenametag";
@@ -50,7 +50,7 @@ internal static class EngineNameTagGuard
     }
 
     // The block runs from the head-bone read to ScaledText.Draw and is entered
-    // only at its first instruction; the gate before it stays untouched.
+    // only at its first instruction, the gate before it stays untouched.
     internal static bool TryFindDrawBlock(IList<CodeInstruction> codes, out int start, out int end)
     {
         start = end = -1;
@@ -95,7 +95,7 @@ internal static class EngineNameTagGuard
         DrawLabel(anchor, owner.Username ?? string.Empty, owner.HasDirectConnection);
     }
 
-    // Same font, size, outline and colours as RageCoop; the text's bottom edge
+    // Same font, size, outline and colours as RageCoop. The text's bottom edge
     // sits at the anchor whatever the screen resolution or aspect ratio.
     internal static void DrawLabel(Vector3 anchor, string text, bool direct)
     {

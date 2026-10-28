@@ -140,7 +140,7 @@ internal static class ServerBrowserTlsGuard
         lock (WorkerGate)
         {
             // Retain only the newest unopened request while the installed
-            // WebClient is busy; rapid reopen must not create more workers.
+            // WebClient is busy. A rapid reopen must not create more workers.
             if (_pending != null) Requests.Remove(_pending);
             _pending = null;
             start = _active == null;
@@ -205,7 +205,7 @@ internal static class ServerBrowserTlsGuard
 
     private static List<ServerInfo>? ReadServerList(string json)
     {
-        // The original downloader already queued a failure; do not replace it
+        // The original downloader already queued a failure. Do not replace it
         // with the original generic null-list result after its empty return.
         if (_request?.Failed == true) return null;
         try

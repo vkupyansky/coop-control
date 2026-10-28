@@ -5,7 +5,7 @@ using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;
 
-// The Персонаж and Оружие switches (invincibility, no wanted level, abilities,
+// The Character and Weapons switches (invincibility, no wanted level, abilities,
 // ammunition) are remembered on this computer with the other settings and
 // turned on again at the next join. Time, weather and traffic pass-through
 // are shared world settings and are not part of this.

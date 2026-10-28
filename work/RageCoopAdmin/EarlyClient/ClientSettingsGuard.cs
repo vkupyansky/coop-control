@@ -116,7 +116,7 @@ internal static class ClientSettingsGuard
         catch (Exception error) when (error is IOException || error is InvalidDataException || error is UnauthorizedAccessException ||
             error is InvalidOperationException || error is ArgumentException || error is NotSupportedException || error is System.Security.SecurityException)
         {
-            // Preserve the installed bool contract; callers never receive raw
+            // Preserve the installed bool contract, callers never receive raw
             // XML, a password or a private path in an error message.
         }
         return false;

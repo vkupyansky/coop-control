@@ -166,6 +166,18 @@ internal static partial class Program
         catch (TimeoutException) { }
         Assert(EngineServerGuard.PendingResponseCount(fixture.Server) == 0,
             "a missing file-transfer acknowledgement fails the transfer and releases its request slot");
+        // The file confirmation arrives after all the chunks, and the core's 5 s kicked a player on a slow link.
+        object complete = Packet("FileTransferComplete");
+        Set(complete, "ID", 154);
+        fixture.Requests.Clear();
+        Task<object?> slow = Task.Run(() => Invoke(request, null, fixture.Server, fixture.First, complete, Channel("File"), 40));
+        WaitUntil(() => fixture.Requests.Any(value => value.Type == 14), "file completion envelope missing");
+        Thread.Sleep(300);
+        Assert(!slow.IsCompleted,
+            "the file completion waits beyond the base timeout, so a slow link has time to deliver the whole resource");
+        fixture.Respond(fixture.FirstPeer, fixture.Requests.Last(value => value.Type == 14).Id, 13, 154, "Completed");
+        Assert(slow.Wait(3000) && slow.Result != null && EngineServerGuard.PendingResponseCount(fixture.Server) == 0,
+            "the player's completion answer then finishes the transfer and releases its slot");
         fixture.Requests.Clear();
         Task<object?> wrongPhase = Task.Run(() => Invoke(request, null, fixture.Server, fixture.First, fileRequest, Channel("File"), 3000));
         WaitUntil(() => fixture.Requests.Any(value => value.Type == 12), "phase request envelope missing");

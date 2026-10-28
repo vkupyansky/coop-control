@@ -41,7 +41,7 @@ internal static class TrafficHandover
     internal static bool IsAvailable => Vehicles != null && VehicleHandles != null && Peds != null && PedHandles != null &&
         VehicleLock != null && PedLock != null && PedVehicle?.PropertyType == typeof(int);
 
-    // Silence alone may be the owner's own pause or connection; only a copy that
+    // Silence alone may be the owner's own pause or connection. Only a copy that
     // went silent while its owner keeps sending was removed by its owner.
     internal static bool ShouldAdopt(long silentMilliseconds, long ownerSilentMilliseconds, float distanceSquared) =>
         silentMilliseconds >= SilentMilliseconds && ownerSilentMilliseconds >= 0 &&
@@ -129,8 +129,7 @@ internal static class TrafficHandover
         return false;
     }
 
-    // Milliseconds since the owner's own character was last updated; -1 when
-    // the owner is unknown, which never authorizes a takeover.
+    // -1 when the owner is unknown, which never authorizes a takeover.
     private static long OwnerSilence(int ownerId)
     {
         lock (PedLock!)
@@ -139,7 +138,6 @@ internal static class TrafficHandover
         }
     }
 
-    // Game boundaries, replaced in isolated checks.
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static long Silence(SyncedEntity entity) =>
         entity.LastSyncedStopWatch is { IsRunning: true } watch ? watch.ElapsedMilliseconds : -1;
@@ -162,8 +160,8 @@ internal static class TrafficHandover
         return false;
     }
 
-    // RageCoop makes copies of NPCs into puppets; give the NPC back its own
-    // reactions and a task, then let GTA manage and later remove it.
+    // RageCoop makes copies of NPCs into puppets. The NPC gets back its own
+    // reactions and a task, then GTA manages and later removes it.
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static void ReleasePed(Ped ped)
     {

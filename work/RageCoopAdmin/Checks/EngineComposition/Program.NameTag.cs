@@ -70,7 +70,7 @@ internal static partial class Program
             var code = new CodeInstruction(source);
             if (code.operand is MethodInfo method && method.DeclaringType == typeof(Function) && method.Name == nameof(Function.Call))
                 code.operand = typeof(Program).GetMethod("RecordNameTagNative" + (method.GetParameters().Length - 1), Static)!;
-            // Native strings need the SHVDN script domain; keep them at the boundary.
+            // Native strings need the SHVDN script domain, so they stay at the boundary.
             else if (code.operand is MethodInfo conversion && conversion.DeclaringType == typeof(InputArgument) &&
                 conversion.Name == "op_Implicit" && conversion.GetParameters()[0].ParameterType == typeof(string))
                 code.operand = typeof(Program).GetMethod(nameof(NameTagString), Static)!;

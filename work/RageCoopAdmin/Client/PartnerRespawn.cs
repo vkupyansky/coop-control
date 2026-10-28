@@ -5,7 +5,7 @@ using GTA.UI;
 
 namespace RageCoopAdmin.Client;
 
-// After a death the game puts the player back at a hospital; with a partner
+// After a death the game puts the player back at a hospital. With a partner
 // alive on the server, they continue next to that partner instead. Alone,
 // nothing changes.
 public sealed partial class AdminMenuScript

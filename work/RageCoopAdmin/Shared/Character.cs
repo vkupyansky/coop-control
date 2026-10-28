@@ -16,14 +16,13 @@ public sealed class CharacterLook
 {
     [XmlAttribute("version")]
     public int Version { get; set; } = 1;
-    // 0: the story hero the player has; otherwise CharacterModels.Male or Female.
+    // 0 for the player's story hero, otherwise CharacterModels.Male or Female.
     public int Model { get; set; }
     [XmlArrayItem("Part")]
     public List<CharacterPart> Clothes { get; set; } = new List<CharacterPart>();
     [XmlArrayItem("Part")]
     public List<CharacterPart> Props { get; set; } = new List<CharacterPart>();
-    // The face and hair; absent means CharacterHead.Default (characters saved
-    // before the face editor).
+    // Absent means CharacterHead.Default (characters saved before the face editor).
     public CharacterHead? Head { get; set; }
     [XmlArrayItem("Tattoo")]
     public List<CharacterTattoo> Tattoos { get; set; } = new List<CharacterTattoo>();
@@ -34,7 +33,7 @@ public sealed class CharacterLook
     internal bool IsOnline => Model != 0;
 }
 
-// A tattoo: an item of one of GTA's decoration collections, both by name hash.
+// An item of one of GTA's decoration collections, both by name hash.
 public sealed class CharacterTattoo
 {
     [XmlAttribute("collection")]
@@ -44,8 +43,8 @@ public sealed class CharacterTattoo
 }
 
 // An Online face as GTA Online's creator builds it: parents and how much the
-// face and skin take after the father (percent), 20 face features (−10…10,
-// tenths of GTA's −1…1), eye colour, hair colour with highlights and the head
+// face and skin take after the father (percent), 20 face features (-10..10,
+// tenths of GTA's -1..1), eye colour, hair colour with highlights and the head
 // overlays (eyebrows, beard, make-up, skin details).
 public sealed class CharacterHead
 {
@@ -117,7 +116,7 @@ public sealed class CharacterFeature
     public int Value { get; set; }
 }
 
-// A head overlay: style (−1 none), strength in percent and colour.
+// A head overlay: style (-1 none), strength in percent and colour.
 public sealed class CharacterOverlay
 {
     [XmlAttribute("slot")]
@@ -132,7 +131,7 @@ public sealed class CharacterOverlay
     internal CharacterOverlay Copy() => new CharacterOverlay { Slot = Slot, Style = Style, Opacity = Opacity, Color = Color };
 }
 
-// One clothing slot (component 0–11) or accessory slot (prop anchor); a prop
+// One clothing slot (component 0-11) or accessory slot (prop anchor). A prop
 // drawable of -1 means nothing is worn there.
 public sealed class CharacterPart
 {
@@ -154,13 +153,13 @@ internal static class CharacterModels
 
 internal static class CharacterProtocol
 {
-    // Client → server: []. Server → client: [string own look] ("" when none is saved yet).
+    // Client to server: []. Server to client: [string own look] ("" when none is saved yet).
     internal const int Request = 20774180;
     internal const int State = 20774181;
-    // Client → server: [string look]. Server → client: [bool saved].
+    // Client to server: [string look]. Server to client: [bool saved].
     internal const int Save = 20774182;
     internal const int Saved = 20774183;
-    // Server → client: [string username, string look]: another player's character.
+    // Server to client: [string username, string look], another player's character.
     internal const int Look = 20774184;
 }
 
@@ -172,13 +171,13 @@ internal static class CharacterCodec
     internal const int MaximumTexture = 255;
     // Hats, glasses, ears, watches and bracelets: the accessories GTA Online sells.
     internal static readonly int[] PropSlots = { 0, 1, 2, 6, 7 };
-    // GTA's parent faces: 0–20 and 42–44 fathers, 21–41 and 45 mothers.
+    // GTA's parent faces: 0-20 and 42-44 fathers, 21-41 and 45 mothers.
     internal const int ParentCount = 46;
     internal const int FeatureCount = 20;
     internal const int FeatureLimit = 10;
     internal const int EyeColorCount = 32;
     internal const int TintCount = 64;
-    // Head overlays 0–10: blemishes, beard, eyebrows, ageing, make-up, blush,
+    // Head overlays 0-10: blemishes, beard, eyebrows, ageing, make-up, blush,
     // complexion, sun damage, lipstick, moles and freckles, chest hair.
     internal const int OverlayCount = 11;
     internal const int Eyebrows = 2;
@@ -212,7 +211,7 @@ internal static class CharacterCodec
         return look;
     }
 
-    // A story hero carries no clothes of ours; an Online body lists every
+    // A story hero carries no clothes of ours. An Online body lists every
     // clothing slot once and only the accessory slots GTA Online uses.
     internal static void Validate(CharacterLook look)
     {

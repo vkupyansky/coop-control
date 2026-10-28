@@ -201,7 +201,7 @@ internal static class Program
         wanted.SelectedIndex = 4;
         NativeMenu settings = menus.Single(menu => menu.Name == "Настройки");
         NativeListItem<string> language = settings.Items.OfType<NativeListItem<string>>().Single(item => item.Title.Contains("Language"));
-        // The menu shows the garage the server sent; an empty one is enough here.
+        // The menu shows the garage the server sent, and an empty one is enough here.
         Type garageType = Resource.GetType("RageCoopAdmin.Client.GarageClient", true)!;
         object garage = Activator.CreateInstance(garageType, Instance, null, new object[] { new Action<int, object[]>((_, _) => { }) }, null)!;
         string emptyGarage = (string)Resource.GetType("OGCoop.Shared.GarageCodec", true)!.GetMethod("Encode", Static)!

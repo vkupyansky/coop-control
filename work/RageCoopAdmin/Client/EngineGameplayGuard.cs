@@ -16,7 +16,7 @@ using OGCoop.Shared;
 namespace RageCoopAdmin.Client;
 
 // Keep the installed event/packet contracts. Creation may fail at the GTA
-// boundary; it must neither block the script nor adopt another live projectile.
+// boundary, and then it must neither block the script nor adopt another live projectile.
 internal static class EngineGameplayGuard
 {
     private const string PatchId = "friendslegacy.ragecoop.enginegameplay";
@@ -185,7 +185,7 @@ internal static class EngineGameplayGuard
     private static Vehicle? CreateGameVehicle(Model model, Vector3 position, float heading)
     {
         // Vehicle.Create also requests the model with a yielding timeout. The
-        // caller already checked loading; this native path never waits a frame.
+        // caller already checked loading, and this native path never waits a frame.
         if (World.VehicleCount >= World.VehicleCapacity) { return null; }
         return Entity.FromHandle(Function.Call<int>(Hash.CREATE_VEHICLE, model.Hash,
             position.X, position.Y, position.Z, heading, false, false)) as Vehicle;
@@ -200,7 +200,7 @@ internal static class EngineGameplayGuard
     // A remote projectile is shown here once per projectile number. When its
     // copy explodes or vanishes before the shooter's (it hit something earlier
     // here), RageCoop drops the record, and the shooter's next update of the
-    // still-flying original makes a new record with the same number — which
+    // still-flying original makes a new record with the same number, which
     // shot one more copy from the latest position: a stream of rockets and
     // explosions along the path. Numbers are remembered for ShownSeconds.
     private const int ShownSeconds = 30;
@@ -259,7 +259,7 @@ internal static class EngineGameplayGuard
         if (owner?.Handle == source.Handle) { return true; }
         if (source is Ped) { return false; }
         // SHVDN explicitly supports both vehicle and ped projectile owners. The
-        // installed engine passes a vehicle handle to the shoot native; it does
+        // installed engine passes a vehicle handle to the shoot native, but does
         // not establish whether GTA retains it, reports a ped or no owner. The
         // unique new handle must still be at the requested creation position,
         // allowing its first physics step and the muzzle/collision adjustment.

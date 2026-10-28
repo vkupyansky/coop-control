@@ -42,7 +42,7 @@ internal static partial class Program
     private static void PatchMenuStorageBoundaries(Harmony boundary)
     {
         // The actual resource builders, item callbacks, LemonUI input and garage
-        // client run unchanged; the server answers through the shared rules. Only GTA graphics, streaming and connection
+        // client run unchanged, the server answers through the shared rules. Only GTA graphics, streaming and connection
         // state are supplied by the isolated host.
         foreach (string name in new[] { "Draw", "UpdateItems", "Recalculate", "UpdateDescription", "ResetCursor" })
             boundary.Patch(typeof(NativeMenu).GetMethod(name, Instance)!, prefix: new HarmonyMethod(typeof(Program), nameof(SkipMenuLayout)));
@@ -248,7 +248,7 @@ internal static partial class Program
         private static readonly Type GarageData = Resource.GetType("OGCoop.Shared.GarageData", true)!;
         private static readonly Type GarageCodec = Resource.GetType("OGCoop.Shared.GarageCodec", true)!;
         private readonly object _garage;
-        // The server's copy; the menu sees it only through state messages.
+        // The server's copy. The menu sees it only through state messages.
         internal object ServerGarage;
         internal bool ServerUnavailable;
         internal IList Presets => (IList)Get("_presets");

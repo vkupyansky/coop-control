@@ -89,7 +89,7 @@ internal static class Program
         if (!entered.Wait(3000) || returned.Wait(200) || !WorkerThread(worker).IsAlive) { return 1; }
         Console.WriteLine("ORIGINAL SELF-JOIN CONFIRMED");
         // A background test worker lets process exit end this known original
-        // self-join; no thread abortion or interruption is used.
+        // self-join, no thread abortion or interruption is used.
         return 0;
     }
 

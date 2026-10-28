@@ -4,8 +4,8 @@ using GTA;
 
 namespace RageCoopAdmin.Client;
 
-// NPC, которых каждая игра ставит сама на одни и те же места (люди в интерьерах, капитаны яхт)
-// RageCoop не должен их отправлять, иначе у всех будут двойники, его список NPC проходит через Without
+// NPCs every game places itself at the same points (people in interiors, yacht captains).
+// RageCoop must not send them or everyone gets doubles, so its NPC list goes through Without.
 internal static class LocalPeds
 {
     private static readonly HashSet<int> Handles = new HashSet<int>();
@@ -22,7 +22,7 @@ internal static class LocalPeds
         lock (Lock) Handles.Remove(ped);
     }
 
-    // в peds все NPC игры, пропавший номер сразу забываем, пока игра не отдала его другому NPC
+    // peds holds all the game's NPCs. A vanished handle is forgotten at once, before the game gives it to another NPC.
     internal static Ped[] Without(Ped[] peds)
     {
         lock (Lock)

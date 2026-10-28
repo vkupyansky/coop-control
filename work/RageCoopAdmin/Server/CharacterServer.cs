@@ -24,11 +24,11 @@ public sealed partial class CoopAdminServer
         API.RegisterCustomEventHandler(CharacterProtocol.Save, OnCharacterSave);
     }
 
-    // A joining player gets their own character and everyone else's; the
+    // A joining player gets their own character and everyone else's, and the
     // others get the joining player's one.
     private void OnCharacterRequest(CustomEventReceivedArgs e)
     {
-        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 }) return;
+        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 } || !CanRequestData(e.Client, CharacterProtocol.Request)) return;
         lock (characterGate)
         {
             // An unreadable file gets no answer: the game then neither offers a

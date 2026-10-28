@@ -9,10 +9,9 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// Puts the yachts of the players on the server on this game's map. A berth's
-// hull and interior are map parts; GTA streams the hull in only near it, and
-// then the upper decks, rails, lights, door, flags and the captain on the
-// bridge go on it. When the hull streams out they are taken off and come back
+// A berth's hull and interior are map parts. GTA streams the hull in only near
+// it, and then the upper decks, rails, lights, door, flags and the captain on
+// the bridge go on it. When the hull streams out they are taken off and come back
 // with it. Game thread only.
 internal sealed class YachtRuntime
 {
@@ -29,7 +28,7 @@ internal sealed class YachtRuntime
     internal static readonly Vector3 DoorOffset = new Vector3(-36.8f, -2.7f, 0.6f);
     internal static readonly Vector3 JacuzziOffset = new Vector3(-51f, -2f, 0.3f);
     internal static readonly Vector3[] FlagOffsets = { new Vector3(-3f, -0.45f, 9.8f), new Vector3(-3f, -3.55f, 9.8f), new Vector3(-56.5f, -2f, 0.5f) };
-    // The captain at the bridge's controls, facing the bow; players arrive on
+    // The captain at the bridge's controls, facing the bow. Players arrive on
     // the aft deck.
     internal static readonly Vector3 CaptainOffset = new Vector3(12.4f, -2.03f, 6.5f);
     internal static readonly Vector3 DeckArrival = new Vector3(-30f, -2f, 1f);
@@ -62,8 +61,8 @@ internal sealed class YachtRuntime
         _revision = int.MinValue;
     }
 
-    // Where a player goes on the owner's yacht: its aft deck once the hull is
-    // in, otherwise the berth's point; null without that yacht.
+    // The aft deck once the hull is in, otherwise the berth's point, null
+    // without that yacht.
     internal Vector3? Arrival(string owner)
     {
         if (!_shown.TryGetValue(owner, out ShownYacht? yacht)) return null;
@@ -75,7 +74,6 @@ internal sealed class YachtRuntime
 
     internal int Captain(string owner) => _shown.TryGetValue(owner, out ShownYacht? yacht) ? yacht.Captain : 0;
 
-    // Where the hull stands, from the berth's point and heading.
     internal static Vector3 HullPosition(YachtBerth berth)
     {
         double angle = berth.Heading * Math.PI / 180.0;
@@ -167,8 +165,7 @@ internal sealed class YachtRuntime
             }
         }
 
-        // The captain faces the bow (the hull's +X).
-        // капитан у каждой игры свой, по сети не уходит
+        // The captain faces the bow (the hull's +X). Each game has its own, never sent over the network.
         yacht.Captain = YachtNatives.CreateCaptain(YachtNatives.Offset(hull, CaptainOffset), YachtNatives.Heading(hull) - 90f);
         LocalPeds.Add(yacht.Captain);
         yacht.Idle = false;
@@ -229,7 +226,6 @@ internal sealed class YachtRuntime
     }
 }
 
-// GTA boundary of the yachts; isolated checks replace these calls.
 internal static class YachtNatives
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -251,7 +247,7 @@ internal static class YachtNatives
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static float Heading(int entity) => Function.Call<float>(Hash.GET_ENTITY_HEADING, entity);
 
-    // Models load over a few frames; true once in memory.
+    // Models load over a few frames, true once in memory.
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static bool LoadModel(string model)
     {

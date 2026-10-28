@@ -64,6 +64,7 @@ public sealed partial class AdminMenuScript : ClientScript
     private readonly RecallRequestCorrelation _recallRequests = new RecallRequestCorrelation();
     private readonly WorldTimeSelection _timeSelection = new WorldTimeSelection();
     private readonly ResourceEventSubscriptions _eventSubscriptions = new ResourceEventSubscriptions();
+    private readonly AnswerRetry _answers = new AnswerRetry();
 
     private ObjectPool? _pool;
     private NativeMenu? _mainMenu;
@@ -232,7 +233,7 @@ public sealed partial class AdminMenuScript : ClientScript
             RegisterYachtEvents();
             RegisterHomeEvents();
             RegisterVehicleSpawnEvents();
-            RepairSync.Start(Logger.Warning);
+            RepairSync.Start(Logger.Warning, _eventSubscriptions.Register);
             if (!VehicleAudioSync.Install())
             {
                 Logger.Warning("OG Coop: radio synchronization contract unavailable.");
@@ -329,6 +330,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
 
         ResourceIdentity.Normalize(CurrentResource);
+        _answers.Clear();
         InitializeGarage();
         InitializeCharacters();
         InitializeYachts();
@@ -586,7 +588,7 @@ public sealed partial class AdminMenuScript : ClientScript
 
     private static NativeMenu CreateMenu(string title, string subtitle)
     {
-        // в шапке все буквы одной высоты: строчные у Pricedown мельче заглавных
+        // Pricedown's lower case is smaller than its capitals, and the banner wants one letter height.
         title = title.ToUpperInvariant();
         NativeMenu menu = new NativeMenu(title, subtitle)
         {
@@ -604,7 +606,7 @@ public sealed partial class AdminMenuScript : ClientScript
 
     private static void FitMenuBanner(NativeMenu menu)
     {
-        // Pricedown крупный, как на логотипе GTA, длинное название ужимается под шапку
+        // Large Pricedown as in the GTA logo, a long title shrinks to fit the banner.
         menu.BannerText.Scale = 0.85f;
         float bannerBudget = 2f * (Math.Min(209f, menu.Width - 209f) - 16f);
         float bannerWidth = menu.BannerText.Width;
@@ -675,6 +677,7 @@ public sealed partial class AdminMenuScript : ClientScript
 
         if (IsInputBlocked() && !_gettingUserInput && _pool.AreAnyVisible)
         {
+            if (_creator != null) _creator.HiddenForHost ??= CreatorMenus().FirstOrDefault(menu => menu.Visible);
             _pool.HideAll();
         }
 
@@ -760,6 +763,9 @@ public sealed partial class AdminMenuScript : ClientScript
         TickSpecialPlaces();
         _hangWatch.Step("respawn");
         TickRespawn();
+        _hangWatch.Step("answers");
+        _answers.Tick(NowMilliseconds(), name =>
+            Logger.Warning("OG Coop: no " + name + " answer from the server after " + AnswerRetry.MaximumAttempts + " requests."));
         _hangWatch.Step("character");
         TickCharacters(NowMilliseconds());
         _hangWatch.Step("yachts");
@@ -778,7 +784,7 @@ public sealed partial class AdminMenuScript : ClientScript
         _hangWatch.Step("frame done");
     }
 
-    // Optional features a build adds in its own files; without them the
+    // Optional features a build adds in its own files. Without them the
     // compiler drops these calls.
     partial void TickExtras(long now);
     partial void CleanupExtras();
@@ -1224,7 +1230,7 @@ public sealed partial class AdminMenuScript : ClientScript
         if (pending.Heading is float heading)
         {
             target.Heading = heading;
-            // у самолёта шасси ниже обычной высоты машины
+            // A plane's landing gear is lower than an ordinary car's height.
             if (target is Vehicle placed) placed.PlaceOnGround();
         }
 
@@ -1262,7 +1268,7 @@ public sealed partial class AdminMenuScript : ClientScript
 
         if (pending.Heading.HasValue)
         {
-            // самолёт с ближайшей дорогой увело бы с полосы
+            // The nearest road would take a plane off the runway.
             return TrySurfaceRay(target, target.Z + 3f, target.Z - 5f, out surface);
         }
 
@@ -1290,7 +1296,7 @@ public sealed partial class AdminMenuScript : ClientScript
     // An interior or a door: the point stands just above the floor, with a
     // ceiling, roof or awning higher up. From 12 m up the probe hit the casino
     // tower's roof or the top of an underground hall, and the player arrived on
-    // the roof or under the street; until the floor has collision it waits.
+    // the roof or under the street. Until the floor has collision it waits.
     private static bool TryFindFloor(GTA.Math.Vector3 point, out GTA.Math.Vector3 surface) =>
         TrySurfaceRay(point, point.Z + 1f, point.Z - 4f, out surface);
 
@@ -1410,8 +1416,7 @@ public sealed partial class AdminMenuScript : ClientScript
         }
     }
 
-    // Undo what a teleport holds in the game: camera focus, scene loading and
-    // the frozen player or car. Safe to call more than once.
+    // Safe to call more than once.
     private static void ReleaseTeleport(PendingTeleport pending)
     {
         if (pending.FocusSet)
@@ -2085,9 +2090,9 @@ public sealed partial class AdminMenuScript : ClientScript
         public int Interior { get; set; } = -1;
         // The floor lies just below the point (an interior or its door).
         public bool FloorKnown { get; set; }
-        // курс на месте: ставим ровно в точку, без поиска дороги рядом
+        // With a heading the arrival is exactly at the point, no road search nearby.
         public float? Heading { get; set; }
-        // что сделать на месте: машина из дома появляется у двери
+        // Runs on arrival: a car from a home appears at the door.
         public Action? Arrived { get; set; }
     }
 

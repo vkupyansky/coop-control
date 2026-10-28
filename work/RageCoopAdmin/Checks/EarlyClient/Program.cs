@@ -45,7 +45,7 @@ public sealed class EarlyClientHostBoundary : MarshalByRefObject
             Assembly? loaded = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly => assembly.FullName == args.Name);
             if (loaded != null) return loaded;
             // LemonUI was built against weak-named SDK 3.6. The supported
-            // installed facade is 3.7; normal host binding reuses that facade.
+            // installed facade is 3.7, and normal host binding reuses that facade.
             // Reproduce only this checked mapping in the byte-loaded domain.
             if (name.Name == "ScriptHookVDotNet3" && name.Version == new Version(3, 6, 0, 0) &&
                 name.GetPublicKeyToken().Length == 0)

@@ -141,7 +141,7 @@ internal sealed class ResourceTextInput
     }
 
     // Stop may run on the network thread. Revoke callbacks without touching
-    // LemonUI/native functions; the normal game-thread Cleanup hides the view.
+    // LemonUI/native functions, and the normal game-thread Cleanup hides the view.
     internal void Abandon()
     {
         _active = false;

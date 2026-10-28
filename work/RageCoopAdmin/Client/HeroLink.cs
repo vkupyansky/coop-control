@@ -15,9 +15,9 @@ namespace RageCoopAdmin.Client;
 // returns to the hero's model as soon as the player is that hero again.
 //
 // The table is GTA V Legacy 1.0.3889's Global_2349 (29 fields per character,
-// field 0 the model; decompiled scripts 1.73-3889). Before any write the
+// field 0 the model, decompiled scripts 1.73-3889). Before any write the
 // first three entries must be Michael, Franklin and Trevor, or one of them an
-// Online body we put there; on another game build nothing is written.
+// Online body we put there. On another game build nothing is written.
 // Game thread only.
 internal sealed class HeroLink
 {
@@ -91,7 +91,6 @@ internal sealed class HeroLink
     }
 }
 
-// GTA boundary; isolated checks replace these calls.
 internal static class HeroLinkNatives
 {
     internal const int Table = 2349;

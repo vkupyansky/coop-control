@@ -119,7 +119,6 @@ public sealed partial class AdminMenuScript
             Notification.PostTicker(UiText.Get("~g~Машина появилась рядом."), false);
     }
 
-    // по умолчанию игрок сразу садится за руль новой машины
     private bool TakeDriverSeat(Ped player, Vehicle vehicle) =>
         _interfaceSettings.DriveNewVehicle && VehicleSeating.TakeDriverSeat(player.Handle, vehicle.Handle);
 
@@ -139,10 +138,9 @@ public sealed partial class AdminMenuScript
     }
 }
 
-// вызовы игры для посадки, проверки их подменяют
 internal static class VehicleSeating
 {
-    // за руль, только если место водителя свободно, чужого водителя не трогаем
+    // Only into a free driver seat, another driver is never moved.
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static bool TakeDriverSeat(int ped, int vehicle)
     {

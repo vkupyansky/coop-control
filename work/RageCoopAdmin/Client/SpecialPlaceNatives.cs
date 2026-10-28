@@ -4,7 +4,6 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// GTA boundary of the hidden map places; isolated checks replace these calls.
 // Raw hashes: the bundled SHVDN names several of these natives differently.
 internal static class SpecialPlaceNatives
 {

@@ -29,8 +29,6 @@ internal static partial class Program
         FieldInfo table = typeof(API).GetField("CustomEventHandlers", Static)!;
         var handlers = (Dictionary<int, List<Action<CustomEventReceivedArgs>>>)table.GetValue(null)!;
         var original = handlers.ToDictionary(pair => pair.Key, pair => pair.Value.ToArray());
-        FieldInfo repairRegistered = Resource.GetType("RageCoopAdmin.Client.RepairSync", true)!.GetField("_registered", Static)!;
-        object previousRepairRegistered = repairRegistered.GetValue(null)!;
         FieldInfo hostLogger = host.GetField("Logger", Static)!;
         object? previousLogger = hostLogger.GetValue(null);
         var logger = (Logger)FormatterServices.GetUninitializedObject(typeof(Logger));
@@ -83,7 +81,6 @@ internal static partial class Program
                 foreach (var pair in original) handlers.Add(pair.Key, pair.Value.ToList());
             }
             hostLogger.SetValue(null, previousLogger);
-            repairRegistered.SetValue(null, previousRepairRegistered);
             foreach (MethodBase method in Harmony.GetAllPatchedMethods().Where(method => Harmony.GetPatchInfo(method)?.Owners.Contains(boundary.Id) == true).ToArray())
                 boundary.Unpatch(method, HarmonyPatchType.All, boundary.Id);
         }
@@ -128,8 +125,8 @@ internal static partial class Program
         Assert(((ICollection)typeof(SoundIdPool).GetField("soundIdQueue", Static)!.GetValue(null)!).Count == 0,
             "Native sound cleanup leaves the real pool empty for reconnect in the same AppDomain.");
         int staticHandlers = handlers.Sum(pair => pair.Value.Count) - before;
-        Assert(staticHandlers is 0 or 2 && !handlers.Values.SelectMany(list => list).Any(handler => ReferenceEquals(handler.Target, instance)),
-            "Stopped sessions retain only pre-existing foreign/base handlers and the two intentional static repair handlers.");
+        Assert(staticHandlers == 0 && !handlers.Values.SelectMany(list => list).Any(handler => ReferenceEquals(handler.Target, instance)),
+            "Stopped sessions retain only pre-existing foreign/base handlers; repair handlers go with the resource, so an updated build loaded into the same GTA leaves none behind.");
         return new WeakReference(instance);
     }
 
@@ -188,7 +185,7 @@ internal static partial class Program
         Assert(handlers.Sum(pair => pair.Value.Count) == before,
             "Failure after the real instance registrations rolls all eighteen subscriptions back before OnStart returns.");
         // Installed StartAll retains a failed script in its resource. Its host
-        // guards follow the existing OnStop lifecycle; event rollback is immediate.
+        // guards follow the existing OnStop lifecycle, event rollback is immediate.
         ((ClientScript)instance).OnStop(); host.GetMethod("DoQueuedActions", Static)!.Invoke(null, null);
         Assert(Resource.GetType("RageCoopAdmin.Client.PassengerSeatGuard", true)!.GetField("_resourceInputBlocked", Static)!.GetValue(null) == null,
             "Actual failed-start Stop removes the passenger guard's bound resource callback.");

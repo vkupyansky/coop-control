@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace RageCoopAdmin.Client;
 
-// SHVDN снимает скрипт, если его кадр шёл дольше ScriptTimeoutThreshold (по умолчанию 5 с).
-// ON_ENTER_MP на медленном ПК идёт дольше, и RageCoop отключался с причиной Abort.
-// Порог сверяется после кадра, поэтому его поднимают до вызова и возвращают в следующих кадрах
+// SHVDN aborts a script whose frame ran longer than ScriptTimeoutThreshold (5 s by default).
+// ON_ENTER_MP takes longer on a slow PC, and RageCoop disconnected with reason Abort.
+// The threshold is checked after the frame, so it is raised before the call and restored later.
 internal sealed class ScriptTimeoutLift
 {
     internal const uint LiftedMilliseconds = 60_000;
@@ -37,7 +37,7 @@ internal sealed class ScriptTimeoutLift
         }
         catch (Exception error)
         {
-            // без поднятого порога переключение всё равно идёт, причина остаётся в журнале
+            // The switch still runs without the raised threshold, and the reason goes to the log.
             _log("OG Coop: SHVDN script timeout left as is: " + error.GetBaseException().GetType().Name + ": " + error.GetBaseException().Message);
         }
     }
@@ -51,7 +51,7 @@ internal sealed class ScriptTimeoutLift
         _domain = null;
         try
         {
-            // порог, который кто-то поменял за это время, не трогаем
+            // A threshold someone else changed meanwhile is left alone.
             if ((uint)threshold.GetValue(domain)! != LiftedMilliseconds) return;
             threshold.SetValue(domain, _restore);
             _log("OG Coop: SHVDN script timeout back to " + _restore + " ms.");

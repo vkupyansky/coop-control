@@ -29,7 +29,7 @@ internal static class PlayerSnapshots
         catch (Exception ex) when (ex is InvalidOperationException ||
                                    (ex is ArgumentException && ex is not ArgumentNullException))
         {
-            // Keep the last UI snapshot; the next scheduled refresh will retry.
+            // Keep the last UI snapshot, the next scheduled refresh will retry.
             players = new Dictionary<int, Player>();
             return false;
         }

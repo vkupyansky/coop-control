@@ -158,7 +158,7 @@ public sealed partial class AdminMenuScript
         if (Vector3.Distance(player.Position, _passengerTeleport.TargetPosition) > 100f)
         {
             // RageCoop creates distant dynamic entities relative to the ped, not the camera.
-            // Hold the ped briefly while they stream in; roll back if a seat cannot be confirmed.
+            // Hold the ped briefly while they stream in, and roll back if a seat cannot be confirmed.
             player.IsPositionFrozen = true;
             _passengerTeleport.MovedForStreaming = true;
             player.Position = _passengerTeleport.TargetPosition + new Vector3(0f, 0f, 3f);
@@ -273,7 +273,7 @@ public sealed partial class AdminMenuScript
         if (!PlayerSnapshots.TryGet(out Dictionary<int, RageCoop.Client.Player> players)) { return true; }
         if (!players.TryGetValue(pending.TargetId, out RageCoop.Client.Player? target)) { return false; }
         Ped? character = RuntimeEntityLookup.GetPlayerPed(target.ID)?.MainPed;
-        // The dynamic vehicle can arrive before its remote ped; the server just probed
+        // The dynamic vehicle can arrive before its remote ped. The server just probed
         // the target's real current vehicle. Wait for the ped when it is still streaming.
         if (character == null || !character.Exists()) { return true; }
         return character.CurrentVehicle?.Handle == vehicle.Handle;

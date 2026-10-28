@@ -6,7 +6,7 @@ using GTA.Math;
 using HarmonyLib;
 using RageCoopAdmin.Client;
 
-// люди в интерьерах: настоящие данные и правила, вызовы игры подменены
+// People in interiors: the real data and rules, GTA calls replaced.
 internal static class Program
 {
     private const int Casino = 7;
@@ -86,7 +86,7 @@ internal static class Program
             held[0].Model == 0x28BE7556u && held[0].Bone == 28422 && held[0].Offset.Z == 0.08f && held[1].Rotation.X == -90f &&
             !InteriorPedLook.TryParseHeld("0@28422@0,0,0@0,0,0", out _) && !InteriorPedLook.TryParseHeld("28BE7556@28422@0,0@0,0,0", out _),
             "things in hand give the model, the hand's bone and how they sit in it");
-        // 1 цикл, 2 замереть в конце, 4096 смещение из клипа, у стоящих оно сдвигает человека ещё раз
+        // 1 loop, 2 hold the last frame, 4096 the clip's offset, which moves a standing person a second time.
         InteriorPed[] everyone = sets.SelectMany(set => set.People).ToArray();
         Check(everyone.All(person => (person.Flags & 1) == 1 && (person.Flags & 2) == 0) &&
             sets.Single(set => set.Interior == "casino_floor").People.Count(person => (person.Flags & 4096) == 0) >= 15 &&
@@ -211,7 +211,7 @@ internal static class Program
         people.Reset();
     }
 
-    // пляжная вечеринка: только пока загружен остров и игрок рядом
+    // The beach party shows only while the island is loaded and the player is near.
     private static void CheckOutdoor()
     {
         Reset();
@@ -251,7 +251,7 @@ internal static class Program
 
     private static bool _playing = true;
 
-    // подменный мир: игрок, интерьеры у казино и ангара, поставленные люди
+    // A stand-in world: the player, the interiors at the casino and the hangar, the people placed.
     private static bool InteriorAt(float x, float y, float z, ref int __result)
     {
         __result = Within(x, y, "casino_floor") ? Casino : Within(x, y, "hangar_inside") ? Hangar : 0;

@@ -12,6 +12,9 @@ namespace CoopAdmin.Server;
 internal static partial class EngineServerGuard
 {
     private const int MaximumPendingResponses = 128;
+    // The file confirmation comes on the same ordered channel after all the chunks. On a slow
+    // link the 1.3 MB resource missed the core's 5 s and the player was kicked.
+    internal const int FileCompleteTimeout = 60000;
 
     internal static object? RequestResponse(HostServer server, Client client, object request, int channel, int timeout)
     {
@@ -22,7 +25,8 @@ internal static partial class EngineServerGuard
         object response = Activator.CreateInstance(Current.FileResponseType, nonPublic: true)!;
         byte responseType = Convert.ToByte(Current.FileResponseType.GetProperty("Type")!.GetValue(response));
         byte requestType = Convert.ToByte(request.GetType().GetProperty("Type")!.GetValue(request));
-        // AllResourcesSent has no file ID; its protocol response explicitly uses zero.
+        if (requestType == Convert.ToByte(Enum.Parse(Current.PacketType, "FileTransferComplete"))) timeout = FileCompleteTimeout;
+        // AllResourcesSent has no file ID, its protocol response explicitly uses zero.
         int fileId = request.GetType().GetProperty("ID")?.GetValue(request) is int requestedId ? requestedId : 0;
         using var pending = new PendingResponse(client, response, responseType, fileId, requestType);
         int id;

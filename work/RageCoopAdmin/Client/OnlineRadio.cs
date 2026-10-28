@@ -4,7 +4,7 @@ using GTA.Native;
 namespace RageCoopAdmin.Client;
 
 // Radio stations of GTA Online updates are hidden from the story-mode radio
-// wheel. While the player is on the server they are shown; the game keeps them
+// wheel. While the player is on the server they are shown, and the game keeps them
 // until it is restarted. Every player's game shows the same list, so the radio
 // station number RageCoop sends between games names the same station.
 // Media Player is left out: in story mode it has no music to play.
@@ -35,7 +35,7 @@ internal sealed class OnlineRadio
         _log("OG Coop: Online radio stations shown: " + before + " -> " + OnlineRadioNatives.UnlockedCount());
     }
 
-    // A new connection shows them again; repeating is harmless.
+    // A new connection shows them again, repeating is harmless.
     internal void Reset() => _shown = false;
 }
 

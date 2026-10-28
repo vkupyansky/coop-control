@@ -7,10 +7,10 @@ namespace RageCoopAdmin.Client;
 
 public sealed partial class AdminMenuScript
 {
-    // Outdoor coordinates: gta5.photography/manuals/teleporting;
-    // airfields: gtahash.com/tools/coord and vice-forge.com/tools/fivem-teleport-coordinates.
+    // Outdoor coordinates: gta5.photography/manuals/teleporting. Airfields:
+    // gtahash.com/tools/coord and vice-forge.com/tools/fivem-teleport-coordinates.
     // They remain hints: the existing teleport pipeline loads and validates collision.
-    // полосы: точка и курс взлёта из скриптов игры pilot_school, pm_plane_promotion и traffick_air
+    // Runways: take-off point and heading from the game's pilot_school, pm_plane_promotion and traffick_air.
     private static readonly TeleportLocation[] InterestingLocations =
     {
         new TeleportLocation("Город", "Пирс Дель-Перро", "Парк аттракционов у океана. Пешком.", -1850.127f, -1231.751f, 13.017f, true),
@@ -131,7 +131,7 @@ public sealed partial class AdminMenuScript
         internal float Y { get; }
         internal float Z { get; }
         internal bool OnFootOnly { get; }
-        // есть курс: ровно в эту точку и носом по курсу, как на полосе
+        // With a heading the arrival is exactly at the point and facing it, as on a runway.
         internal float? Heading { get; }
     }
 }

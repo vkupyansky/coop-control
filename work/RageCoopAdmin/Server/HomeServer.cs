@@ -7,7 +7,6 @@ using RageCoop.Server.Scripting;
 
 namespace CoopAdmin.Server;
 
-// своё жильё по имени RageCoop (HomeStore): игрок выбирает его в меню и появляется там после входа
 public sealed partial class CoopAdminServer
 {
     private const long HomeSaveCooldownMs = 1000;
@@ -24,14 +23,14 @@ public sealed partial class CoopAdminServer
 
     private void OnHomeRequest(CustomEventReceivedArgs e)
     {
-        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 }) return;
+        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 } || !CanRequestData(e.Client, HomeProtocol.Request)) return;
         lock (homeGate)
         {
             string home;
             try { home = homes!.Load(e.Client.Username); }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidDataException)
             {
-                // нечитаемый файл остаётся как есть, ответа нет, и меню не предлагает перезаписать его
+                // An unreadable file stays as it is. No answer goes out, so the menu never offers to overwrite it.
                 Logger.Warning($"Home of {e.Client.Username} could not be loaded: {error.GetType().Name}");
                 return;
             }

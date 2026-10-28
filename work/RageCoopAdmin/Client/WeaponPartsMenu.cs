@@ -4,9 +4,8 @@ using LemonUI.Menus;
 
 namespace RageCoopAdmin.Client;
 
-// Attachments of one weapon — scopes, magazines, suppressors, grips, finishes,
-// Mk II ammo types — and its colour, with the game's own names. RageCoop already
-// sends the components and tint of the weapon in hand to the other players.
+// RageCoop already sends the components and tint of the weapon in hand to the
+// other players.
 public sealed partial class AdminMenuScript
 {
     private NativeMenu? _weaponPartsMenu;

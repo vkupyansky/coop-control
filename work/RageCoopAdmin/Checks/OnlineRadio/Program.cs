@@ -5,7 +5,7 @@ using System.Reflection;
 using HarmonyLib;
 using RageCoopAdmin.Client;
 
-// Online radio stations: the real switch runs here; only GTA's radio calls are
+// Online radio stations: the real switch runs here, only GTA's radio calls are
 // replaced by recorded fakes.
 internal static class Program
 {

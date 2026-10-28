@@ -126,7 +126,7 @@ internal static class EngineLoggerGuard
             if (current.Length <= MaximumBufferCharacters) { return; }
             // Flush deliberately retains text when its file is unavailable. A
             // permanent IO failure must not turn diagnostics into an unbounded
-            // string queue; retain recent complete lines where possible.
+            // string queue, and retain recent complete lines where possible.
             int start = current.Length - (MaximumBufferCharacters - TruncationMarker.Length);
             int newline = current.IndexOf('\n', start);
             if (newline >= 0 && newline + 1 < current.Length) { start = newline + 1; }

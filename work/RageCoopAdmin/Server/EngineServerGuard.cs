@@ -216,7 +216,7 @@ internal static partial class EngineServerGuard
         // its worker job runs, because a handshake may reserve the ID meanwhile.
         if (__args[1] is not Client sender || !Connected(__instance, sender) || !CanUseSyncId(__instance, __args[0], sender)) { return false; }
         // Local clients only publish entities they currently own. The server is
-        // the authority for the authenticated sender; its relay must agree with
+        // the authority for the authenticated sender. Its relay must agree with
         // ServerEntities.Update, which also assigns that sender as Owner.
         __args[0].GetType().GetProperty("OwnerID")!.SetValue(__args[0], sender.Player.ID);
         return true;

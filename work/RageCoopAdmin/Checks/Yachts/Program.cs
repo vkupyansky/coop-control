@@ -7,7 +7,7 @@ using HarmonyLib;
 using OGCoop.Shared;
 using RageCoopAdmin.Client;
 
-// Yachts on the map: the real berths, looks and building order run here; only
+// Yachts on the map: the real berths, looks and building order run here, only
 // GTA's map-part, object and ped calls are replaced by a recorded fake world.
 internal static class Program
 {

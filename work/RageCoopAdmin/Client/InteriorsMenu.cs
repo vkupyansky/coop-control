@@ -11,9 +11,7 @@ using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;
 
-// GTA Online interiors as in Online: an icon at each street entrance (all on the
-// pause map, nearby ones on the minimap), a door marker that takes a player on
-// foot inside, an exit marker inside, and Teleports → Interiors.
+// Icons as in Online: all on the pause map, nearby ones on the minimap.
 public sealed partial class AdminMenuScript
 {
     private const long InteriorTickMilliseconds = 250;
@@ -25,14 +23,14 @@ public sealed partial class AdminMenuScript
     private InteriorPeople? _interiorPeople;
     private readonly DoorTrigger[] _doors = OnlineInteriors.Doors.Select(_ => new DoorTrigger()).ToArray();
     private readonly float?[] _doorGround = new float?[OnlineInteriors.Doors.Length];
-    // дверь, к которой ведёт выход: через неё вошли или ближайшая при телепорте
+    // The exit leads to the door the player came in by, or the nearest one after a teleport.
     private InteriorDoor? _insideDoor;
     private readonly DoorTrigger _exitDoor = new DoorTrigger();
     private Dictionary<string, NativeMenu>? _entranceMenus;
     private OnlineInterior? _inside;
     private float? _exitGround;
     private long _lastInteriorTick;
-    // Buildings from GTA Online updates this game has; asked once on the server.
+    // Buildings from GTA Online updates this game has, asked once on the server.
     private bool[]? _buildingAvailable;
 
     private void BuildInteriorsMenu(NativeMenu teleports)
@@ -98,7 +96,7 @@ public sealed partial class AdminMenuScript
         if (!CanTeleportToPlace(!interior.ByCar, out _)) return;
         _pool?.HideAll();
         long now = NowMilliseconds();
-        // комнаты на острове есть, только пока остров загружен
+        // Rooms on the island exist only while the island is loaded.
         if (interior.Building.Place >= 0) _specialPlaces.Target(interior.Building.Place, now);
         _interiors.Target(interior.Index, now);
         _inside = interior;
@@ -113,7 +111,7 @@ public sealed partial class AdminMenuScript
         }
     }
 
-    // arrived выполняется у двери, когда выход удался
+    // arrived runs at the door once the exit succeeded.
     private bool ExitInterior(OnlineInterior interior, Action? arrived = null)
     {
         if (!CanTeleportToPlace(!interior.ByCar, out _)) return false;
@@ -142,13 +140,13 @@ public sealed partial class AdminMenuScript
     private bool IsAvailable(OnlineInterior interior) =>
         IsAvailable(interior.Building) && (interior.Dlc == null || InteriorNatives.IsDlcPresent(interior.Dlc));
 
-    // игрок оказался в нашем интерьере не через дверь: телепорт к напарнику, появление дома, вход пешком
+    // The player got into our interior without a door: a teleport to a partner, a home spawn, walking in.
     private void NoticeInterior()
     {
         if (_inside != null || _pendingTeleport != null) return;
         int[] found = _interiors.Find(Function.Call<int>(Hash.GET_INTERIOR_FROM_ENTITY, Game.Player.Character.Handle));
         if (found.Length == 0) return;
-        // из общей комнаты выход к тому зданию, через которое вошли
+        // A shared room exits to the building the player came in by.
         int index = found.Where(item => OnlineInteriors.All[item].Building == _insideDoor?.Building).DefaultIfEmpty(found[0]).First();
         _inside = OnlineInteriors.All[index];
         if (_insideDoor?.Building != _inside.Building) _insideDoor = _inside.Building.Doors[0];
@@ -156,8 +154,7 @@ public sealed partial class AdminMenuScript
         _exitDoor.Disarm();
     }
 
-    // Every frame on the server: door and exit markers; loading, icons every 250 ms.
-    // люди внутри тоже каждый кадр
+    // Markers and the people inside every frame, loading and icons every 250 ms.
     private void TickInteriors()
     {
         if (!_specialPlaces.OnlineMapEnabled) return;
@@ -214,7 +211,7 @@ public sealed partial class AdminMenuScript
 
             _exitGround ??= Ground(inside.X, inside.Y, inside.Z + 0.5f);
             float floor = _exitGround ?? inside.Z - 1f;
-            // с тестовой трассы выезжают на машине, круг шире
+            // The test track is left by car, so the circle is wider.
             bool driving = inside.ByCar && player.IsInVehicle();
             DrawDoor(inside.X, inside.Y, floor, inside.ByCar ? DoorTrigger.CarScale : 1f);
             float exit = Math.Abs(at.Z - (floor + 1f)) <= DoorHeightReach

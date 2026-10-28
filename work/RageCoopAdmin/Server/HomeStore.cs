@@ -4,7 +4,6 @@ using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 
-// жильё игрока в файле по имени RageCoop (PlayerFiles), рядом с гаражами
 internal sealed class HomeStore
 {
     private const int MaximumBytes = 256;
@@ -12,7 +11,7 @@ internal sealed class HomeStore
 
     internal HomeStore(string dataFolder) => _files = new PlayerFiles(dataFolder, "homes", MaximumBytes);
 
-    // пустая строка, если жильё не выбрано
+    // "" when no home is chosen.
     internal string Load(string username)
     {
         if (_files.Read(username) is not string xml) return string.Empty;
@@ -36,7 +35,7 @@ internal sealed class HomeStore
 
     internal void Save(string username, string key)
     {
-        // в ключе только латинские буквы, цифры и подчёркивание, экранировать нечего
+        // The key holds only Latin letters, digits and underscores, so nothing needs escaping.
         if (!HomeCodec.IsKey(key)) throw new InvalidDataException("The home is unknown.");
         _files.Write(username, "<Home>" + key + "</Home>");
     }

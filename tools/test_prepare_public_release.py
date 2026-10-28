@@ -24,6 +24,10 @@ class PublicReleaseTests(unittest.TestCase):
             self.put(Path("publication") / name, "Public documentation\n")
         for name in release.SCREENSHOT_FILES:
             self.put(Path("publication") / name, b"isolated screenshot fixture\x00")
+        for name in ("start-server.sh", "stop-server.sh"):
+            self.put(Path("publication") / name, "#!/bin/sh\nexit 0\n")
+        for name in ("Start server.cmd", "Stop server.cmd"):
+            self.put(Path("publication") / name, "@exit /b 0\r\n")
         for name in release.PROJECT_FILES:
             self.put(release.PROJECT / name, "public project\n")
         self.put(release.PROJECT / "Directory.Build.props", "<Project>\n</Project>\n")
@@ -205,11 +209,17 @@ class PublicReleaseTests(unittest.TestCase):
         self.assertEqual(list(target.glob(".*.tmp")), [])
         self.assert_no_release_outputs()
 
+    def test_release_requires_every_server_button(self) -> None:
+        for name in release.LAUNCHERS:
+            path = self.root / "publication" / name
+            kept = path.read_bytes()
+            path.unlink()
+            with self.subTest(name=name), self.assertRaises(release.ReleaseError):
+                self.prepare()
+            self.assert_no_release_outputs()
+            path.write_bytes(kept)
+
     def test_exact_public_binary_tree_and_manifest(self) -> None:
-        for name in ("start-server.sh", "stop-server.sh"):
-            self.put(Path("publication") / name, "#!/bin/sh\nexit 0\n")
-        for name in ("Start server.cmd", "Stop server.cmd"):
-            self.put(Path("publication") / name, "@exit /b 0\r\n")
         binary, source, manifest_path = self.prepare()
         self.assertTrue(
             all(
@@ -370,10 +380,25 @@ class PublicReleaseTests(unittest.TestCase):
             )
 
     def test_private_blocks_in_product_sources_are_rejected(self) -> None:
-        self.put(release.PROJECT / "Client/Example.cs", "#if !PUBLIC_RELEASE\nclass Hidden { }\n#endif\n")
-        with self.assertRaisesRegex(release.ReleaseError, "private file"):
-            self.prepare()
-        self.assert_no_release_outputs()
+        for content in (
+            "#if !PUBLIC_RELEASE\nclass Hidden { }\n#endif\n",
+            "#if  !PUBLIC_RELEASE\nclass Hidden { }\n#endif\n",
+            "#if (!PUBLIC_RELEASE)\nclass Hidden { }\n#endif\n",
+            "#if PUBLIC_RELEASE\nclass Shown { }\n#else\nclass Hidden { }\n#endif\n",
+            "#if DEBUG\nclass A { }\n#elif !PUBLIC_RELEASE\nclass Hidden { }\n#endif\n",
+        ):
+            with self.subTest(content=content):
+                self.put(release.PROJECT / "Client/Example.cs", content)
+                with self.assertRaisesRegex(release.ReleaseError, "private file"):
+                    self.prepare()
+                self.assert_no_release_outputs()
+
+    def test_public_only_blocks_in_product_sources_are_kept(self) -> None:
+        content = "#if PUBLIC_RELEASE\nclass Shown { }\n#endif\n#if DEBUG\nclass A { }\n#else\nclass B { }\n#endif\n"
+        self.put(release.PROJECT / "Client/Example.cs", content)
+        _, source, _ = self.prepare()
+        with zipfile.ZipFile(source) as archive:
+            self.assertEqual(archive.read((release.PROJECT / "Client/Example.cs").as_posix()).decode(), content)
 
     def test_private_terms_are_rejected_in_text_and_own_binaries(self) -> None:
         for name, content in (
@@ -513,6 +538,16 @@ class PublicReleaseTests(unittest.TestCase):
                     self.prepare()
                 self.assert_no_release_outputs()
 
+    def test_shipped_tools_pass_their_own_path_scan(self) -> None:
+        # The source archive ships the packer, so its own patterns and examples
+        # must not look like a personal path.
+        tools = Path(__file__).resolve().parent
+        for name in release.TOOL_FILES:
+            with self.subTest(name=name):
+                source = tools / name
+                digest = hashlib.sha256(source.read_bytes()).hexdigest()
+                release.reject_private_paths(source, "tools/" + name, text=True, root=self.root, sha256=digest)
+
     def test_public_client_override_uses_only_the_attested_file(self) -> None:
         rebuilt = self.put(Path("rebuilt/Client.dll"), b"rebuilt public fixture")
         digest = hashlib.sha256(rebuilt.read_bytes()).hexdigest()
@@ -528,6 +563,8 @@ class PublicReleaseTests(unittest.TestCase):
             ("/" + "Users/alice/private/client.pdb").encode(),
             ("C:" + "\\Users\\alice\\private\\client.pdb").encode(),
             ("/" + "home/alice/private/client.pdb").encode("utf-16-le"),
+            ("C:" + "\\\\Users\\\\alice\\\\private").encode(),
+            ("\\/" + "Users\\/alice\\/private").encode(),
         )
         for sample in samples:
             with self.subTest(sample=sample):
@@ -539,6 +576,18 @@ class PublicReleaseTests(unittest.TestCase):
                     self.prepare()
                 self.assert_no_release_outputs()
 
+    def test_utf16_path_near_the_end_of_a_binary_is_found(self) -> None:
+        # in UTF-16 the scanned text is half the bytes: the carried tail lost such a path
+        path = ("/" + "Users/alice/private/client.pdb").encode("utf-16-le")
+        filler = "y".encode("utf-16-le") * 1500
+        self.put(
+            release.PUBLIC_BUILD / "EarlyClient/Release/net48/OGCoop.EarlyClient.dll",
+            b"MZ" + b"x" * (release.CHUNK_SIZE - 2 - len(path) - len(filler)) + path + filler,
+        )
+        with self.assertRaises(release.ReleaseError):
+            self.prepare()
+        self.assert_no_release_outputs()
+
     def test_upstream_ci_exception_requires_a_pinned_harmony_digest(self) -> None:
         data = b"MZ" + release.UPSTREAM_CI_PREFIX + b"Harmony/build/0Harmony.pdb\x00"
         self.put(release.PUBLIC_BUILD / "EarlyClient/Release/net48/0Harmony.dll", data)
@@ -546,7 +595,7 @@ class PublicReleaseTests(unittest.TestCase):
             self.prepare()
         self.assert_no_release_outputs()
         digest = hashlib.sha256(data).hexdigest()
-        # The fixture substitutes one attested upstream binary; ordinary tests
+        # The fixture substitutes one attested upstream binary, ordinary tests
         # never need game files or a download of the real dependency.
         with patch.object(release, "PINNED_HARMONY_SHA256", frozenset((digest,))):
             _, _, manifest_path = self.prepare()

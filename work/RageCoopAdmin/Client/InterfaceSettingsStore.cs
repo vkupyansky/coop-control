@@ -68,7 +68,7 @@ internal sealed class InterfaceSettingsStore
                 settings.KeyboardBoost = true;
             }
 
-            // Legacy I now uses K; a disabled repair binding stays disabled.
+            // Legacy I now uses K, a disabled repair binding stays disabled.
             settings.RepairShortcut = settings.RepairShortcut == 2 ? 1 : 0;
             settings.Version = 5;
         }
@@ -77,7 +77,7 @@ internal sealed class InterfaceSettingsStore
             settings.Version = 5;
         }
 
-        // Retired options of our own older versions are dropped; options of
+        // Retired options of our own older versions are dropped, options of
         // other versions are kept.
         XmlElement[]? other = settings.OtherOptions?.Where(option => Array.IndexOf(RetiredOptions, option.Name) < 0).ToArray();
         settings.OtherOptions = other is { Length: > 0 } ? other : null;
@@ -153,9 +153,9 @@ public sealed partial class InterfaceSettings
     public UiLanguage MenuLanguage { get; set; } = UiLanguage.Russian;
     // Absent in older files, so voice chat is on until the player turns it off.
     public bool VoiceChat { get; set; } = true;
-    // в старых файлах нет, поэтому новая машина сажает за руль, пока игрок не выключит
+    // Absent in older files, so a new car seats the player at the wheel until turned off.
     public bool DriveNewVehicle { get; set; } = true;
-    // The Персонаж and Оружие switches that are on (invincibility and the
+    // The Character and Weapons switches that are on (invincibility and the
     // like), turned on again at the next join. Absent in older files: all off.
     [XmlArrayItem("On")]
     public List<string> Switches { get; set; } = new List<string>();

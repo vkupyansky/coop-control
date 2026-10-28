@@ -70,12 +70,12 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 
 **Обновление:** скачайте новый `OGCoop-Addon.zip` и запустите его **Install.exe**. Он заменит только изменившееся и сохранит ваши настройки. Затем запустите GTA заново.
 
-В VK Play делайте всё внутри облачного компьютера, на его постоянном игровом диске. Если установщик там не запускается, скопируйте всё из папки `client` рядом с `GTA5.exe`, а также `ScriptHookV.dll` и `dinput8.dll` из ScriptHookV.
+В VK Play делайте всё внутри облачного компьютера, на его постоянном игровом диске. Если установщик там не запускается, скопируйте всё из папки `client` рядом с `GTA5.exe`, а также `ScriptHookV.dll` и `dinput8.dll` из ScriptHookV. Если так обновляетесь с Coop Control, удалите `scripts\CoopControl.EarlyClient.dll`, если он есть.
 
 ## Свой сервер
 
 1. Распакуйте `OGCoop-Addon.zip` и положите папку `server` туда, где разрешена запись. GTA на этом компьютере не нужна.
-2. Windows: двойной щелчок по **Start server**, .NET уже внутри. Linux или macOS: `sh start-server.sh` с установленным x64 [.NET 10 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+2. Windows: двойной щелчок по **Start server**, .NET уже внутри. Linux или macOS: `sh start-server.sh` с установленным x64 [.NET 10 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0). На Mac с Apple silicon берите установщик для macOS x64: ему нужна Rosetta, скрипт найдёт его сам.
 3. Первый запуск создаст `Settings.xml` и откроет сервер на UDP **4499**. В окне сервера появятся адреса для друзей, см. [как подключаются игроки](#как-подключаются-игроки). В публичном списке серверов его нет. Играйте с теми, кому доверяете: общие инструменты доступны всем подключённым.
 4. Остановить: **Stop server**, `sh stop-server.sh` или Ctrl+C в окне сервера. Гаражи, персонажи, яхты и жильё сохраняются при каждом изменении.
 
@@ -142,14 +142,14 @@ OG Coop это неофициальное дополнение к RageCoop. Од
 <details>
 <summary>Сборка из исходников</summary>
 
-Распакуйте архивы исходников и дополнения. Установите .NET SDK из `work/RageCoopAdmin/global.json` (**10.0.402**). В этой папке скопируйте `References.example.props` в `References.props` и укажите в `RageCoopClientDir` папку `client/scripts/RageCoop` дополнения, в `RageCoopServerDir` папку `server`, в `LemonUiDll` файл `lib/net48/LemonUI.SHVDN3.dll` из [LemonUI.SHVDN3 2.2.0](https://www.nuget.org/packages/LemonUI.SHVDN3/2.2.0). Затем из `work/RageCoopAdmin`:
+Распакуйте архивы исходников и дополнения. Установите .NET SDK из `work/RageCoopAdmin/global.json` (**10.0.403**). В этой папке скопируйте `References.example.props` в `References.props` и укажите в `RageCoopClientDir` папку `client/scripts/RageCoop` дополнения, в `RageCoopServerDir` папку `server`, в `LemonUiDll` файл `lib/net48/LemonUI.SHVDN3.dll` из [LemonUI.SHVDN3 2.2.0](https://www.nuget.org/packages/LemonUI.SHVDN3/2.2.0). Затем из `work/RageCoopAdmin`:
 
 ```sh
 dotnet restore Client/RageCoopAdmin.Client.csproj --locked-mode -p:PublicRelease=true -warnaserror
 dotnet build Client/RageCoopAdmin.Client.csproj -c Release --no-restore -p:PublicRelease=true -warnaserror
 ```
 
-Server, Bootstrap, EarlyClient и Installer собираются так же. Для упаковки дополнения нужны официальные ZIP SHVDN 3.7.0-nightly.188 и .NET Runtime 10.0.13 (win-x64) в `outputs/public-deps`, их адреса и закреплённые хеши указаны в `tools/prepare_public_release.py`. Из корня исходников `bash tools/check.sh --public-release` запускает публичные сборки и проверки (Windows с Git Bash или macOS с CrossOver и .NET Framework 4.8).
+Server, Bootstrap, EarlyClient и Installer собираются так же. Архивы выпуска упаковываются из рабочей копии автора: `tools/prepare_public_release.py` из этого архива исходников не запускается. В нём указаны закреплённые загрузки SHVDN 3.7.0-nightly.188 и .NET Runtime 10.0.14 (win-x64) и их хеши. Из корня исходников `bash tools/check.sh --public-release` запускает публичные сборки и проверки (Windows с Git Bash или macOS с CrossOver и .NET Framework 4.8).
 
 </details>
 

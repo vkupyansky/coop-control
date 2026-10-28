@@ -25,5 +25,6 @@
     <Compile Include="../../Client/Yachts.cs" Link="Yachts.cs" />
     <Compile Include="../../Server/WorldModeStore.cs" Link="WorldModeStore.cs" />
     <Compile Include="../../Client/GarageClient.cs" Link="GarageClient.cs" />
+    <Compile Include="../../Client/AnswerRetry.cs" Link="AnswerRetry.cs" />
   </ItemGroup>
 </Project>

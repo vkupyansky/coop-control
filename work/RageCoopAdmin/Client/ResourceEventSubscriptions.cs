@@ -68,7 +68,7 @@ internal sealed class ResourceEventSubscriptions : IDisposable
         { _owner = owner; Hash = hash; Handler = handler; }
         internal void Invoke(CustomEventReceivedArgs args)
         {
-            // Stop waits for an executing callback; a previously captured
+            // Stop waits for an executing callback. A previously captured
             // dispatch snapshot cannot call this instance after Stop returns.
             lock (_owner._gate) { Handler?.Invoke(args); }
         }

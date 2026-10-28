@@ -6,7 +6,7 @@ namespace RageCoopAdmin.Client;
 internal static class MotionCorrectionPolicy
 {
     // The original correction points at the predicted position. Preserve it
-    // while its relative displacement fits inside this frame's error; otherwise
+    // while its relative displacement fits inside this frame's error, otherwise
     // cap only that correction to distance / dt. Owner velocity remains separate.
     internal static Vector3 Limit(Vector3 correction, float distance, float frameSeconds)
     {

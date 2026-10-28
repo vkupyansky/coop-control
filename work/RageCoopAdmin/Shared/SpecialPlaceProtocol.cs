@@ -1,7 +1,7 @@
 namespace OGCoop.Shared;
 
 // Invitation to one of the hidden map places under Teleports. The place catalog
-// and loading belong to the client; the server relays only a known place number.
+// and loading belong to the client, the server relays only a known place number.
 internal static class SpecialPlaceProtocol
 {
     internal const int Invite = 20774170;

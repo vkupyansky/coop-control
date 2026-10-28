@@ -21,7 +21,7 @@ internal sealed class TattooOption
 
     internal int Collection { get; }
     internal int Name { get; }
-    // GTA's body part of the decoration: 0 torso, 1 head, 2–3 arms, 4–5 legs.
+    // GTA's body part of the decoration: 0 torso, 1 head, 2-3 arms, 4-5 legs.
     internal int Zone { get; }
     internal string Label { get; }
 
@@ -63,7 +63,7 @@ internal static class CharacterTattoos
     // The script names this one's item for the man's body on both bodies.
     private const string ManOnlyLabel = "TAT_FM_204";
     private const string LaunchCollection = "multiplayer_overlays";
-    // GTA's tattoo data record: 8-byte fields; collection and item in fields 2
+    // GTA's tattoo data record: 8-byte fields, collection and item in fields 2
     // and 3, the text label written in place from field 7. The buffer is far
     // larger than the record and zeroed, so the label always ends.
     private const int RecordBytes = 256;
@@ -114,7 +114,7 @@ internal static class CharacterTattoos
         return result;
     }
 
-    // The tattoo's name in the game's language; null when it has none.
+    // Null when the tattoo has no name in the game's language.
     internal static string? Name(TattooOption option)
     {
         if (option.Label.Length == 0 || !Function.Call<bool>(Hash.DOES_TEXT_LABEL_EXIST, option.Label)) return null;

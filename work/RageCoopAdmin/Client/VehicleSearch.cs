@@ -77,7 +77,7 @@ internal static class VehicleSearch
             }
         }
 
-        // Every word must belong to this model; mixed Russian/Latin queries are valid.
+        // Every word must belong to this model, mixed Russian/Latin queries are valid.
         string searchable = Normalize(text);
         return normalizedQuery.Split(' ').All(word => searchable.IndexOf(word, StringComparison.Ordinal) >= 0);
     }

@@ -80,7 +80,7 @@ internal static partial class EarlyClientLifecycle
                 "The real early constructor patches only the nested opening handler, without initializing the menu or download target.");
             settings.SetValue(null, new Settings());
             WebRequest.DefaultWebProxy = null;
-            // Keep actual menu construction and events; only layout, textures,
+            // Keep actual menu construction and events, only layout, textures,
             // instruction movies and notifications cross into the native host.
             boundary.Patch(typeof(NativeMenu).GetMethod("UpdateItems", instance)!, prefix: TlsBoundary(nameof(SkipTlsNative)));
             boundary.Patch(typeof(NativeMenu).GetMethod("Recalculate", instance, null, Type.EmptyTypes, null)!, prefix: TlsBoundary(nameof(SkipTlsNative)));
@@ -399,7 +399,7 @@ internal static partial class EarlyClientLifecycle
             Console.WriteLine(error?.StackTrace);
             Console.Out.Flush();
             // Observe the real raw-thread failure, then exit before the CLR's
-            // default crash UI/reporting; never crash the parent or live game.
+            // default crash UI/reporting and never crash the parent or live game.
             Environment.Exit(error?.GetType().FullName == "Newtonsoft.Json.JsonReaderException" ? 73 : 74);
         };
         guard.GetMethod("Uninstall", Static)!.Invoke(null, null);

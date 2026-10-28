@@ -13,8 +13,8 @@ using RageCoop.Client;
 namespace RageCoopAdmin.Client;
 
 // RageCoop disables GTA's pause actions and replays them on keyboard events.
-// Give their complete press/hold/release lifecycle back to GTA. Only reserve
-// cancellation while our own interface owns it; never replay native input.
+// Their complete press/hold/release lifecycle goes back to GTA. Cancellation is
+// reserved only while our own interface owns it, and native input is never replayed.
 internal static class HostMenuInputGuard
 {
     private const string PatchId = "friendslegacy.ragecoop.menuinput";
@@ -160,7 +160,7 @@ internal static class HostMenuInputGuard
 
     private static void ProcessWorldPauseInput(GTA.Control action)
     {
-        // The 199 call site is unconditional; the 200 call site depends on the
+        // The 199 call site is unconditional, the 200 call site depends on the
         // host's DisableAlternatePause setting. Dispatch both from the first.
         if ((int)action != 199) return;
         // GTA's own pause menu pauses this game, as in story mode. Unpausing
@@ -210,8 +210,8 @@ internal static class HostMenuInputGuard
     {
         if (_processingResourceMenus?.Invoke() != true || _ownsTextInput?.Invoke() != true) return false;
         // P (Russian з) and other gameplay bindings remain text. Keyboard
-        // Enter/Esc are handled by KeyDown, regardless of native event order;
-        // controller A/B still use LemonUI's ordinary accept/cancel path.
+        // Enter/Esc are handled by KeyDown, regardless of native event order.
+        // Controller A/B still use LemonUI's ordinary accept/cancel path.
         if ((int)action is 156 or 199 or 200) return true;
         return (int)action is 176 or 177 or 201 or 202 &&
             Function.Call<bool>(Hash.IS_USING_KEYBOARD_AND_MOUSE, 2);

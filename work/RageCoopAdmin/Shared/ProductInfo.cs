@@ -3,12 +3,10 @@ using System.Text.RegularExpressions;
 
 namespace OGCoop.Shared;
 
-// One place for the product name, version, author and links shown by the
-// menu, the server window and the installer.
 internal static class ProductInfo
 {
     internal const string Name = "OG Coop";
-    internal const string Version = "0.4.1";
+    internal const string Version = "0.4.2";
     internal const string Tag = "v" + Version + "-wip";
     internal const string Author = "Vladislav Kupyansky (vkupyansky)";
     internal const string Telegram = "@skibidessa";

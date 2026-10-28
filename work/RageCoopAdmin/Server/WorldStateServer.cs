@@ -11,9 +11,9 @@ public sealed partial class CoopAdminServer
 {
     // The checked server queues CustomEvent, PedSync/OnPlayerUpdate and
     // disconnect callbacks on its one Worker. EngineServerGuard also queues
-    // ready callbacks there. OnStart precedes listener start; guarded unload
+    // ready callbacks there. OnStart precedes listener start, and guarded unload
     // joins that Worker before OnStop. These session dictionaries therefore
-    // share that serialized lifetime; timer SendPlayerUpdate only sends roster.
+    // share that serialized lifetime. Timer SendPlayerUpdate only sends roster.
     private readonly WorldStateAuthority worldState = new();
     private WorldModeStore? worldModes;
     private readonly Dictionary<Client, int> worldSessions = new();
@@ -21,6 +21,8 @@ public sealed partial class CoopAdminServer
     private readonly Dictionary<Client, long> lastWorldFetches = new();
     private readonly Dictionary<Client, int> lastWorldRequestIds = new();
     private readonly Dictionary<Client, long> lastWorldObservations = new();
+    // Ready but no world request yet: 0 while its game has sent no update (window in the
+    // background, no frames), otherwise the time of the first update.
     private readonly Dictionary<Client, long> worldUnknownReady = new();
     private bool worldStateActive;
 
@@ -116,7 +118,7 @@ public sealed partial class CoopAdminServer
         lastWorldRequestIds[e.Client] = requestId;
         bool accepted = worldState.TryChange(epoch, change, value1, value2, enabled,
             Environment.TickCount64, out WorldStateSnapshot state);
-        // Send the correlated result before its broadcast; all events use the same
+        // Send the correlated result before its broadcast. All events use the same
         // reliable ordered channel, including updates from concurrent players.
         API.SendCustomEventQueued(new List<Client> { e.Client }, WorldStateProtocol.State,
             WorldStateProtocol.Encode(state, session, requestId, accepted, change));
@@ -131,7 +133,7 @@ public sealed partial class CoopAdminServer
         }
     }
 
-    // Only a player's own switch is saved; modes released for an outdated
+    // Only a player's own switch is saved. Modes released for an outdated
     // client keep the saved choice.
     private void SaveGhostTraffic(bool enabled)
     {
@@ -175,10 +177,15 @@ public sealed partial class CoopAdminServer
         // OnStart fetch supplies the resource-session token. A ready callback may
         // precede it, so only already registered clients can receive a target reply.
         if (worldSessions.TryGetValue(client, out int session)) SendWorldState(client, session);
-        else worldUnknownReady[client] = Environment.TickCount64;
+        else worldUnknownReady[client] = 0;
     }
 
-    private void OnWorldPlayerUpdate(object? sender, Client client) => MaintainWorldCapabilities();
+    private void OnWorldPlayerUpdate(object? sender, Client client)
+    {
+        // The 5 s for the world request count from its game's first frame: the resource sends it from a frame.
+        if (worldUnknownReady.TryGetValue(client, out long since) && since == 0) worldUnknownReady[client] = Environment.TickCount64;
+        MaintainWorldCapabilities();
+    }
 
     private void MaintainWorldCapabilities()
     {
@@ -187,7 +194,7 @@ public sealed partial class CoopAdminServer
         bool incompatible = false;
         foreach (KeyValuePair<Client, long> pending in worldUnknownReady)
         {
-            if (pending.Key.IsReady && !worldSessions.ContainsKey(pending.Key) && now - pending.Value >= 5000)
+            if (pending.Key.IsReady && !worldSessions.ContainsKey(pending.Key) && pending.Value != 0 && now - pending.Value >= 5000)
             {
                 incompatible = true;
                 break;

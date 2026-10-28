@@ -21,7 +21,7 @@ public sealed partial class CoopAdminServer
 
     private void OnGarageRequest(CustomEventReceivedArgs e)
     {
-        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 }) return;
+        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 } || !CanRequestData(e.Client, GarageProtocol.Request)) return;
         lock (garageGate)
         {
             if (TryLoadGarage(e.Client, out GarageData? garage)) SendGarage(e.Client, garage);
@@ -34,6 +34,12 @@ public sealed partial class CoopAdminServer
         lock (garageGate)
         {
             if (e.Args.Length < 1 || e.Args[0] is not int token) return;
+            // Every change reads, writes with fsync and sends the whole garage.
+            if (!CanRequestData(e.Client, GarageProtocol.Change, GarageChangeCooldownMs))
+            {
+                SendGarageResult(e.Client, token, GarageResult.Unavailable);
+                return;
+            }
             if (!TryLoadGarage(e.Client, out GarageData? garage))
             {
                 SendGarageResult(e.Client, token, GarageResult.Unavailable);

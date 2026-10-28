@@ -109,14 +109,14 @@ EXTRA_FILES = (
     (Path("publication/ScriptHookVDotNet.ini"), "client/ScriptHookVDotNet.ini", "publication/ScriptHookVDotNet.ini"),
     (Path("work/ReShade/OGCoop.ini"), "reshade/OGCoop.ini", "work/ReShade/OGCoop.ini"),
 )
-# GitHub issue forms; they live in the repository, not in the add-on.
+# GitHub issue forms live in the repository, not in the add-on.
 REPOSITORY_FILES = (
     (Path("publication/github/ISSUE_TEMPLATE/bug_report.yml"), ".github/ISSUE_TEMPLATE/bug_report.yml"),
     (Path("publication/github/ISSUE_TEMPLATE/config.yml"), ".github/ISSUE_TEMPLATE/config.yml"),
 )
 # Official upstream downloads, pinned by digest, unpacked into the add-on so a
 # player needs only the game and ScriptHookV. They are fetched into
-# outputs/public-deps (ENGINE → «Публичные проверки и упаковка»).
+# outputs/public-deps.
 DEPENDENCY_DIRECTORY = Path("outputs/public-deps")
 
 
@@ -126,7 +126,7 @@ class Upstream:
     url: str
     algorithm: str
     digest: str
-    # Archive member -> add-on path; None maps every file under prefix.
+    # Archive member -> add-on path, None maps every file under prefix.
     members: tuple[tuple[str, str], ...] | None
     prefix: str = ""
 
@@ -148,11 +148,11 @@ UPSTREAM = (
         ),
     ),
     Upstream(
-        "dotnet-runtime-10.0.13-win-x64.zip",
-        "https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.13/dotnet-runtime-10.0.13-win-x64.zip",
+        "dotnet-runtime-10.0.14-win-x64.zip",
+        "https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.14/dotnet-runtime-10.0.14-win-x64.zip",
         "sha512",
-        "2b98792ce86adc50899764ad2e4d21bd25cfda5432eeb0b4dfe7944f3ea049f9"
-        "e0570a8f4aee92314d97cdb5f8b7be1363d501fc5012e680371e607af648ef40",
+        "a176095f1db69b42c81acc60940744078d6bf2d2ac643e418342aa9c81889f4b"
+        "d13e42f4621b131f9e77e4bc781ad46e375956219df9a4f979031d2a5a8d93cd",
         None,
         "server/dotnet/",
     ),
@@ -182,7 +182,7 @@ SOURCE_VIEW = PUBLIC_BUILD / "source-view"
 TEXT_SUFFIXES = frozenset(
     (".cs", ".csproj", ".props", ".json", ".md", ".txt", ".ini", ".cmd", ".sh", ".py", ".yml", ".resx", ".manifest")
 )
-# Our own binaries; third-party and baseline files are pinned elsewhere.
+# Our own binaries. Third-party and baseline files are pinned elsewhere.
 OWN_BINARIES = (
     "client/scripts/OGCoop.EarlyClient.dll",
     "server/Resources/Client/OGCoop/RageCoopAdmin.Client.dll",
@@ -195,8 +195,10 @@ ARCHIVE_NAMES = ("OGCoop-Addon.zip", "OGCoop-Source.zip")
 MANIFEST_NAME = "OGCoop-manifest.json"
 OUTPUT_DIRECTORY = Path("outputs/public")
 CHUNK_SIZE = 1024 * 1024
+# Also the escaped forms of C#, JSON and Python: doubled backslashes and escaped slashes.
 PRIVATE_PATH = re.compile(
-    rb"/(?:Users|home)/[^\s/'\"<>]{1,255}/|[A-Za-z]:[\\/](?:Users|Documents and Settings)[\\/]"
+    rb"/(?:Users|home)\\?/[^\s/'\"<>]{1,255}/"
+    rb"|[A-Za-z]:(?:\\+|/)(?:Users|Documents and Settings)(?:\\+|/)"
 )
 # Unmodified Lib.Harmony 2.4.3 binaries from the pinned NuGet package.
 PINNED_HARMONY_SHA256 = frozenset(
@@ -254,8 +256,7 @@ def reject_private_paths(path: Path, name: str, *, text: bool, root: Path, sha25
     tail = b""
     pinned_harmony = not text and path.name == "0Harmony.dll" and sha256 in PINNED_HARMONY_SHA256
 
-    def inspect(data: bytes, *, final: bool) -> bool:
-        scan = data if text else data.replace(b"\x00", b"")
+    def inspect(scan: bytes, *, final: bool) -> bool:
         if root_bytes in scan:
             raise ReleaseError(f"Private absolute path found in public file: {name}")
         allowed = False
@@ -274,9 +275,10 @@ def reject_private_paths(path: Path, name: str, *, text: bool, root: Path, sha25
         while block := stream.read(CHUNK_SIZE):
             if decoder is not None:
                 decoder.decode(block)
-            combined = tail + block
-            # CodeView uses ASCII; managed literals can contain UTF-16 paths.
-            # Removing NULs also detects those without retaining the whole DLL.
+            # CodeView uses ASCII, managed literals can contain UTF-16 paths.
+            # Removing NULs per block also detects those without retaining the
+            # whole DLL, and keeps the carried tail in the scanned coordinates.
+            combined = tail + (block if text else block.replace(b"\x00", b""))
             upstream_ci_paths |= inspect(combined, final=False)
             tail = combined[-overlap:]
     if decoder is not None:
@@ -347,6 +349,26 @@ def load_private_rules(root: Path) -> PrivateRules:
         tuple(term.casefold() for term in rules["forbiddenSubstrings"]),
         tuple(sorted(words)),
     )
+
+
+def has_private_branch(text: str) -> bool:
+    """A product file may only add public-only code with a plain #if PUBLIC_RELEASE."""
+    frames: list[bool] = []
+    for line in text.splitlines():
+        directive = re.fullmatch(r"#\s*(if|elif|else|endif)\b\s*(.*)", line.strip())
+        if directive is None:
+            continue
+        word, condition = directive.group(1), re.sub(r"[\s()]", "", directive.group(2))
+        if word == "if":
+            if "PUBLIC_RELEASE" in condition and condition != "PUBLIC_RELEASE":
+                return True
+            frames.append(condition == "PUBLIC_RELEASE")
+        elif word in ("elif", "else"):
+            if (frames and frames[-1]) or "PUBLIC_RELEASE" in condition:
+                return True
+        elif frames:
+            frames.pop()
+    return False
 
 
 def public_csharp(text: str, name: str) -> str:
@@ -428,7 +450,7 @@ def public_text(path: Path, relative: PurePosixPath, rules: PrivateRules) -> str
         return text
     component = relative.relative_to(PurePosixPath(PROJECT.as_posix())).parts[0]
     if component in PRODUCT_DIRECTORIES:
-        if "#if !PUBLIC_RELEASE" in text or PRIVATE_SOURCE_BEGIN in text:
+        if PRIVATE_SOURCE_BEGIN in text or has_private_branch(text):
             raise ReleaseError(f"Product source has a private block; move it to a private file: {relative}")
         return text
     return public_csharp(text, relative.as_posix())
@@ -473,7 +495,7 @@ def reject_private_terms(entries: list[Entry], rules: PrivateRules) -> None:
         if name.suffix in TEXT_SUFFIXES or name.name in ("LICENSE", ".editorconfig"):
             term = forbidden_term(item.source.read_bytes().decode("utf-8"), rules)
         elif item.name in OWN_BINARIES:
-            # Type, member and resource names in any letter case; the public
+            # Type, member and resource names in any letter case. The public
             # catalog check already proves no private vehicle is embedded.
             data = item.source.read_bytes()
             lowered = data.lower()
@@ -758,11 +780,11 @@ def collect_inputs(
     source.extend(
         entry(root / "tools" / name, "tools/" + name, text=True, root=root) for name in TOOL_FILES
     )
-    launchers = [root / "publication" / name for name in LAUNCHERS]
-    if any(path.exists() or path.is_symlink() for path in launchers):
-        for path in launchers:
-            binary.append(entry(path, "server/" + path.name, text=True, root=root))
-            source.append(entry(path, "publication/" + path.name, text=True, root=root))
+    # without the four server buttons the host has nothing to start or stop the server with
+    for name in LAUNCHERS:
+        path = root / "publication" / name
+        binary.append(entry(path, "server/" + name, text=True, root=root))
+        source.append(entry(path, "publication/" + name, text=True, root=root))
     for entries in (binary, source):
         reject_private_terms(entries, rules)
         names = [item.name.casefold() for item in entries]

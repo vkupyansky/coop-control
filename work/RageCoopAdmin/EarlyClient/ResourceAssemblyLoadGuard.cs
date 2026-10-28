@@ -12,7 +12,7 @@ namespace RageCoop.EarlyClient;
 
 // The installed loader extracts every root DLL, including native ones, to a
 // random temporary file. Keep its archive/script flow and clean only those
-// exact files; byte loading prevents Windows from pinning managed files.
+// exact files, and byte loading prevents Windows from pinning managed files.
 internal static class ResourceAssemblyLoadGuard
 {
     private const string Owner = "friendslegacy.ragecoop.earlyresources";

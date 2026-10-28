@@ -2,7 +2,6 @@ using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 
-// One character file per RageCoop name (PlayerFiles), next to the garages.
 internal sealed class CharacterStore
 {
     private readonly PlayerFiles _files;

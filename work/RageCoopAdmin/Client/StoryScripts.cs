@@ -7,25 +7,21 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// Story-mode scripts stopped while connected: the player's choice on the
-// "Скрипты сюжета GTA V" page (selection/current, version 15), built from
-// work/StoryScripts/catalog.json. Story missions and calls, strangers and
-// freaks, random events, side jobs and collectibles. The scripts that run the
-// game, shops, phone, Los Santos Customs, respawn and the map icons
-// (blip_controller: it draws the shops' icons too) stay; StoryBlipHider hides
-// the story characters' icons instead. The hero wheel (selector) is stopped
-// as well: the user turned hero switching off on the server. So are the
-// clothes shops, barbers, tattoo parlours and the safehouse wardrobe: they
-// dress the story hero, and an Online character (which the game takes for that
-// hero) would get the hero's clothes; looks change in our character editor
-// instead. Scripts the game started once at load
-// (the story flow, calls) stay stopped until GTA restarts; those the world
-// starts on its own (random events, side jobs) return after disconnecting.
+// Story-mode scripts stopped while connected. The scripts that run the game,
+// shops, phone, Los Santos Customs, respawn and the map icons (blip_controller
+// also draws the shops' icons) stay, and StoryBlipHider hides the story
+// characters' icons instead. Hero switching is off on the server, so the wheel
+// (selector) stops too. Clothes shops, barbers, tattoo parlours and the
+// safehouse wardrobe dress the story hero, and an Online character, which the
+// game takes for that hero, would get the hero's clothes. Scripts the game
+// started once at load (the story flow, calls) stay stopped until GTA restarts.
+// Those the world starts on its own (random events, side jobs) return after
+// disconnecting.
 internal static class StoryScripts
 {
     internal static readonly string[] Stopped =
     {
-        // Управление сюжетом (67)
+        // Story flow (67)
         "achievement_controller", "af_intro_t_sandy", "autosave_controller", "bootycallhandler",
         "buddydeathresponse", "charactergoals", "comms_controller", "completionpercentage_controller", "drf1",
         "drf2", "drf3", "drf4", "drf5", "email_controller", "exile_city_denial", "family1taxi", "family_scene_f0",
@@ -40,7 +36,7 @@ internal static class StoryScripts
         "player_scene_t_park", "player_scene_t_tie", "player_timetable_scene", "postkilled_bailbond2",
         "postrc_barry1and2", "postrc_barry4", "postrc_epsilon4", "postrc_nigel3", "randomchar_controller",
         "sh_intro_f_hills", "sh_intro_m_home", "shrinkletter", "stripperhome",
-        // Сюжетные миссии (97)
+        // Story missions (97)
         "agency_heist1", "agency_heist2", "agency_heist3a", "agency_heist3b", "agency_prep1", "agency_prep2amb",
         "armenian1", "armenian2", "armenian3", "assassin_bus", "assassin_construction", "assassin_hooker",
         "assassin_multi", "assassin_rankup", "assassin_valet", "carsteal1", "carsteal2", "carsteal3", "carsteal4",
@@ -56,7 +52,7 @@ internal static class StoryScripts
         "michael1", "michael2", "michael3", "michael4", "michael4leadout", "prologue1", "rural_bank_heist",
         "rural_bank_prep1", "rural_bank_setup", "solomon1", "solomon2", "solomon3", "trevor1", "trevor2", "trevor3",
         "trevor4",
-        // Незнакомцы и чудаки (102)
+        // Strangers and freaks (102)
         "abigail1", "abigail2", "altruist_cult", "ambient_mrsphilips", "ambient_solomon", "ambient_tonya",
         "ambient_tonyacall", "ambient_tonyacall2", "ambient_tonyacall5", "bailbond1", "bailbond2", "bailbond3",
         "bailbond4", "bailbond_launcher", "barry1", "barry2", "barry3", "barry3a", "barry3c", "barry4", "dreyfuss1",
@@ -72,7 +68,7 @@ internal static class StoryScripts
         "paparazzo3b", "paparazzo4", "rampage1", "rampage2", "rampage3", "rampage4", "rampage5",
         "rampage_controller", "selling_short_1", "selling_short_2", "thelastone", "tonya1", "tonya2", "tonya3",
         "tonya4", "tonya5",
-        // Случайные события (38)
+        // Random events (38)
         "re_abandonedcar", "re_accident", "re_armybase", "re_arrests", "re_atmrobbery", "re_bikethief", "re_border",
         "re_burials", "re_bus_tours", "re_cartheft", "re_chasethieves", "re_crashrescue", "re_cultshootout",
         "re_dealgonewrong", "re_domestic", "re_drunkdriver", "re_duel", "re_gang_intimidation", "re_gangfight",
@@ -80,7 +76,7 @@ internal static class StoryScripts
         "re_mountdance", "re_muggings", "re_paparazzi", "re_prison", "re_prisonerlift", "re_prisonvanbreak",
         "re_rescuehostage", "re_seaplane", "re_securityvan", "re_shoprobbery", "re_snatched", "re_stag_do",
         "re_yetarian",
-        // Развлечения и подработки (34)
+        // Activities and side jobs (34)
         "controller_races", "controller_taxi", "controller_towing", "controller_trafficking", "country_race",
         "country_race_controller", "launcher_offroadracing", "launcher_pilotschool", "launcher_racing",
         "launcher_rampage", "launcher_stunts", "launcher_triathlon", "mission_race", "offroad_races", "pilot_school",
@@ -88,23 +84,20 @@ internal static class StoryScripts
         "taxi_followcar", "taxi_gotyounow", "taxi_gotyourback", "taxi_needexcitement", "taxi_procedural",
         "taxi_takeiteasy", "taxi_taketobest", "taxitutorial", "towing", "traffick_air", "traffick_ground",
         "traffickingsettings", "traffickingteleport", "triathlonsp",
-        // Коллекционные предметы (12)
+        // Collectibles (12)
         "ambient_diving", "ambient_sonar", "ambient_ufos", "flyunderbridges", "forsalesigns", "murdermystery",
         "photographymonkey", "photographywildlife", "shot_bikejump", "spaceshipparts", "ufo", "underwaterpickups",
-        // Живой мир (2)
+        // Living world (2)
         "cheat_controller", "restrictedareas",
-        // Колесо выбора персонажа (1): смена героя на сервере запрещена
+        // Hero wheel (1)
         "selector",
-        // Магазины одежды, парикмахерские, салоны татуировок и гардероб в
-        // убежище (4): они одевают героя сюжета, а внешность персонажа меняется
-        // в нашем редакторе
+        // Clothes shops, barbers, tattoo parlours, safehouse wardrobe (4)
         "clothes_shop_sp", "hairdo_shop_sp", "tattoo_shop", "wardrobe_sp",
     };
 }
 
-// Switching heroes is off on the server. The wheel's script is stopped with
-// the story; these keys are blocked too, so the wheel cannot open in the
-// frames before the stopper reaches it. The gamepad menu shortcut reads the
+// The wheel's keys are blocked as well, so the wheel cannot open in the
+// frames before the stopper reaches its script. The gamepad menu shortcut reads the
 // wheel button as a disabled control and keeps working. Game thread only.
 internal static class HeroSwitch
 {
@@ -120,9 +113,8 @@ internal static class HeroSwitch
     }
 }
 
-// Checks a few names each frame and stops any that runs; a parent that starts
-// one again (the game restarts some on its own) is caught on the next pass.
-// Game thread only.
+// A few names are checked each frame. A parent that starts a script again
+// (the game restarts some on its own) is caught on the next pass. Game thread only.
 internal sealed class StoryScriptStopper
 {
     internal const int PerFrame = 40;
@@ -155,7 +147,7 @@ internal sealed class StoryScriptStopper
             if (_logged.Add(_names[index])) _log?.Invoke("OG Coop: stopped story script " + _names[index] + ".");
         }
 
-        // A story script's save request queues "autosave is off" help; the
+        // A story script's save request queues "autosave is off" help, and the
         // story scripts that would take it down again are stopped.
         if (StoryScriptNatives.IsHelpShown(SaveOffHelp)) StoryScriptNatives.ClearHelp();
     }
@@ -168,9 +160,10 @@ internal sealed class StoryScriptStopper
 // closed on the server. blip_controller draws them together with the icons of other shops,
 // Los Santos Customs and activities, so it keeps running and only these icons
 // are hidden, once a second (it may show them again). Sprite numbers from the
-// FiveM blip list source (docs: game-references/blips, build 3258; radar_*_family,
-// *_strand, story contacts, friends); none is used by our places or by RageCoop players. Hidden icons stay hidden until GTA restarts,
-// like the story flow that placed them. Game thread only.
+// FiveM blip list source (docs: game-references/blips, build 3258: radar_*_family,
+// *_strand, story contacts, friends). None is used by our places or by RageCoop
+// players. Hidden icons stay hidden until GTA restarts, like the story flow that
+// placed them. Game thread only.
 internal sealed class StoryBlipHider
 {
     internal const long IntervalMilliseconds = 1_000;
@@ -224,7 +217,6 @@ internal sealed class StoryBlipHider
     }
 }
 
-// GTA boundary; isolated checks replace these calls.
 internal static class StoryBlipNatives
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -239,7 +231,6 @@ internal static class StoryBlipNatives
     internal static void Hide(int blip) => Function.Call(Hash.SET_BLIP_DISPLAY, blip, 0);
 }
 
-// GTA boundary; isolated checks replace these calls.
 internal static class StoryScriptNatives
 {
     [MethodImpl(MethodImplOptions.NoInlining)]

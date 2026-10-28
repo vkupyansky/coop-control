@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RageCoopAdmin.Client;
 
-// Local changes are immediate; complete snapshots are coalesced at a bounded
+// Local changes are immediate, complete snapshots are coalesced at a bounded
 // rate. A per-edit nonce keeps old server echoes from undoing selection.
 internal sealed class AppearanceEditQueue
 {

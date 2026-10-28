@@ -61,7 +61,7 @@ internal sealed class SpecialPlace
     internal float Radius { get; }
     internal bool OnFootOnly { get; }
     internal string[] Ipls { get; }
-    // Map icon (blip sprite) shown while the place is loaded (the island: always); 0 means none.
+    // Map icon (blip sprite) shown while the place is loaded (the island: always), 0 for none.
     internal int Icon { get; }
 
     // Everything stays loaded with the usual map, except two places. North Yankton
@@ -69,7 +69,7 @@ internal sealed class SpecialPlace
     // loaded only by teleporting there and replaces both while someone is in it.
     internal bool ExplicitOnly => Kind == SpecialPlaceKind.Prologue;
     // The game's island switch hides distant Los Santos (CFX developers: it "will
-    // disable LS"); with the island always on, the city went blank in fast flight.
+    // disable LS"). With the island always on, the city went blank in fast flight.
     // So the island loads only when the player is near it or teleports there.
     internal bool LoadsNearby => Kind == SpecialPlaceKind.Island;
 
@@ -137,7 +137,7 @@ internal static class SpecialPlaces
             SpecialPlaceKind.Ipl, 294.7f, 189.6f, 104.3f, 295f, 190f, 300f, true,
             "redcarpet"),
         // Yachts with interiors from GTA Online updates (Cayo Perico parties, The Contract,
-        // the summer update). Arrival is the hull centre; the teleport finds the deck below.
+        // the summer update). Arrival is the hull centre, the teleport finds the deck below.
         new SpecialPlace(9, "yacht_port", "Яхта у порта", "Яхта с интерьером в море к югу от порта Лос-Сантоса. Пешком.",
             SpecialPlaceKind.OnlineIpl, 50.6f, -3294.4f, 9.0f, 50.6f, -3296f, 300f, true,
             "h4_islandx_yacht_01", "h4_islandx_yacht_01_int"),
@@ -165,8 +165,8 @@ internal static class SpecialPlaces
     private static bool SharesYanktonSea(int place) => place == CayoPerico || place == EastCarrier || place == YachtEast;
 }
 
-// Keeps the places loaded with the usual map while connected; Cayo Perico only
-// near it and North Yankton only after teleporting there. Each game loads places
+// Places stay loaded with the usual map while connected, Cayo Perico only near
+// it and North Yankton only after teleporting there. Each game loads places
 // itself. Game thread only.
 internal sealed class SpecialPlaceRuntime
 {
@@ -177,7 +177,7 @@ internal sealed class SpecialPlaceRuntime
     // Island roads, water and map follow the player over the island itself.
     internal const float IslandShowRadius = 1500f;
     internal const float IslandHideRadius = 1800f;
-    // The island's roads replace the city's (no traffic there); unloading them
+    // The island's roads replace the city's (no traffic there). Unloading them
     // near the island may crash the game, so they go only this far away.
     internal const float IslandRoadsRadius = 2500f;
     // The island loads this far beyond its area (2.6 km from the area centre,
@@ -230,15 +230,12 @@ internal sealed class SpecialPlaceRuntime
     // behind a faded screen and then calls EnterOnlineMap.
     internal bool NeedsOnlineMap { get; private set; }
 
-    // The map is checked and no switch is pending.
     internal bool MapReady => _onlineProbed && !NeedsOnlineMap;
     internal bool IslandRoads => _islandRoads;
 
-    // Whether anything is loaded or pending that a reset would have to undo.
     internal bool HasState => _target >= 0 || _islandShown || _prologueShown || _islandRoads || _active.Any(active => active);
 
-    // Number of the place's map parts the game reports as present; the island
-    // has no such count and reports -1.
+    // The island has no count of present map parts and reports -1.
     internal int LoadedParts(int id)
     {
         SpecialPlace place = _places[id];
@@ -253,7 +250,9 @@ internal sealed class SpecialPlaceRuntime
         _target = id;
         _targetUntil = now + TargetMilliseconds;
         _lastWanted[id] = now;
-        if (!_active[id]) Activate(id);
+        // An Online place waits for the map switch behind the loading screen. In view it showed
+        // the world reloading, and on a slow PC SHVDN aborted RageCoop.
+        if (!_active[id] && (_onlineMap || _places[id].Kind != SpecialPlaceKind.OnlineIpl)) Activate(id);
     }
 
     internal void CancelTarget(int id)
@@ -288,7 +287,7 @@ internal sealed class SpecialPlaceRuntime
             for (int other = 0; other < _places.Length; other++)
             {
                 if (other == i || !SpecialPlaces.Conflict(i, other)) continue;
-                // The chosen place wins; otherwise the one already loaded keeps it.
+                // The chosen place wins, otherwise the one already loaded keeps it.
                 if (_target == other || (_target != i && _active[other] && raw[other])) blocked = true;
             }
 
@@ -326,7 +325,7 @@ internal sealed class SpecialPlaceRuntime
 
     // The island minimap is drawn like an interior and must be set every frame.
     // GTA draws no GPS route on an interior minimap, so while a waypoint is set
-    // the minimap stays ordinary; the pause map always shows the island.
+    // the minimap stays ordinary. The pause map always shows the island.
     internal void Frame(long now)
     {
         if (!_islandShown) return;
@@ -354,7 +353,7 @@ internal sealed class SpecialPlaceRuntime
             : "OG Coop: island waypoint: the game found no GPS route" + (_islandRoads ? "." : "; island roads off."));
     }
 
-    // Disconnect or resource stop: unload everything this resource loaded.
+    // Disconnect or resource stop.
     internal void Reset(Vector3? local)
     {
         _target = -1;
@@ -429,9 +428,6 @@ internal sealed class SpecialPlaceRuntime
                 SpecialPlaceNatives.SetPrologueRoads(true);
                 break;
             case SpecialPlaceKind.OnlineIpl:
-                // Only a teleport chosen before the faded switch gets here first;
-                // it leaves the reloading area anyway.
-                EnterOnlineMap();
                 RequestAll(place);
                 break;
             default:

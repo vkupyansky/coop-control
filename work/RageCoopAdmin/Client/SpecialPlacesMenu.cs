@@ -121,7 +121,7 @@ public sealed partial class AdminMenuScript
             return false;
         }
 
-        if (_mapLoad != null)
+        if (_mapLoad != null || !_specialPlaces.MapReady)
         {
             Notification.PostTicker(UiText.Get("~o~Телепорт:~s~ дождитесь загрузки карты."), false);
             return false;
@@ -246,7 +246,7 @@ public sealed partial class AdminMenuScript
             // ON_ENTER_MP stops the game for seconds, and meanwhile only GTA's
             // own fade covers the world: this drawing stops with the game. The
             // fade counts game time, which lags right after connecting, so the
-            // switch waits until the screen is really dark; another script
+            // switch waits until the screen is really dark. Another script
             // that fades the screen in is overridden.
             bool dark = MapLoadingScreen.IsFadedOut();
             if (!dark && elapsed >= MapLoadFadeIn && !MapLoadingScreen.IsFadingOut()) MapLoadingScreen.FadeOut((int)MapLoadFadeIn);
@@ -300,8 +300,7 @@ public sealed partial class AdminMenuScript
         MapLoadingScreen.Draw(alpha, elapsed / 1000.0);
     }
 
-    // Undo the scene load, the frozen player, the screen fade and the spinner;
-    // safe to repeat.
+    // Safe to repeat.
     private void ReleaseMapLoad(MapLoad load)
     {
         _scriptTimeout?.Restore();

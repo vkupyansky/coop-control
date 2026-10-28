@@ -89,7 +89,7 @@ namespace LemonUI.Menus
 
 namespace LemonUI.Elements
 {
-    // Only SDK rendering is isolated; production localization and text handling
+    // Only SDK rendering is isolated, production localization and text handling
     // are compiled directly. No actual game text widths are asserted here.
     internal sealed class ScaledText
     {

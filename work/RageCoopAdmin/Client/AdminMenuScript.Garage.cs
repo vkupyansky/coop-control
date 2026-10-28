@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Xml;
 using OGCoop.Shared;
 using GTA.UI;
 using RageCoop.Client.Scripting;
@@ -10,7 +8,6 @@ namespace RageCoopAdmin.Client;
 public sealed partial class AdminMenuScript
 {
     private GarageClient? _garage;
-    private bool _garageImportChecked;
 
     private void RegisterGarageEvents()
     {
@@ -22,8 +19,8 @@ public sealed partial class AdminMenuScript
     {
         _garage = new GarageClient((hash, args) => API.SendCustomEvent(hash, args));
         _garage.Changed += OnGarageChanged;
-        _garageImportChecked = false;
         _garage.Request();
+        _answers.Await("garage", () => _garage?.Request(), () => _garage?.Current != null, NowMilliseconds());
     }
 
     private void QueueGarageEvent(CustomEventReceivedArgs e, bool state)
@@ -38,27 +35,8 @@ public sealed partial class AdminMenuScript
                 _garage.ApplyResult(args);
                 return;
             }
-            if (_garage.ApplyState(args) && !_garageImportChecked)
-            {
-                _garageImportChecked = true;
-                ImportLocalGarage();
-            }
+            _garage.ApplyState(args);
         });
-    }
-
-    private void ImportLocalGarage()
-    {
-        try
-        {
-            _garage!.ImportLocal(CurrentResource.DataFolder, complete => Notification.PostTicker(UiText.Get(complete
-                ? "~g~Гараж этого компьютера перенесён на сервер."
-                : "~o~Гараж этого компьютера перенесён не полностью.~s~ Файлы на компьютере оставлены."), false));
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidDataException or InvalidOperationException or XmlException)
-        {
-            // The files stay untouched; the next connection tries again.
-            Logger.Warning("OG Coop: local garage could not be moved to the server: " + ex.GetType().Name);
-        }
     }
 
     private void OnGarageChanged()

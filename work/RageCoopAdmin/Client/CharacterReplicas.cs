@@ -69,7 +69,7 @@ internal static class CharacterReplicas
         }
         catch (Exception error) when (error is InvalidOperationException or ArgumentException or NullReferenceException)
         {
-            // RageCoop's own clothes stay; the failure is reported once per resource start.
+            // RageCoop's own clothes stay, and the failure is reported once per resource start.
             if (_warned) return;
             _warned = true;
             _warn?.Invoke("OG Coop: a player's character could not be put on their copy: " + error.GetType().Name);

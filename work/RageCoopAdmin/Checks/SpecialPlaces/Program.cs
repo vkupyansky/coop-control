@@ -7,7 +7,7 @@ using GTA.Math;
 using HarmonyLib;
 using RageCoopAdmin.Client;
 
-// Hidden places: the real catalog, protocol and loading rules run here; only the
+// Hidden places: the real catalog, protocol and loading rules run here, only the
 // game's map-part, island and minimap calls are replaced by a recorded fake.
 internal static class Program
 {
@@ -141,8 +141,12 @@ internal static class Program
         runtime = new SpecialPlaceRuntime(SpecialPlaces.All);
         runtime.Tick(1_000, City);
         runtime.Target(Find("yacht_paleto"), 1_500);
-        Check(Calls.Count(call => call == "EnterOnlineMap") == 1 && runtime.IsActive(Find("yacht_paleto")) && !runtime.NeedsOnlineMap,
-            "a teleport chosen before the card switches the map itself: the player leaves the reloading area");
+        Check(!Calls.Contains("EnterOnlineMap") && !runtime.IsActive(Find("yacht_paleto")) && runtime.NeedsOnlineMap && !runtime.MapReady,
+            "a teleport chosen before the card does not switch the map in view (a slow PC lost RageCoop to SHVDN's freeze limit); the menu refuses it until the map is ready");
+        runtime.EnterOnlineMap();
+        runtime.Tick(1_600, City);
+        Check(Calls.Count(call => call == "EnterOnlineMap") == 1 && runtime.IsActive(Find("yacht_paleto")) && runtime.MapReady,
+            "after the switch behind the card the chosen place loads");
 
         Reset();
         int carrier = Find("carrier_zancudo");
@@ -409,7 +413,7 @@ internal static class Program
         return false;
     }
 
-    // на медленном ПК ON_ENTER_MP шёл 5,3 с при пороге SHVDN 5 с, и RageCoop снимало
+    // On a slow PC ON_ENTER_MP took 5.3 s against SHVDN's 5 s threshold, and RageCoop was aborted.
     private static void CheckScriptTimeout()
     {
         var log = new List<string>();
@@ -452,7 +456,7 @@ internal static class Program
 
 namespace SHVDN
 {
-    // те же открытые члены, что у SHVDN.ScriptDomain в ScriptHookVDotNet.asi 3.7.0-nightly.188
+    // The same public members as SHVDN.ScriptDomain in ScriptHookVDotNet.asi 3.7.0-nightly.188.
     public sealed class ScriptDomain
     {
         public static ScriptDomain? CurrentDomain { get; set; }

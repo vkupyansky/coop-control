@@ -215,7 +215,7 @@ internal static partial class EarlyClientLifecycle
         {
             Console.Error.WriteLine("Resource loading check failed before fixture cleanup: " + error);
             // Failure cleanup happens only after the exclusive-open assertion
-            // has failed; it cannot turn an archive leak into a passing check.
+            // has failed, so it cannot turn an archive leak into a passing check.
             _lastResourceArchive?.Dispose();
             throw;
         }

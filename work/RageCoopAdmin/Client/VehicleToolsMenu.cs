@@ -339,7 +339,7 @@ public sealed partial class AdminMenuScript
                     var state = new LocalAppearanceState(value, revision, xml);
                     // A delayed acknowledgement can outlive bounded retries and
                     // their retained state. Its snapshot was captured from this
-                    // owner's car; replaying it could undo a newer LSC preview
+                    // owner's car, and replaying it could undo a newer LSC preview
                     // before the next capture. Initial garage spawns use nonce 0.
                     if (requesterId == API.LocalPlayerID && nonce != 0 && synced?.IsLocal == true && synced.MainVehicle != null)
                     {

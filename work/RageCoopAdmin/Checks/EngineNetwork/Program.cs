@@ -32,7 +32,7 @@ internal static class Program
         try
         {
             // PlayerList requests a HUD movie in its type initializer. Replace
-            // only that native boundary; all player and receive methods are real.
+            // only that native boundary, all player and receive methods are real.
             nativeBoundary.Patch(movie, prefix: new HarmonyMethod(typeof(Program), nameof(SkipMovie)));
             Host.GetField("LocalPlayerID", StaticFlags)!.SetValue(null, 1);
             Type settingsType = ClientAssembly.GetType("RageCoop.Client.Settings", true)!;

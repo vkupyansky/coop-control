@@ -323,7 +323,7 @@ internal static class Program
         typeof(SyncedEntity).GetProperty("Quaternion", Instance)!.SetValue(record, Quaternion.Identity);
         typeof(SyncedEntity).GetField("<Owner>k__BackingField", Instance)!.SetValue(record,
             FormatterServices.GetUninitializedObject(typeof(RageCoop.Client.Player)));
-        // A stopped zero-age watch keeps timing deterministic; live code uses its
+        // A stopped zero-age watch keeps timing deterministic, live code uses its
         // original restarted Stopwatch and the actual owner's travel-time getter.
         record.LastSyncedStopWatch = new Stopwatch();
     }

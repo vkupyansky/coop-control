@@ -10,8 +10,6 @@ using OGCoop.Shared;
 
 namespace OGCoop.Installer;
 
-// One double-click for the player: finds GTA V Legacy, checks it, installs or
-// updates everything next to GTA5.exe, checks the cars and says what is next.
 internal static class Program
 {
     internal const string PrivatePayload = "1 Скопировать в папку игры";
@@ -66,7 +64,7 @@ internal static class Program
                 Text.Get("Закройте GTA и OpenIV и запустите установщик ещё раз.", "Close GTA and OpenIV and run the installer again."), error);
             code = 1;
         }
-        // The window must explain any failure before it closes; the full error goes to the log.
+        // The window must explain any failure before it closes. The full error goes to the log.
         catch (Exception error)
         {
             Fail(Text.Get("Непредвиденная ошибка: ", "Unexpected error: ") + error.Message,
@@ -101,15 +99,8 @@ internal static class Program
         if (!_private && !CheckForNewerRelease(options)) return 0;
         WaitForGameClosed(options);
         GameFolder game = ChooseGame(options);
-        if (game.Kind == GameKind.Enhanced)
-            throw new InstallerException(Text.Get("Это GTA V Enhanced, а нужна GTA V Legacy.", "This is GTA V Enhanced; GTA V Legacy is required."),
-                Text.Get("Установите GTA V Legacy — в лаунчере это отдельная игра.", "Install GTA V Legacy — the launcher lists it as a separate game."));
-        if (!game.IsSupported)
-            throw new InstallerException(
-                Text.Get("Нужна GTA V Legacy 1.0." + GameFolder.SupportedBuild + ", а у вас ", "GTA V Legacy 1.0." + GameFolder.SupportedBuild + " is required; this game is ") +
-                (game.Version?.ToString() ?? Text.Get("версия, которую не удалось прочитать", "an unreadable version")) + ".",
-                Text.Get("Обновите игру в лаунчере. Под другую версию ScriptHookV и дополнение не подходят.",
-                    "Update the game in its launcher. ScriptHookV and the toolkit match this version only."));
+        InstallerException? rejected = Rejection(game);
+        if (rejected != null) throw rejected;
         Say(Text.Get("Папка игры: ", "Game folder: ") + game.Path + " (GTA V Legacy " + game.Version + ")");
 
         bool update = File.Exists(Path.Combine(game.Path, @"scripts\RageCoop\RageCoop.Client.dll"));
@@ -220,9 +211,14 @@ internal static class Program
 
         Say(Text.Get("Ищу GTA V…", "Looking for GTA V…"));
         List<GameFolder> found = GameLocator.Find();
-        // A single Enhanced or other-version copy gets its exact reason from the caller.
-        if (found.Count == 1 && !found[0].IsSupported) return found[0];
-        if (found.Count == 1)
+        if (found.Count == 1 && !found[0].IsSupported)
+        {
+            // In check mode the caller reports the reason. Installing, the player may choose another copy.
+            if (options.Check) return found[0];
+            Say(Text.Get("Нашёл: ", "Found: ") + found[0].Path);
+            Say(Rejection(found[0])!.Message);
+        }
+        else if (found.Count == 1)
         {
             Say(Text.Get("Нашёл: ", "Found: ") + found[0].Path);
             if (options.Check) return found[0];
@@ -260,9 +256,25 @@ internal static class Program
             if (input == null) throw new InstallerException(Text.Get("Папка игры не выбрана.", "No game folder was chosen."),
                 Text.Get("Запустите установщик снова и укажите папку, где лежит GTA5.exe.", "Run the installer again and choose the folder with GTA5.exe."));
             GameFolder? folder = GameFolder.Inspect(input);
-            if (folder != null) return folder;
-            Say(Text.Get("Здесь нет GTA5.exe, попробуйте ещё раз.", "No GTA5.exe there, try again."));
+            InstallerException? rejected = folder == null ? null : Rejection(folder);
+            if (folder != null && rejected == null) return folder;
+            Say(rejected == null ? Text.Get("Здесь нет GTA5.exe, попробуйте ещё раз.", "No GTA5.exe there, try again.")
+                : rejected.Message + " " + rejected.Hint + Text.Get(" Или укажите другую папку.", " Or choose another folder."));
         }
+    }
+
+    // Null when the copy is supported.
+    internal static InstallerException? Rejection(GameFolder game)
+    {
+        if (game.Kind == GameKind.Enhanced)
+            return new InstallerException(Text.Get("Это GTA V Enhanced, а нужна GTA V Legacy.", "This is GTA V Enhanced; GTA V Legacy is required."),
+                Text.Get("Установите GTA V Legacy — в лаунчере это отдельная игра.", "Install GTA V Legacy — the launcher lists it as a separate game."));
+        if (game.IsSupported) return null;
+        return new InstallerException(
+            Text.Get("Нужна GTA V Legacy 1.0." + GameFolder.SupportedBuild + ", а у вас ", "GTA V Legacy 1.0." + GameFolder.SupportedBuild + " is required; this game is ") +
+            (game.Version?.ToString() ?? Text.Get("версия, которую не удалось прочитать", "an unreadable version")) + ".",
+            Text.Get("Обновите игру в лаунчере. Под другую версию ScriptHookV и дополнение не подходят.",
+                "Update the game in its launcher. ScriptHookV and the toolkit match this version only."));
     }
 
     private static bool CanWrite(string game)
@@ -280,8 +292,12 @@ internal static class Program
         }
     }
 
-    // Program Files needs administrator rights; ask Windows once and continue
-    // in the new window with the same choice.
+    // A player may move Downloads to another drive, so Windows is asked for the path.
+    private static string DownloadsFolder(Options options) =>
+        options.Downloads ?? KnownFolders.Downloads() ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+    // Program Files needs administrator rights. Windows is asked once and the
+    // new window continues with the same choice.
     private static void Elevate(Options options, string game)
     {
         if (options.Elevated)
@@ -289,7 +305,9 @@ internal static class Program
                 Text.Get("Проверьте, что игра не на защищённом диске, и запустите установщик снова.", "Check the drive permissions and run the installer again."));
         Say(Text.Get("Для записи в папку игры нужны права администратора — подтвердите запрос Windows.",
             "Writing to the game folder needs administrator rights — confirm the Windows prompt."));
-        string arguments = "--elevated --game \"" + game.TrimEnd('\\') + "\"" + (options.Language != null ? " --lang " + options.Language : string.Empty);
+        // The elevated window may run under another account, so this player's Downloads go along.
+        string arguments = "--elevated --game \"" + game.TrimEnd('\\') + "\"" + (options.Language != null ? " --lang " + options.Language : string.Empty) +
+            " --downloads \"" + DownloadsFolder(options).TrimEnd('\\') + "\"";
         try
         {
             Process.Start(new ProcessStartInfo(Process.GetCurrentProcess().MainModule!.FileName, arguments) { UseShellExecute = true, Verb = "runas" });
@@ -326,7 +344,7 @@ internal static class Program
     private static void EnsureScriptHookV(Options options, string home, string game)
     {
         if (ScriptHookV.Installed(game)) return;
-        string[] folders = { home, Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads") };
+        string[] folders = { home, DownloadsFolder(options) };
         while (true)
         {
             string? zip = ScriptHookV.TryImport(game, folders, apply: !options.Check);
@@ -436,6 +454,7 @@ internal sealed class Options
     internal bool Check { get; private set; }
     internal bool NoPause { get; private set; }
     internal bool Elevated { get; private set; }
+    internal string? Downloads { get; private set; }
 
     internal static Options Parse(string[] args)
     {
@@ -449,7 +468,8 @@ internal sealed class Options
                 case "--check": options.Check = true; break;
                 case "--no-pause": options.NoPause = true; break;
                 case "--elevated": options.Elevated = true; break;
-                default: throw new ArgumentException("Usage: CoopInstaller [--check] [--game <folder>] [--lang ru|en] [--no-pause]");
+                case "--downloads" when index + 1 < args.Length: options.Downloads = args[++index]; break;
+                default: throw new ArgumentException("Usage: CoopInstaller [--check] [--game <folder>] [--lang ru|en] [--no-pause] [--downloads <folder>]");
             }
         }
 

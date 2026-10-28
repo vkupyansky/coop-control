@@ -71,7 +71,7 @@ internal sealed class GhostTrafficRuntime : IGhostTrafficRuntime
         }
         bool occupied = false, unknown = false;
         // Riders of motorcycles, quads and bicycles sit outside the vehicle's
-        // body and collide on their own; car occupants are inside it.
+        // body and collide on their own. Car occupants are inside it.
         Model model = vehicle.Model;
         bool exposed = model.IsBike || model.IsQuadBike || model.IsBicycle;
         var riders = new List<int>();
@@ -107,7 +107,7 @@ internal sealed class GhostTrafficRuntime : IGhostTrafficRuntime
     {
         // An entity keeps a single no-collision partner: every call replaces the
         // previous one. Each traffic part therefore names the player's vehicle,
-        // which keeps every nearby car passable; the player's side names this
+        // which keeps every nearby car passable. The player's side names this
         // car and ends with the last pair of the frame. Calling all rider pairs
         // left a traffic car naming the player's rider, so a motorcycle passed
         // only the last car of the frame. Always current-frame.

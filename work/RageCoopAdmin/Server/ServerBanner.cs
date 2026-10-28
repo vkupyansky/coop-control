@@ -60,7 +60,7 @@ internal static class ServerBanner
         return !(bytes[0] == 169 && bytes[1] == 254) && bytes[0] != 0;
     }
 
-    // RageCoop runs from its own folder; a missing or broken file means the default port.
+    // RageCoop runs from its own folder, and a missing or broken file means the default port.
     internal static int ReadPort(string settings)
     {
         try

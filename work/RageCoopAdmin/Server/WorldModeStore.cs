@@ -7,7 +7,7 @@ namespace CoopAdmin.Server;
 
 // Passing through traffic stays as the players last set it after a server
 // restart (installing an update restarts the server). One short line next to
-// the garages; the frozen time and weather still start fresh.
+// the garages. The frozen time and weather still start fresh.
 internal sealed class WorldModeStore
 {
     private const string On = "ghost-traffic=on";

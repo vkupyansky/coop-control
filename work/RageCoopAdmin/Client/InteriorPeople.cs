@@ -9,7 +9,6 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// человек из интерьера Online (InteriorPedData): место, модель, одежда, анимация или сценарий
 internal sealed class InteriorPed
 {
     internal InteriorPed(uint model, float x, float y, float z, float heading, string animations, string clip, string scenario, string look, string held, int flags)
@@ -31,11 +30,11 @@ internal sealed class InteriorPed
     internal string Animations { get; }
     internal string Clip { get; }
     internal string Scenario { get; }
-    // drawable/texture для частей 0-11, прочерк оставляет свою, дальше slot:drawable/texture для пропов
+    // drawable/texture for components 0-11 (a dash keeps the model's own), then slot:drawable/texture for props
     internal string Look { get; }
-    // model@bone@x,y,z@pitch,roll,yaw через точку с запятой, что в руках
+    // What is held: model@bone@x,y,z@pitch,roll,yaw, separated by semicolons
     internal string Held { get; }
-    // флаги анимации из скрипта этого человека, всегда с циклом
+    // Animation flags from this person's script, always looped
     internal int Flags { get; }
 }
 
@@ -160,8 +159,8 @@ internal static class InteriorPedLook
     }
 }
 
-// люди Online в наших интерьерах, пока игрок внутри
-// каждая игра ставит своих на те же места и не шлёт их по сети (LocalPeds)
+// Online people in our interiors while the player is inside. Each game places
+// its own at the same points and never sends them over the network (LocalPeds).
 internal sealed class InteriorPeople
 {
     internal const int CreatePerFrame = 2;
@@ -169,16 +168,16 @@ internal sealed class InteriorPeople
     internal const long LoadLimit = 10000;
     internal const long CheckEvery = 1000;
     internal const float NearDistance = 200f;
-    // тусовка под открытым небом видна, пока игрок ближе этого к её середине
+    // An outdoor party shows while the player is closer than this to its centre.
     internal const float OutdoorDistance = 150f;
-    // пляжная вечеринка Online на Кайо-Перико (am_mp_peds), есть, пока загружен остров
+    // Online's beach party on Cayo Perico (am_mp_peds), present while the island is loaded.
     internal const string CayoBeachParty = "cayo_beach_party";
 
     private readonly ShownSet[] _sets;
     private readonly Action<string>? _log;
     private readonly Func<string, bool> _outdoorReady;
 
-    // набор с ключом не из каталога интерьеров стоит на улице, outdoorReady говорит, загружено ли там место
+    // A set whose key is not an interior stands outdoors, and outdoorReady tells whether its place is loaded.
     internal InteriorPeople(IEnumerable<InteriorPedSet> sets, IEnumerable<OnlineInterior> interiors, Action<string>? log = null,
         Func<string, bool>? outdoorReady = null)
     {
@@ -229,7 +228,7 @@ internal sealed class InteriorPeople
     private bool IsNear(ShownSet set, Vector3 at) =>
         at.DistanceToSquared(set.Centre) <= OutdoorDistance * OutdoorDistance && _outdoorReady(set.Key);
 
-    // номер интерьера игра даёт, когда комнаты загружены, у некоторых интерьеров их несколько
+    // The game gives an interior's id once its rooms are loaded, and some interiors have several.
     private static bool IsIn(ShownSet set, int inside, Vector3 at, long now)
     {
         OnlineInterior interior = set.Interior!;
@@ -341,7 +340,7 @@ internal sealed class InteriorPeople
             InteriorPeopleNatives.PlayAnimation(person.Ped, data.Animations, data.Clip, data.Position, data.Heading, person.Phase, data.Flags);
     }
 
-    // игра иногда убирает людей, тогда ставим заново, остановившуюся анимацию запускаем снова
+    // The game sometimes removes people, so they are placed again, and a stopped animation restarts.
     private static void Keep(ShownPerson person)
     {
         if (!InteriorPeopleNatives.Exists(person.Ped))
@@ -420,7 +419,7 @@ internal sealed class InteriorPeople
         }
 
         internal string Key { get; }
-        // null у тусовки под открытым небом
+        // Null for an outdoor party.
         internal OnlineInterior? Interior { get; }
         internal ShownPerson[] People { get; }
         internal Vector3 Centre { get; }
@@ -439,7 +438,7 @@ internal sealed class InteriorPeople
         internal ShownPerson(InteriorPed data, int index)
         {
             Data = data;
-            // кривые данные ловят проверки, здесь теряется только одежда или предмет
+            // Malformed data loses only a piece of clothing or a held item here.
             if (!InteriorPedLook.TryParse(data.Look, out PedPart[] clothes, out PedPart[] props))
             {
                 clothes = Array.Empty<PedPart>();
@@ -449,7 +448,7 @@ internal sealed class InteriorPeople
             Clothes = clothes;
             Props = props;
             Items = InteriorPedLook.TryParseHeld(data.Held, out HeldItem[] items) ? items : Array.Empty<HeldItem>();
-            // разный старт цикла, чтобы соседи не двигались синхронно
+            // Different loop starts, so neighbours do not move in sync.
             Phase = index * 0.37f % 0.5f;
         }
 
@@ -466,7 +465,6 @@ internal sealed class InteriorPeople
     }
 }
 
-// вызовы игры, проверки их подменяют
 internal static class InteriorPeopleNatives
 {
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -507,7 +505,7 @@ internal static class InteriorPeopleNatives
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static void ReleaseAnimations(string animations) => Function.Call(Hash.REMOVE_ANIM_DICT, animations);
 
-    // как в скриптах Online: стоит на месте, неуязвим, ни на что не реагирует, не цель
+    // As in Online's scripts: stays put, cannot be hurt, ignores everything and is no target.
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static int CreatePed(uint model, Vector3 at, float heading)
     {
@@ -554,7 +552,7 @@ internal static class InteriorPeopleNatives
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static bool UsesScenario(int ped) => Function.Call<bool>(Hash.IS_PED_USING_ANY_SCENARIO, ped);
 
-    // бокал, телефон или сигарета на кости руки, как крепит скрипт
+    // A glass, phone or cigarette on a hand bone, attached as the script does.
     [MethodImpl(MethodImplOptions.NoInlining)]
     internal static int Hold(int ped, HeldItem item)
     {

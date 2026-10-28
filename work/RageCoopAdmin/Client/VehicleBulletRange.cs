@@ -19,7 +19,7 @@ internal static class VehicleBulletRange
             return false;
         }
 
-        // GTA reports impact points on the surface; allow small interpolation error.
+        // GTA reports impact points on the surface, so allow small interpolation error.
         const float margin = 1.5f;
         return localHit.X >= minimum.X - margin && localHit.X <= maximum.X + margin &&
             localHit.Y >= minimum.Y - margin && localHit.Y <= maximum.Y + margin &&

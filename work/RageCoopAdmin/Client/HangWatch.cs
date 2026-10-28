@@ -5,7 +5,7 @@ namespace RageCoopAdmin.Client;
 
 // Freeze diagnostics for a game that stops for good: the freeze log
 // (FrameHitchMonitor) reports a stop at the next frame, which then never comes.
-// The window clock's timer thread checks that our frames still arrive; after
+// The window clock's timer thread checks that our frames still arrive. After
 // ten seconds without one, with the window in front, it logs the step of our
 // frame and the RageCoop ticks still running. RageCoop's logger writes the line
 // to the file from its own thread while the game stands still.

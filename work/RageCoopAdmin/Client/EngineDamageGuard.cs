@@ -16,7 +16,7 @@ using Player = RageCoop.Client.Player;
 namespace RageCoopAdmin.Client;
 
 // A clean authoritative damage bit must also restore a part that was broken by
-// an earlier packet. Apply each transition once; unchanged snapshots never repair
+// an earlier packet. Each transition applies once, unchanged snapshots never repair
 // new local collision damage every frame. Keep the remote resurrection grace
 // period on the game thread and revoke it whenever the original car/owner leaves.
 internal static class EngineDamageGuard
@@ -189,7 +189,7 @@ internal static class EngineDamageGuard
             throw new InvalidOperationException("Unsupported RageCoop vehicle tyre mask.");
         }
         // Retain all five representable upstream bits, including signed bit 15.
-        // Bone IDs 16–20 use the previously unused low bits of the same Int16.
+        // Bone IDs 16-20 use the previously unused low bits of the same Int16.
         codes[at].opcode = OpCodes.Call;
         codes[at].operand = typeof(EngineDamageGuard).GetMethod(nameof(TyreBitIndex), Static)!;
         return codes;
@@ -412,7 +412,7 @@ internal static class EngineDamageGuard
         for (int index = 0; index < 8; index++)
         {
             int bit = 1 << index;
-            // Only windows 0–3 belong to the same numbered doors. Door bits
+            // Only windows 0-3 belong to the same numbered doors. Door bits
             // 4/5 are bonnet/boot and cannot prevent middle-window repair.
             if ((restoredWindows & bit) != 0 && (index >= 4 || (doors & bit) == 0))
             {

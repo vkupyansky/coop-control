@@ -12,7 +12,7 @@ namespace RageCoopAdmin.Client;
 // keyboard) records the default microphone and the server relays it to every
 // player. OG Coop turns it on by default with an off switch in Settings.
 // RageCoop stops recording only at the next key press, so a released key kept
-// the microphone open; here recording stops as soon as the key is released.
+// the microphone open. Here recording stops as soon as the key is released.
 internal sealed class VoiceChat
 {
     private const int PushToTalk = 249;
@@ -33,7 +33,7 @@ internal sealed class VoiceChat
     internal static bool IsAvailable => VoiceType != null && SettingsField != null && VoiceSetting?.PropertyType == typeof(bool) &&
         WasInitialized?.ReturnType == typeof(bool) && IsRecording?.ReturnType == typeof(bool) && Init != null && ClearAll != null && StopRecording != null;
 
-    // `quiet`: no map switch or teleport is loading the world; playback (the
+    // `quiet`: no map switch or teleport is loading the world. Playback (the
     // sound device) starts only then and stays on afterwards.
     internal void Tick(bool enabled, bool quiet, string speakingText)
     {
@@ -94,7 +94,7 @@ internal sealed class VoiceChat
         VoiceType?.GetMethod(name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
 }
 
-// The "microphone on" line at the bottom of the screen; created in the game only.
+// Created in the game only.
 internal static class VoiceIndicator
 {
     private static TextElement? _text;

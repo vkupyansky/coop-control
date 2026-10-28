@@ -7,7 +7,7 @@ using LemonUI.Menus;
 namespace RageCoopAdmin.Client;
 
 // Bind only resource-owned UI slots. Player names, model names and editable text
-// are passed through untouched; translation never searches/replaces user data.
+// are passed through untouched, and translation never searches/replaces user data.
 internal static class UiMenu
 {
     private static readonly ConditionalWeakTable<object, Binding> Bindings = new ConditionalWeakTable<object, Binding>();

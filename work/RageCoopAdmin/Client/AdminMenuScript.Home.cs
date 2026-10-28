@@ -8,22 +8,20 @@ using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;
 
-// своё жильё в меню Телепорты, Моё жильё: апартаменты, дома, особняки и пентхаус казино
-// сервер хранит выбор по имени, после входа на сервер игрок появляется дома, машина из дома ждёт у входа
 public sealed partial class AdminMenuScript
 {
-    // сколько после входа ждать карту Online, возрождение и редактор персонажа
+    // How long after joining to wait for the Online map, the respawn and the character editor.
     private const long HomeArrivalLimit = 120_000;
     private const long HomeSaveRetry = 5_000;
     private NativeMenu? _homeMenu;
     private NativeItem? _homeGo;
     private NativeListItem<string>? _homeChoice;
-    // жильё с сервера: null до ответа, пустая строка без жилья
+    // Null until the server answers, "" without a home.
     private string? _home;
     private string? _homeSaving;
     private long _homeSentAt;
     private bool _homeFirstState;
-    // с какого времени ждём появления дома после входа, -1 не ждём
+    // Since when the home arrival after joining is awaited, -1 when it is not.
     private long _homeArrivalSince = -1;
 
     private void RegisterHomeEvents()
@@ -39,6 +37,7 @@ public sealed partial class AdminMenuScript
         _homeFirstState = true;
         _homeArrivalSince = -1;
         API.SendCustomEvent(HomeProtocol.Request, Array.Empty<object>());
+        _answers.Await("home", () => API.SendCustomEvent(HomeProtocol.Request, Array.Empty<object>()), () => !_homeFirstState, NowMilliseconds());
     }
 
     private void QueueHomeEvent(CustomEventReceivedArgs e, bool state)
@@ -136,7 +135,7 @@ public sealed partial class AdminMenuScript
     private static OnlineInterior? HomeInterior(string? key) =>
         string.IsNullOrEmpty(key) ? null : OnlineInteriors.Homes.FirstOrDefault(interior => interior.Key == key);
 
-    // после входа на сервер: домой, когда игрок на ногах, карта Online загружена и ничего другого не идёт
+    // After joining: home once the player is on foot, the Online map is loaded and nothing else runs.
     private void TickHome(long now)
     {
         if (_homeArrivalSince < 0) return;
@@ -154,7 +153,7 @@ public sealed partial class AdminMenuScript
         if (_inside != home) EnterInterior(home);
     }
 
-    // из дома машина не появляется в комнате: игрок выходит к двери, машина приходит туда
+    // A car never appears inside the home: the player goes out to the door and the car comes there.
     private bool SpawnOutsideHome(int modelHash, string? encodedAppearance)
     {
         if (_inside is not OnlineInterior room || Array.IndexOf(OnlineInteriors.Homes, room) < 0 || Game.Player.Character.IsInVehicle()) return false;

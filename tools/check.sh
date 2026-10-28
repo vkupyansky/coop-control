@@ -15,6 +15,10 @@ if [[ "${1-}" == '--world-modes' ]]; then
     shift
 fi
 if [[ "${1-}" == '--menu-language' ]]; then
+    if [[ "$world_modes" == true ]]; then
+        printf '%s\n' 'Choose one of --world-modes and --menu-language: together they select no checks.' >&2
+        exit 2
+    fi
     menu_language=true
     shift
 fi

@@ -412,7 +412,7 @@ internal static partial class Program
             _inputTextLayout = InputLoadKeyboardLayout("00000419", 0x00000001);
             Assert(_inputTextLayout != IntPtr.Zero && englishLayout != IntPtr.Zero, "Real loaded Russian and English keyboard layouts are available for the reported VK_P regression.");
             // CrossOver's Mac driver types with the active macOS input source and
-            // ignores the requested layout; only Windows can prove the Russian з.
+            // ignores the requested layout, only Windows can prove the Russian з.
             MethodInfo translate = Resource.GetType("RageCoopAdmin.Client.UnicodeKeyboardTextReader", true)!.GetMethod("Translate", Static)!;
             string Translate(Keys key, IntPtr layout) => (string)translate.Invoke(null, new object[] { (uint)key, new byte[256], layout })!;
             _inputTextLetter = Translate(Keys.A, englishLayout) != Translate(Keys.A, _inputTextLayout) ? "з" : Translate(Keys.P, _inputTextLayout);
@@ -645,6 +645,7 @@ internal static partial class Program
                 Harmony.GetPatchInfo(worldTick)!.Owners.Contains(boundary.Id),
                 "World pause cleanup removes only this resource's patch and preserves the independent boundary patch.");
             CheckMenuStyle();
+            CheckCreatorHidden();
             Console.WriteLine("Actual WorldThread/Main/input Tick checks passed: GTA owns pause press/hold/release and closing in both script/native boundary orderings; no resource activation or latch; VK_P uses real ToUnicodeEx while native 200 cannot cancel text or its restored parent. Phone/shop cancellation, Enter/Esc and Xbox A/B preserved. GTA frontend processing, physical devices and runtime script ordering remain isolated.");
         }
         finally
@@ -657,7 +658,19 @@ internal static partial class Program
         }
     }
 
-    // настоящие строки открытого меню рисуют свой фон вместо белой рамки LemonUI
+    // Chat T or F9 in the appearance editor took the menu away, and the editor reverted every edit.
+    private static void CheckCreatorHidden()
+    {
+        MethodInfo hidden = Resource.GetType("RageCoopAdmin.Client.AdminMenuScript", true)!
+            .GetMethod("OnCreatorHidden", BindingFlags.NonPublic | BindingFlags.Static)!;
+        string Decide(bool hiddenForHost, bool inputBlocked) => hidden.Invoke(null, new object[] { hiddenForHost, inputBlocked })!.ToString();
+        Assert(Decide(false, false) == "Leave" && Decide(false, true) == "Leave",
+            "Closing the character creator yourself still cancels the edits.");
+        Assert(Decide(true, true) == "Wait" && Decide(true, false) == "Reshow",
+            "Chat, the RageCoop menu or the pause menu over the creator keep the edits: the creator waits and comes back once they close.");
+    }
+
+    // The open menu's real rows draw their own background instead of LemonUI's white frame.
     private static void CheckMenuStyle()
     {
         Type style = Resource.GetType("RageCoopAdmin.Client.MenuStyle", true)!;
@@ -675,7 +688,7 @@ internal static partial class Program
             colors.BadgeRightHovered.ToArgb() == System.Drawing.Color.White.ToArgb(),
             "Every row of an open menu draws its own background: orange #F4A261 when selected, matte dark turquoise otherwise; badges and checkboxes keep their colours.");
 
-        // шапка, подзаголовок и фон на настоящих закрытых полях LemonUI 2.2
+        // Banner, subtitle and background on LemonUI 2.2's real private fields.
         NativeMenu framed = BareInputMenu(0);
         var name = new LemonUI.Elements.ScaledRectangle(System.Drawing.PointF.Empty, System.Drawing.SizeF.Empty) { Color = System.Drawing.Color.Black };
         var under = new LemonUI.Elements.ScaledTexture("commonmenu", "gradient_bgd");
@@ -696,6 +709,26 @@ internal static partial class Program
             subtitle.Color.ToArgb() == System.Drawing.Color.FromArgb(0x9F, 0xD3, 0xCB).ToArgb() &&
             under.Color.A == 0 && description.Color.A == 0,
             "The banner title is white Pricedown with a black outline like the GTA logo; the subtitle and the dark LemonUI gradients become matte.");
+
+        // LemonUI takes the banner height from the element, and an empty rectangle gave a banner of zero height.
+        MethodInfo flatBanner = style.GetMethod("FlatBanner", BindingFlags.NonPublic | BindingFlags.Static)!;
+        var picture = new LemonUI.Elements.ScaledTexture(System.Drawing.PointF.Empty, new System.Drawing.SizeF(431f, 108f), "commonmenu", "interaction_bgd");
+        var flat = (LemonUI.Elements.ScaledRectangle)flatBanner.Invoke(null, new object?[] { picture })!;
+        var fallback = (LemonUI.Elements.ScaledRectangle)flatBanner.Invoke(null, new object?[] { null })!;
+        Assert(flat.Size.Height == 108f && fallback.Size.Height == 108f,
+            "The flat banner keeps the height of LemonUI's banner picture, so the turquoise banner shows above the subtitle instead of collapsing to nothing.");
+
+        // A selected disabled row still looks selected.
+        var selectedDisabled = (ColorSet)style.GetField("SelectedDisabled", BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
+        rows[1].Enabled = false;
+        typeof(NativeMenu).GetField("index", Instance)!.SetValue(menu, 1);
+        paint.Invoke(null, new object[] { menu });
+        bool shown = ReferenceEquals(rows[1].Colors, selectedDisabled) && ReferenceEquals(rows[0].Colors, colors) &&
+            selectedDisabled.BackgroundDisabled.A > 0 && selectedDisabled.BackgroundDisabled.ToArgb() != colors.BackgroundDisabled.ToArgb();
+        typeof(NativeMenu).GetField("index", Instance)!.SetValue(menu, 0);
+        paint.Invoke(null, new object[] { menu });
+        Assert(shown && ReferenceEquals(rows[1].Colors, colors),
+            "A selected unavailable row shows the selection in muted orange, and turns matte again once the selection moves on.");
     }
 
     // Mirrors AdminMenuScript.CreateMenu: every menu the resource renames is
@@ -712,12 +745,14 @@ internal static partial class Program
     {
         var menu = (NativeMenu)FormatterServices.GetUninitializedObject(typeof(NativeMenu));
         var items = new List<NativeItem>();
-        // у пустой строки нет элементов для покраски, поэтому ей сразу дан общий набор цветов
+        // A bare row has no elements to paint, so it gets the shared colour set at once.
         object styled = Resource.GetType("RageCoopAdmin.Client.MenuStyle", true)!.GetField("Items", BindingFlags.NonPublic | BindingFlags.Static)!.GetValue(null)!;
         for (int index = 0; index < itemCount; index++)
         {
             var bare = (NativeItem)FormatterServices.GetUninitializedObject(typeof(NativeItem));
             typeof(NativeItem).GetField("colors", Instance)!.SetValue(bare, styled);
+            typeof(NativeItem).GetField("<UseCustomBackground>k__BackingField", Instance)!.SetValue(bare, true);
+            typeof(NativeItem).GetField("enabled", Instance)!.SetValue(bare, true);
             items.Add(bare);
         }
         typeof(NativeMenu).GetField("<Items>k__BackingField", Instance)!.SetValue(menu, items);

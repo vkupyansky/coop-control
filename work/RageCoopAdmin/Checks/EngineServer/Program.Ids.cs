@@ -99,7 +99,7 @@ internal static partial class Program
                     peer.Recycle(message);
                 }
                 // NetClient.ConnectionStatus is Disconnected before its outgoing
-                // handshake starts; only an observed notification proves denial.
+                // handshake starts. Only an observed notification proves denial.
                 return receivedStatuses.TryGetValue(peer, out NetConnectionStatus actual) && actual == status;
             }
             NetClient first = Connect(51001, "First");

@@ -10,7 +10,7 @@ using RageCoop.Client;
 namespace RageCoopAdmin.Client;
 
 // The client message envelope reads type, ID, status and strings from the
-// network before any packet guard runs; bound those reads. Full-snapshot
+// network before any packet guard runs, so those reads are bounded. Full-snapshot
 // damage reset lives in the shared codec guard for client and server alike.
 internal static class EnginePacketGuard
 {

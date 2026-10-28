@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 
-// до переименования в OG Coop клиентский ресурс лежал в Resources/Client/CoopControl.
-// RageCoop раздаёт игрокам каждую папку из Resources/Client, поэтому если новую папку
-// сервера скопировали поверх старой, у игроков загрузились бы оба меню
+// Before the rename to OG Coop the client resource lived in Resources/Client/CoopControl.
+// RageCoop sends players every folder in Resources/Client, so with the new server folder
+// copied over the old one players would load both menus.
 internal static class RetiredResources
 {
     internal static readonly string Folder = Path.Combine("Resources", "Client", "CoopControl");

@@ -199,6 +199,12 @@ internal static class Program
         Call(fixture.Resource, "OnWorldPlayerUpdate", null, first);
         Assert((bool)fixture.WorldState[6], "A normal late join retains active modes during its bounded handshake grace.");
         var unknownReady = (IDictionary)Field(fixture.Resource, "worldUnknownReady");
+        Call(fixture.Resource, "OnWorldPlayerUpdate", null, first);
+        Assert((long)unknownReady[unknown]! == 0 && (bool)fixture.WorldState[6],
+            "A joining game that draws no frames yet (window in the background) cannot use up the grace: it starts with its own first update.");
+        Call(fixture.Resource, "OnWorldPlayerUpdate", null, unknown);
+        Assert((long)unknownReady[unknown]! > 0 && (bool)fixture.WorldState[6],
+            "The joining player's first update starts the bounded handshake grace.");
         unknownReady[unknown] = Environment.TickCount64 - 5001;
         Sent.Clear();
         Call(fixture.Resource, "OnWorldPlayerUpdate", null, first);

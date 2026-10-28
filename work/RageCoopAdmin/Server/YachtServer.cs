@@ -8,15 +8,13 @@ using RageCoop.Server.Scripting;
 
 namespace CoopAdmin.Server;
 
-// Yachts are kept per RageCoop name (YachtStore). Every player on the server
-// sees the yachts of everyone on it; a berth holds one yacht, so a player who
-// joins with a berth already taken has theirs moved to the next free one.
+// A berth holds one yacht, so a player who joins with a berth already taken has
+// theirs moved to the next free one.
 public sealed partial class CoopAdminServer
 {
     private const long YachtSaveCooldownMs = 1000;
     private readonly object yachtGate = new();
     private readonly Dictionary<Client, long> lastYachtSave = new();
-    // The yachts on the map: those of the players on the server.
     private readonly Dictionary<Client, YachtLook> shownYachts = new();
     private YachtStore? yachts;
 
@@ -29,7 +27,7 @@ public sealed partial class CoopAdminServer
 
     private void OnYachtRequest(CustomEventReceivedArgs e)
     {
-        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 }) return;
+        if (!HasReadyPlayer(e) || e.Args is not { Length: 0 } || !CanRequestData(e.Client, YachtProtocol.Request)) return;
         lock (yachtGate)
         {
             // An unreadable file gets no answer, so the game does not offer a
@@ -38,12 +36,12 @@ public sealed partial class CoopAdminServer
             shownYachts.Remove(e.Client);
             if (own != null && BerthTaken(own.Berth, e.Client))
             {
+                // A "no yacht" answer would make the menu offer a new one over the saved yacht.
                 int free = YachtCodec.FreeBerth(own.Berth + 1, berth => BerthTaken(berth, e.Client));
-                if (free < 0) own = null;
-                else
+                if (!YachtCodec.MoveToFreeBerth(own, free, look => TrySaveYacht(e.Client, look)))
                 {
-                    own.Berth = free;
-                    if (!TrySaveYacht(e.Client, own)) own = null;
+                    Logger.Warning($"Yacht of {e.Client.Username} could not move to a free berth; it is kept and not shown.");
+                    return;
                 }
             }
             var requester = new List<Client> { e.Client };

@@ -89,7 +89,7 @@ internal static partial class Program
             _navigationController = true;
 
             var settings = ((NativeSubmenuItem)root.Items[7]).Menu;
-            // The language selector now leads Settings; checkboxes keep their own hint.
+            // The language selector now leads Settings, checkboxes keep their own hint.
             Show(settings, settings.Items.OfType<NativeCheckboxItem>().First()); Hints(settings, "Вкл./выкл.", "Назад");
             var player = ((NativeSubmenuItem)root.Items[4]).Menu;
             var wanted = (NativeListItem<string>)script.GetField("_wantedItem", Instance)!.GetValue(instance)!;

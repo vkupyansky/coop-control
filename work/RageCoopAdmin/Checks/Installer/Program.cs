@@ -77,6 +77,24 @@ internal static class CheckProgram
             "An update replaces only the changed file and merges the settings file.");
         string ini = File.ReadAllText(Path.Combine(game, "ScriptHookVDotNet.ini"));
         Assert(ini.Contains("ReloadKeyBinding=None") && ini.Contains("Mine=1"), "The merged settings keep the player's own key.");
+        // The installer overwrote the player's console key and hang threshold, and broke a file in the Windows code page.
+        File.WriteAllText(Path.Combine(payload, "ScriptHookVDotNet.ini"),
+            "ReloadKeyBinding=None\nConsoleKeyBinding=F5\nScriptTimeoutThreshold=5000\nScriptsLocation=\"scripts\"\n");
+        Encoding ansi = Encoding.GetEncoding(1251);
+        File.WriteAllBytes(Path.Combine(game, "ScriptHookVDotNet.ini"),
+            ansi.GetBytes("; мои настройки\nConsoleKeyBinding=F4\nScriptTimeoutThreshold=30000\nScriptsLocation=\"mods\"\nReloadKeyBinding=Insert\n"));
+        string merged = IniMerge.Merge(ansi.GetString(File.ReadAllBytes(Path.Combine(game, "ScriptHookVDotNet.ini"))),
+            File.ReadAllText(Path.Combine(payload, "ScriptHookVDotNet.ini")), GameFiles.ShvdnPlayerKeys);
+        Assert(merged.Contains("ConsoleKeyBinding=F4") && merged.Contains("ScriptTimeoutThreshold=30000") &&
+            merged.Contains("ScriptsLocation=\"scripts\"") && merged.Contains("ReloadKeyBinding=None") && merged.Contains("; мои настройки"),
+            "The player's console key and freeze limit stay; only the keys the add-on needs (no script reload, our scripts folder) are set.");
+        if (Encoding.Default.CodePage == 1251)
+        {
+            GameFiles.Install(payload, game, apply: true);
+            byte[] written = File.ReadAllBytes(Path.Combine(game, "ScriptHookVDotNet.ini"));
+            Assert(ansi.GetString(written).Contains("; мои настройки") && ansi.GetString(written).Contains("ConsoleKeyBinding=F4"),
+                "A settings file in the Windows code page keeps its Russian comments after the update.");
+        }
         Assert(!Directory.EnumerateFiles(game, "*.coop-new", SearchOption.AllDirectories).Any(), "No temporary file is left after an update.");
         string former = Path.Combine(game, @"scripts\CoopControl.EarlyClient.dll");
         Directory.CreateDirectory(Path.GetDirectoryName(former)!);
@@ -100,6 +118,10 @@ internal static class CheckProgram
         Assert(byFile != null && byFile.Path == legacy && byFile.Kind == GameKind.Legacy && byFile.Version == null && !byFile.IsSupported,
             "A dragged, quoted GTA5.exe selects its folder; a file without version information is not accepted as supported.");
         Assert(GameFolder.Inspect(enhanced)?.Kind == GameKind.Enhanced, "GTA V Enhanced is recognised and refused by its own executable.");
+        Assert(OGCoop.Installer.Program.Rejection(GameFolder.Inspect(enhanced)!)?.Message.Contains("Enhanced") == true &&
+            OGCoop.Installer.Program.Rejection(byFile!)?.Message.Contains("unreadable") == true &&
+            OGCoop.Installer.Program.Rejection(new GameFolder(legacy, GameKind.Legacy, new Version(1, 0, 3889, 0))) == null,
+            "An Enhanced or other-version copy is explained so another folder can be chosen; the supported copy passes.");
         Assert(GameFolder.Inspect(empty) == null && GameFolder.Inspect("") == null && GameFolder.Inspect("\0bad") == null,
             "Folders without the game and invalid input are rejected without an exception.");
     }
@@ -151,8 +173,12 @@ internal static class CheckProgram
         Directory.CreateDirectory(game);
         byte[] hook = Encoding.ASCII.GetBytes("hook"), loader = Encoding.ASCII.GetBytes("loader");
         var expected = new[] { ("ScriptHookV.dll", (long)hook.Length, Sha(hook)), ("dinput8.dll", (long)loader.Length, Sha(loader)) };
+        // The SHVDN archive has no loader, so without both DLLs a name check would prove nothing.
         using (ZipArchive dotnet = ZipFile.Open(Path.Combine(downloads, "ScriptHookVDotNet.zip"), ZipArchiveMode.Create))
+        {
             Write(dotnet, "bin/ScriptHookV.dll", hook, CompressionLevel.Optimal);
+            Write(dotnet, "bin/dinput8.dll", loader, CompressionLevel.Optimal);
+        }
         using (ZipArchive wrong = ZipFile.Open(Path.Combine(downloads, "ScriptHookV_old.zip"), ZipArchiveMode.Create))
         {
             Write(wrong, "bin/ScriptHookV.dll", Encoding.ASCII.GetBytes("hooq"), CompressionLevel.Optimal);
@@ -171,6 +197,13 @@ internal static class CheckProgram
             "Check mode finds the official download without writing.");
         Assert(ScriptHookV.TryImport(game, new[] { downloads, Path.Combine(root, "missing") }, true, expected)?.EndsWith("ScriptHookV_3889.0.zip") == true &&
             File.ReadAllText(Path.Combine(game, "dinput8.dll")) == "loader", "The matching official ZIP supplies both files without unpacking by hand.");
+        Assert(ScriptHookV.Installed(game, expected), "ScriptHookV for this game build counts as installed.");
+        File.WriteAllText(Path.Combine(game, "ScriptHookV.dll"), "hooq");
+        Assert(!ScriptHookV.Installed(game, expected),
+            "A ScriptHookV left by older mods for another game build is not taken as installed, so the installer replaces it instead of reporting success.");
+        File.WriteAllText(Path.Combine(game, "dinput8.dll"), "another loader");
+        File.WriteAllText(Path.Combine(game, "ScriptHookV.dll"), "hook");
+        Assert(ScriptHookV.Installed(game, expected), "Another mod's ASI loader next to the right ScriptHookV is fine.");
         Assert(ScriptHookV.Files.All(file => file.Sha256.Length == 64), "The pinned ScriptHookV hashes are complete.");
     }
 

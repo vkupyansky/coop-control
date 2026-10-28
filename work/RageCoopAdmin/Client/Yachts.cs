@@ -4,9 +4,9 @@ using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
-// A berth of GTA Online's yacht: its point and heading from the yacht script
-// (am_mp_yacht, func_55; berth 14 is the script's own reference berth) and its
-// map parts, hull and interior, apa_yacht_grpGG_N(_int).
+// Point and heading from the yacht script (am_mp_yacht, func_55, where berth 14
+// is the script's own reference berth). Map parts: hull and interior,
+// apa_yacht_grpGG_N(_int).
 internal sealed class YachtBerth
 {
     internal YachtBerth(int id, string area, int number, float x, float y, float heading)
@@ -32,7 +32,7 @@ internal sealed class YachtBerth
 }
 
 // GTA Online's yacht, as the yacht script and HKH191's Working Galaxy Super
-// Yacht (MIT) put it together: the hull is a map part with its interior; the
+// Yacht (MIT) put it together: the hull is a map part with its interior, and the
 // upper decks, rails, lights, door and flags are objects on top of it.
 internal static class Yachts
 {
@@ -78,14 +78,14 @@ internal static class Yachts
 
     internal static readonly string[] Models = { "Orion", "Pisces", "Aquaris" };
 
-    // GTA Online's colour schemes; the number is the objects' tint.
+    // GTA Online's colour schemes, the number is the objects' tint.
     internal static readonly string[] Colors =
     {
         "Pacific", "Nautical", "Mariner", "Merchant", "Pristine", "Azure", "Uniform", "Ruby", "Mediterranean", "Vintage",
         "Continental", "Battleship", "Command", "Classico", "Intrepid", "Voyager",
     };
 
-    // Lighting 1–8: Presidential, then Vivacious, each green, blue, rose, gold.
+    // Lighting 1-8: Presidential, then Vivacious, each green, blue, rose, gold.
     internal static readonly string[] Lights = { "Presidential", "Vivacious" };
     internal static readonly string[] LightColors = { "зелёный", "синий", "розовый", "золотой" };
 
@@ -141,7 +141,6 @@ internal static class Yachts
         return parts.ToArray();
     }
 
-    // Every model a yacht look may need, for the catalog check.
     internal static string[] AllModels() =>
         Enumerable.Range(0, YachtCodec.ModelCount).SelectMany(model => Enumerable.Range(0, YachtCodec.LightingCount + 1).SelectMany(lighting =>
             new[] { false, true }.SelectMany(gold => Parts(new YachtLook { Model = model, Lighting = lighting, GoldRails = gold }).Select(part => part.Model))))

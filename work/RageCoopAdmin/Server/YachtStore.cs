@@ -2,7 +2,6 @@ using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 
-// One yacht file per RageCoop name (PlayerFiles), next to the garages.
 internal sealed class YachtStore
 {
     private readonly PlayerFiles _files;

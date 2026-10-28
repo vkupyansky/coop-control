@@ -16,6 +16,8 @@ internal static class Program
             CheckPassengerSeatSelection();
             VehicleSpawnProtocolChecks.Run();
             CheckRepairOwnerAuthorization();
+            CheckDeleteOnLeave();
+            CheckDataRequestPacing();
             var server = new CoopAdminServer();
             Client first = ClientForTest(11);
             Client second = ClientForTest(22);
@@ -47,7 +49,7 @@ internal static class Program
             Assert(Reserve(server, second, request2, 0), "expired reservation does not block a seat");
 
             // These call the production handler. It must reject invalid/stale packets
-            // before accessing API; this isolated script intentionally has no live API.
+            // before accessing API, and this isolated script intentionally has no live API.
             DispatchCommit(server, first, 101, 9, -1);
             DispatchCommit(server, first, 999, 9, 0);
             DispatchCommit(server, first, 101, 999, 0);
@@ -178,6 +180,42 @@ internal static class Program
         (int)((value.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) ??
             throw new InvalidOperationException(name + " missing")).GetValue(value) ??
             throw new InvalidOperationException(name + " missing value"));
+
+    // A modified client sent data requests in a loop, and the server read and wrote files for each.
+    private static void CheckDataRequestPacing()
+    {
+        var server = new CoopAdminServer();
+        Client player = ClientForTest(51);
+        Client other = ClientForTest(52);
+        const int Garage = 1, Character = 2;
+        MethodInfo can = typeof(CoopAdminServer).GetMethod("CanRequestData", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        MethodInfo forget = typeof(CoopAdminServer).GetMethod("ForgetDataRequests", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        long pause = (long)typeof(CoopAdminServer).GetField("DataRequestCooldownMs", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null)!;
+        bool Can(Client client, int kind) => (bool)can.Invoke(server, new object[] { client, kind, pause })!;
+        Assert(Can(player, Garage) && Can(player, Character) && Can(other, Garage),
+            "the first garage, character, yacht and home requests of each joining player are all served");
+        Assert(!Can(player, Garage) && !Can(player, Character),
+            "a repeated request of the same kind within the pause is ignored, so a looping client cannot keep the server reading and sending files");
+        forget.Invoke(server, new object[] { player });
+        Assert(Can(player, Garage) && !Can(other, Garage),
+            "after the player leaves their pacing is forgotten; other players keep theirs");
+    }
+
+    // The player left while a partner drove the car he had spawned, and the car vanished under the partner.
+    private static void CheckDeleteOnLeave()
+    {
+        Client leaving = ClientForTest(41);
+        Client partner = ClientForTest(42);
+        ServerVehicle spawned = (ServerVehicle)RuntimeHelpers.GetUninitializedObject(typeof(ServerVehicle));
+        PropertyInfo owner = typeof(ServerObject).GetProperty("Owner", BindingFlags.Instance | BindingFlags.Public)!;
+        MethodInfo decide = typeof(CoopAdminServer).GetMethod("DeleteOnLeave", BindingFlags.Static | BindingFlags.NonPublic)!;
+        bool Delete(ServerVehicle? pooled) => (bool)decide.Invoke(null, new object?[] { leaving, spawned, pooled })!;
+        owner.SetValue(spawned, partner);
+        Assert(!Delete(spawned), "a car the partner now drives stays when the player who spawned it leaves");
+        owner.SetValue(spawned, leaving);
+        Assert(Delete(spawned) && !Delete(null),
+            "a car still owned by the leaving player is removed once, and one RageCoop already removed is left alone");
+    }
 
     private static void Assert(bool condition, string label)
     {

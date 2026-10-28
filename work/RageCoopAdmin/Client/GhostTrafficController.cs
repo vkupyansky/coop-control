@@ -211,7 +211,6 @@ internal sealed class GhostTrafficController
         _nearPlayers = Array.Empty<GhostTrafficVehicle>();
     }
 
-    // Player drivers and every car within pairing distance of one, in scan order.
     private static GhostTrafficVehicle[] NearPlayers(IEnumerable<GhostTrafficBody> bodies)
     {
         GhostTrafficBody[] all = bodies.ToArray();
@@ -226,7 +225,7 @@ internal sealed class GhostTrafficController
 
     // Only newly appeared traffic qualifies: a car this game classifies as
     // ambient, or another game's replica driven by a known non-player driver.
-    // Player-used, unknown or created cars never qualify; later passing needs
+    // Player-used, unknown or created cars never qualify, later passing needs
     // the server registry.
     private bool IsProvisionalTraffic(GhostTrafficBody body, long now) =>
         !body.PlayerOccupant && !body.Protected && body.ClassificationKnown &&
@@ -234,7 +233,7 @@ internal sealed class GhostTrafficController
         _firstSeen.TryGetValue(Identity(body.Vehicle), out long first) && !Elapsed(now, first, ProvisionalMilliseconds);
 
     // Another game's car with an NPC at the wheel, or moving with no player in
-    // it, is that game's traffic; it passes without waiting for its owner's
+    // it, is that game's traffic. It passes without waiting for its owner's
     // report, which a far or older owner may never send. Parked and created
     // cars stand still and keep waiting for the server.
     private static bool IsRemoteNpcTraffic(GhostTrafficBody body) =>

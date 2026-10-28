@@ -6,7 +6,7 @@ using GTA;
 using HarmonyLib;
 using RageCoopAdmin.Client;
 
-// Story scripts: the real list and stopper run here; only GTA's script-thread
+// Story scripts: the real list and stopper run here, only GTA's script-thread
 // calls are replaced by a recorded fake set of running scripts.
 internal static class Program
 {

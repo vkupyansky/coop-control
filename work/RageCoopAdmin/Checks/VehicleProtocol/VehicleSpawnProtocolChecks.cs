@@ -31,7 +31,7 @@ internal static class VehicleSpawnProtocolChecks
         {
             // Exercise production handlers, validation, shared 750 ms limit,
             // replacement and appearance retention. Only host/transport APIs
-            // are isolated; no live server or game account is accessed.
+            // are isolated, no live server or game account is accessed.
             Patch(typeof(ServerScript).GetProperty("API", Instance)!.GetGetMethod(true)!, nameof(GetApi));
             Patch(typeof(API).GetProperty("Entities", Instance)!.GetGetMethod(true)!, nameof(GetEntities));
             Patch(typeof(API).GetMethod("SendCustomEventQueued", Instance)!, nameof(CaptureSend));

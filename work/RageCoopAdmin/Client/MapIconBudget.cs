@@ -4,8 +4,8 @@ namespace RageCoopAdmin.Client;
 
 // Story mode's blip_controller adds the game's own map icons (shops, Los
 // Santos Customs, activities) only while fewer than 150 icons exist and
-// otherwise waits; with all our places and interiors on the map it stopped
-// adding them. Our icons get what is left under that limit, nearest first; on
+// otherwise waits. With all our places and interiors on the map it stopped
+// adding them. Our icons get what is left under that limit, nearest first. On
 // the open pause map all are shown (the game is paused, it adds nothing then).
 internal static class MapIconBudget
 {

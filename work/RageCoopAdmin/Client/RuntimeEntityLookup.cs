@@ -149,7 +149,7 @@ internal static class RuntimeEntityLookup
             if (!ReferenceEquals(current, mapped) || current == null || !current.IsPlayer || current.MainPed?.Handle != handle) { return false; }
             try
             {
-                // The int overload reads one connected player; unlike the
+                // The int overload reads one connected player. Unlike the
                 // SyncedPed overload it never changes Player.Character.
                 Player? player = PlayerById(current.ID);
                 if (player == null || player.ID != current.ID) { return false; }

@@ -12,7 +12,7 @@ using RageCoop.Client.Scripting;
 
 internal static partial class Program
 {
-    // Options a player can turn off; each must survive a resource update.
+    // Options a player can turn off, each must survive a resource update.
     private static readonly string[] OptOutSettings =
         { "KeyboardBoost", "GamepadShortcuts" };
 

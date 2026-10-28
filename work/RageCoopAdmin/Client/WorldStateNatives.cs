@@ -3,8 +3,6 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// GTA boundary kept separate from server/session logic; isolated checks capture
-// these calls without pretending to execute the game's world or clock.
 internal static class WorldStateNatives
 {
     internal static void SetClock(int hour, int minute, int second) => Function.Call(Hash.SET_CLOCK_TIME, hour, minute, second);

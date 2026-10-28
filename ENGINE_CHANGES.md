@@ -13,6 +13,7 @@ These changes target the **tested RageCoop 1.5.12.15 binaries** listed in the re
 | Player lists | Readers raced with changes to the player roster and indexes | Short coordinated operations and snapshots |
 | Resource transfer | Parallel transfers shared one stream position; a file of the same size was taken as up to date | Coordinated stream access; this resource is named by its content |
 | Server requests | Races in the response table, timeouts and sender checks | Bounded waits, sender/type/state checks and cleanup |
+| Download confirmation | The server waited the usual 5 s for the confirmation that a client sends after all file chunks, so a player on a slow link was kicked while joining | That confirmation may take up to 60 s |
 | Object lifecycle | A delayed removal could hit a replaced connection or owner | Session and ownership are re-checked before removal |
 | Packet reading | Lengths could allocate memory before the remaining data was checked; some codecs were asymmetric | Bounds are checked before allocation; affected values round-trip |
 | Network fragments | Fragment groups and the large-buffer cache had no proper limits | Size and count limits, expiry, cleanup on disconnect and shutdown |

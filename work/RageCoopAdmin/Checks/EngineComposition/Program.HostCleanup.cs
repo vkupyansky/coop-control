@@ -171,7 +171,7 @@ public sealed class HostCleanupCompositionBoundary : MarshalByRefObject
             Abort(host);
             Require(cleanups == 1 && oldCalls == 1, "An unloaded resource no longer receives host aborts.");
 
-            // Isolate only logging; the resource's real exception handling and
+            // Isolate only logging, the resource's real exception handling and
             // the synthetic Abort body must both execute for this failure case.
             Assembly engine = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(assembly => assembly.GetName().Name == "RageCoop.Client") ??
                 Assembly.Load(File.ReadAllBytes(Path.Combine(binaries, "RageCoop.Client.dll")));

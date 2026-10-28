@@ -7,10 +7,8 @@ using OGCoop.Shared;
 
 namespace CoopAdmin.Server;
 
-// What the server keeps for each player — the garage, the character — lives in
-// one file per RageCoop name in its own folder of the resource data. RageCoop
-// compares names case-insensitively, so the key is the lower-cased name; an
-// unusual name becomes a hash, so it is always a safe file name.
+// RageCoop compares names case-insensitively, so the key is the lower-cased name.
+// An unusual name becomes a hash, so it is always a safe file name.
 internal sealed class PlayerFiles
 {
     private readonly long _maximumBytes;
@@ -24,18 +22,29 @@ internal sealed class PlayerFiles
 
     internal string Folder { get; }
 
-    internal static string Key(string username)
+    internal static string Key(string username) => Key(username, OperatingSystem.IsWindows());
+
+    // On Windows con, nul, com1 and the like are devices, not files, and a trailing dot is
+    // dropped. On Mac and Linux these names stay as they were, so players' files are not lost.
+    internal static string Key(string username, bool windows)
     {
         string name = (username ?? string.Empty).Trim().ToLowerInvariant();
         bool plain = name.Length is > 0 and <= 32 && name[0] != '.' && name.All(c => c is >= 'a' and <= 'z' or >= '0' and <= '9' or '_' or '-' or '.');
-        if (plain) return name;
+        if (plain && !(windows && WindowsReserved(name))) return name;
         using SHA256 hash = SHA256.Create();
         return "user-" + Convert.ToHexString(hash.ComputeHash(Encoding.UTF8.GetBytes(name))).ToLowerInvariant();
     }
 
+    private static bool WindowsReserved(string name)
+    {
+        if (name.EndsWith('.')) return true;
+        string stem = name.Split('.')[0];
+        return stem is "con" or "prn" or "aux" or "nul" ||
+            stem.Length == 4 && (stem.StartsWith("com", StringComparison.Ordinal) || stem.StartsWith("lpt", StringComparison.Ordinal)) && stem[3] is >= '1' and <= '9';
+    }
+
     internal string PathOf(string username) => Path.Combine(Folder, Key(username) + ".xml");
 
-    // The player's file, or null when there is none yet.
     internal string? Read(string username)
     {
         string path = PathOf(username);

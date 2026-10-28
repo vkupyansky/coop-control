@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using GTA.Native;
 
 namespace RageCoopAdmin.Client;
@@ -22,8 +23,9 @@ internal static class MapLoadingScreen
         Function.Call((Hash)0x61BB1D9B3A95D802UL, AfterFade); // SET_SCRIPT_GFX_DRAW_ORDER
         Function.Call(Hash.DRAW_RECT, 0.5f, 0.5f, 1f, 1f, 10, 12, 15, alpha, false);
 
-        Text(UiText.Get("OG Coop").ToUpperInvariant(), 0.355f, 0.34f, 255, 167, 46, alpha);
-        Function.Call(Hash.DRAW_RECT, 0.5f, 0.392f, 0.036f, 0.0028f, 255, 167, 46, alpha, false);
+        Color accent = Palette.Orange;
+        Text(UiText.Get("OG Coop").ToUpperInvariant(), 0.355f, 0.34f, accent.R, accent.G, accent.B, alpha);
+        Function.Call(Hash.DRAW_RECT, 0.5f, 0.392f, 0.036f, 0.0028f, accent.R, accent.G, accent.B, alpha, false);
         Text(UiText.Get("Загружаем карту"), 0.41f, 0.85f, 236, 234, 230, alpha);
         Text(UiText.Get("Авианосцы, яхты, грузовое судно и аэродром"), 0.505f, 0.42f, 170, 178, 188, alpha);
 
@@ -33,7 +35,7 @@ internal static class MapLoadingScreen
         float eased = (float)(0.5 - Math.Cos(phase * 2 * Math.PI) / 2); // there and back, easing at both ends
         float left = 0.5f - BarWidth / 2;
         float x = left + eased * (BarWidth - SweepWidth) + SweepWidth / 2;
-        Function.Call(Hash.DRAW_RECT, x, BarY, SweepWidth, 0.004f, 255, 167, 46, alpha, false);
+        Function.Call(Hash.DRAW_RECT, x, BarY, SweepWidth, 0.004f, accent.R, accent.G, accent.B, alpha, false);
 
         Text(UiText.Get("Один раз за запуск GTA: дальше места просто стоят на карте."), 0.88f, 0.34f, 140, 148, 158, alpha);
         Function.Call((Hash)0x61BB1D9B3A95D802UL, AfterHud);

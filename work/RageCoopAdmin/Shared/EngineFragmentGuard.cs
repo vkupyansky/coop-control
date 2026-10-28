@@ -133,7 +133,7 @@ internal static class EngineFragmentGuard
                 if (existing.TotalBits == 0)
                 {
                     // Safely adopt a bounded in-flight group when the resource
-                    // installs during a transfer; acknowledged chunks survive.
+                    // installs during a transfer, and acknowledged chunks survive.
                     existing.TotalBits = header.TotalBits; existing.ChunkBytes = header.ChunkBytes;
                 }
                 if (existing.TotalBits != header.TotalBits || existing.ChunkBytes != header.ChunkBytes) { __instance.Recycle(__0); return false; }

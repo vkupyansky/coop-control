@@ -41,7 +41,7 @@ internal static partial class Program
         try
         {
             // PlayerList's type initializer requests a GTA HUD movie. Only this
-            // game boundary is suppressed; resource guards and engine stay real.
+            // game boundary is suppressed, resource guards and engine stay real.
             boundary.Patch(movie, prefix: new HarmonyMethod(typeof(Program), nameof(SkipMovie)));
             InitializeHost();
             CheckLocalVehicleInput();
@@ -192,7 +192,7 @@ internal static partial class Program
         script.GetField("_garage", Instance)!.SetValue(instance, LoadedGarage());
         var vehicleMenu = new NativeMenu("Проверка", "Транспорт");
         script.GetField("_vehicleMenu", Instance)!.SetValue(instance, vehicleMenu);
-        // ObjectPool's constructor reads GTA's graphics settings; its managed
+        // ObjectPool's constructor reads GTA's graphics settings. Its managed
         // collection and Add path are sufficient for menu registration here.
         var pool = (ObjectPool)FormatterServices.GetUninitializedObject(typeof(ObjectPool));
         FieldInfo poolItems = typeof(ObjectPool).GetFields(Instance).Single(field =>
@@ -416,7 +416,7 @@ internal static partial class Program
     private static MethodInfo Send(Type entity) => Network.GetMethod(entity == typeof(SyncedPed) ? "SendPed" : "SendVehicle", Static)!;
     private static int CurrentCalls(MethodInfo method, string type, string name) => PatchProcessor.GetCurrentInstructions(method)
         .Count(code => code.operand is MethodInfo call && call.DeclaringType?.Assembly == Resource && call.DeclaringType.Name == type && call.Name == name);
-    // The menu shows the garage the server sent; an empty one is enough where
+    // The menu shows the garage the server sent, and an empty one is enough where
     // a fixture does not exercise garage changes.
     private static object LoadedGarage()
     {

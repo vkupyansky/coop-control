@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 
 // server.pid beside RageCoop.Server.dll lets the one-click stop script find
-// exactly this server. It is removed on a normal exit; the stop script also
+// exactly this server. It is removed on a normal exit, and the stop script also
 // removes a file left by a forced stop.
 internal static class ServerProcessFile
 {
@@ -19,7 +19,7 @@ internal static class ServerProcessFile
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
-            // The server still runs; only the stop button cannot find it.
+            // The server still runs, only the stop button cannot find it.
             Console.Error.WriteLine("OG Coop: could not write " + path + ": " + error.Message);
             return;
         }

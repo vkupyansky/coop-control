@@ -38,7 +38,7 @@ internal static partial class Program
         object instance = FormatterServices.GetUninitializedObject(script);
         script.GetField("_active", Instance)!.SetValue(instance, true);
         script.GetField("_nextVehicleSpawnToken", Instance)!.SetValue(instance, 100);
-        // сначала без посадки за руль, её проверка в конце
+        // First without taking the wheel, which is checked at the end.
         object settings = Activator.CreateInstance(Resource.GetType("RageCoopAdmin.Client.InterfaceSettings", true)!)!;
         PropertyInfo drive = settings.GetType().GetProperty("DriveNewVehicle")!;
         drive.SetValue(settings, false);
@@ -58,7 +58,7 @@ internal static partial class Program
         try
         {
             // Requests, correlation, expiry and the installed pool lookup remain
-            // real; the account, transport and GTA native boundaries are isolated.
+            // real, the account, transport and GTA native boundaries are isolated.
             Patch(typeof(API).GetProperty("IsOnServer")!.GetGetMethod()!, nameof(SpawnConnection));
             Patch(typeof(API).GetMethod("SendCustomEvent", Static, null, new[] { typeof(int), typeof(object[]) }, null)!, nameof(CaptureSpawnSend));
             Patch(typeof(API).GetMethod("QueueAction", Static, null, new[] { typeof(Action) }, null)!, nameof(RunSpawnAction));

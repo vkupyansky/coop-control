@@ -7,7 +7,6 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// Map icons of our places and interiors within MapIconBudget, nearest first.
 public sealed partial class AdminMenuScript
 {
     private const long MapIconMilliseconds = 1_000;
@@ -57,7 +56,7 @@ public sealed partial class AdminMenuScript
             blip = Blip.Create(icon.At);
             blip.Sprite = (BlipSprite)icon.Sprite;
             if (icon.Place) blip.Color = icon.Color;
-            // Places point the way from afar; interiors show on the minimap only nearby.
+            // Places point the way from afar, interiors show on the minimap only nearby.
             blip.IsShortRange = !icon.Place;
             blip.Name = UiText.Get(icon.Name);
             _mapIcons[icon.Key] = blip;
@@ -84,7 +83,7 @@ public sealed partial class AdminMenuScript
                 : new MapIcon("yacht:" + owner + ":" + look.Berth, new Vector3(berth.X, berth.Y, YachtBerth.Z), YachtSprite, "Яхта напарника", true, BlipColor.White);
         }
 
-        // своё жильё синим домиком, его видно издалека
+        // The player's home as a blue house, visible from afar.
         InteriorBuilding? home = HomeInterior(_home)?.Building;
         foreach (InteriorDoor door in OnlineInteriors.Doors)
         {

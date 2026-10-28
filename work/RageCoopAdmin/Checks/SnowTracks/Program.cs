@@ -6,7 +6,7 @@ using OGCoop.Shared;
 using HarmonyLib;
 using RageCoopAdmin.Client;
 
-// Snow tracks: the real switch runs here; only GTA's weather, tracks and sound
+// Snow tracks: the real switch runs here, only GTA's weather, tracks and sound
 // banks are replaced by recorded fakes.
 internal static class Program
 {

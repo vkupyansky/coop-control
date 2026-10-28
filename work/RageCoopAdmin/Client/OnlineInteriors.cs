@@ -8,7 +8,6 @@ using GTA.Native;
 
 namespace RageCoopAdmin.Client;
 
-// A furnishing set inside an interior, optionally tinted (colour index).
 internal readonly struct InteriorSet
 {
     internal InteriorSet(string name, int tint = -1)
@@ -22,7 +21,7 @@ internal readonly struct InteriorSet
 }
 
 // One GTA Online interior. X/Y/Z is where a player appears inside and where
-// the exit is; it also identifies the interior (GET_INTERIOR_AT_COORDS).
+// the exit is. It also identifies the interior (GET_INTERIOR_AT_COORDS).
 internal sealed class OnlineInterior
 {
     internal OnlineInterior(string key, string name, float x, float y, float z, string[] ipls, params InteriorSet[] sets)
@@ -53,9 +52,9 @@ internal sealed class OnlineInterior
     // A lighter building GTA shows from afar (the mansions, whose own one has
     // no distant view); off close by.
     internal string? Generic { get; private set; }
-    // обновление Online, без которого этой комнаты нет, хотя здание есть
+    // The Online update this room needs. The building itself exists without it.
     internal string? Dlc { get; private set; }
-    // въезд и выезд на машине: тестовая трасса
+    // Entered and left by car: the test track.
     internal bool ByCar { get; private set; }
 
     internal OnlineInterior Outside(string? generic, params string[] world)
@@ -105,12 +104,12 @@ internal sealed class InteriorBuilding
     internal float Y { get; }
     internal float Z { get; }
     internal OnlineInterior[] Interiors { get; }
-    // A GTA Online update this building needs; absent in older games, so it is hidden there.
+    // A GTA Online update this building needs. Older games lack it, so it is hidden there.
     internal string? Dlc { get; private set; }
-    // первая дверь главная, остальные как в Online в других районах
+    // The first door is the main one, the others are Online's entrances elsewhere.
     internal InteriorDoor[] Doors { get; private set; }
     internal string IconName { get; private set; }
-    // особое место, на котором стоит здание (остров), -1 в городе
+    // The special place the building stands on (the island), -1 in the city.
     internal int Place { get; private set; } = -1;
 
     internal InteriorBuilding RequiresDlc(string dlc)
@@ -159,7 +158,7 @@ internal sealed class InteriorDoor
 // (am_mp_music_studio, am_mp_casino_nightclub for the Music Locker beside the
 // casino, am_mp_multistorey_garage, am_mp_juggalo_hideout for the Freakshop).
 // CEO garages open from their office towers. Icons: the FiveM blip list source.
-// у бизнесов все входы Online, у жилья и офисов по одному
+// Businesses have all their Online entrances, homes and offices one each.
 internal static class OnlineInteriors
 {
     internal const int Safehouse = 40;
@@ -171,18 +170,18 @@ internal static class OnlineInteriors
         557, 569, 590, 614, 740, 777, 779, 826, 867, 893, 931, 948, // bunker, hangar, facility, nightclub, arcade, car meet,
         // auto shop, agency, salvage yard, bail office, car wash, mansion
         136, 473, 524, 819, 847, 856, // music venue, warehouse, vehicle warehouse, music studio, Freakshop, garage
-        900, 925, 428, 928, 903, 959, // швейная фабрика, Smoke on the Water, особняк Эль Рубио, Helitours, ангар McKenzie, Kortz Center
+        900, 925, 428, 928, 903, 959, // garment factory, Smoke on the Water, El Rubio's mansion, Helitours, McKenzie hangar, Kortz Center
     };
 
     private static readonly string[] None = Array.Empty<string>();
 
-    // мастерская Kortz, одна на три особняка, в неё ходят из особняка (am_mp_mansion_art_workshop, обстановка bob74_ipl KortzWorkshop)
+    // The Kortz workshop, one for the three mansions and entered from them (am_mp_mansion_art_workshop, furnishing bob74_ipl KortzWorkshop).
     private static OnlineInterior ArtWorkshop(string key) =>
         new OnlineInterior(key, "Мастерская", 2583.847f, 5965.467f, -50f, None,
             new InteriorSet("set_vault_door"), new InteriorSet("set_hacking_usb"), new InteriorSet("set_vault_hacking_angel"),
             new InteriorSet("set_chair_easel"), new InteriorSet("set_hazmat"), new InteriorSet("set_drills")).RequiresDlc("mp2026_01");
 
-    // один гараж с мастерской на все четыре агентства, как в Online (bob74_ipl MpSecurityGarage)
+    // One garage with a workshop for all four agencies, as in Online (bob74_ipl MpSecurityGarage).
     private static OnlineInterior AgencyGarage(string key) =>
         new OnlineInterior(key, "Гараж агентства", -1071.439f, -77.034f, -93.526f, new[] { "sf_int_placement_sec_interior_2_dlc_garage_sec_milo_" },
             new InteriorSet("entity_set_tints"), new InteriorSet("Entity_Set_Wallpaper_07"), new InteriorSet("Entity_Set_Workshop_Lights"));
@@ -258,7 +257,7 @@ internal static class OnlineInteriors
         new InteriorBuilding("clubhouse_sandy", "Клуб байкеров 1", "Байкеры", 492, 1737.878f, 3709.088f, 33.135f,
             new OnlineInterior("clubhouse_sandy_club", "Клуб", 1107.040f, -3157.399f, -37.519f, new[] { "bkr_biker_interior_placement_interior_0_biker_dlc_int_01_milo" },
                 new InteriorSet("walls_02", 3), new InteriorSet("furnishings_01", 3), new InteriorSet("decorative_01"), new InteriorSet("mural_01")))
-            // клубы 91-96 ведут в bkr_biker_dlc_int_01, 97-102 в int_02 (am_mp_property_ext func_6731, am_mp_hangar)
+            // Clubhouses 91-96 lead to bkr_biker_dlc_int_01, 97-102 to int_02 (am_mp_property_ext func_6731, am_mp_hangar).
             .AlsoAt("Клуб байкеров", new Vector3(254.189f, -1809.183f, 26.181f), new Vector3(-1472.278f, -920.068f, 8.968f),
                 new Vector3(38.948f, -1026.629f, 28.635f), new Vector3(46.903f, 2789.825f, 57.112f), new Vector3(-342.325f, 6065.316f, 30.490f)),
         new InteriorBuilding("clubhouse_paleto", "Клуб байкеров 2", "Байкеры", 492, -39.329f, 6420.603f, 30.702f,
@@ -269,7 +268,7 @@ internal static class OnlineInteriors
         new InteriorBuilding("biker_meth", "Лаборатория мета", "Байкеры", 499, 1181.440f, -3113.820f, 5.030f,
             new OnlineInterior("biker_meth_lab", "Лаборатория", 1009.500f, -3196.600f, -38.997f, new[] { "bkr_biker_interior_placement_interior_2_biker_dlc_int_ware01_milo" },
                 new InteriorSet("meth_lab_empty")))
-            // бизнесы 22-41, по четыре каждого вида (func_6541)
+            // Businesses 22-41, four of each kind (func_6541).
             .AlsoAt("Лаборатория мета", new Vector3(52.903f, 6338.585f, 30.350f), new Vector3(1454.671f, -1651.986f, 66.000f), new Vector3(201.891f, 2461.782f, 54.689f)),
         new InteriorBuilding("biker_weed", "Ферма травы", "Байкеры", 496, 102.140f, 175.260f, 103.560f,
             new OnlineInterior("biker_weed_farm", "Ферма", 1051.491f, -3196.536f, -39.148f, new[] { "bkr_biker_interior_placement_interior_3_biker_dlc_int_ware02_milo" },
@@ -292,7 +291,7 @@ internal static class OnlineInteriors
                 new InteriorSet("Bunker_Style_A"), new InteriorSet("standard_bunker_set"), new InteriorSet("standard_security_set"), new InteriorSet("Office_Upgrade_set"), new InteriorSet("gun_locker_upgrade"), new InteriorSet("gun_range_lights"))
                 .Outside(null, "gr_case0_bunkerclosed", "gr_case1_bunkerclosed", "gr_case2_bunkerclosed", "gr_case3_bunkerclosed", "gr_case4_bunkerclosed",
                     "gr_case5_bunkerclosed", "gr_case6_bunkerclosed", "gr_case7_bunkerclosed", "gr_case9_bunkerclosed", "gr_case10_bunkerclosed", "gr_case11_bunkerclosed"))
-            // двери бункеров 70-80 (am_mp_bunker func_6244)
+            // Bunker doors 70-80 (am_mp_bunker func_6244).
             .AlsoAt("Бункер", new Vector3(480.487f, 2996.070f, 41.616f), new Vector3(848.216f, 2993.330f, 43.383f), new Vector3(26.312f, 2955.610f, 56.382f),
                 new Vector3(2127.750f, 3336.490f, 45.890f), new Vector3(2494.080f, 3140.060f, 48.934f), new Vector3(1826.220f, 4707.520f, 40.110f),
                 new Vector3(-782.508f, 5935.050f, 21.986f), new Vector3(-392.703f, 4364.930f, 56.281f), new Vector3(-3057.530f, 3329.870f, 10.345f),
@@ -300,7 +299,7 @@ internal static class OnlineInteriors
         new InteriorBuilding("hangar", "Ангар", "Бизнесы", 569, -1153.875f, -3412.450f, 12.945f,
             new OnlineInterior("hangar_inside", "Ангар", -1267.000f, -3013.135f, -49.500f, new[] { "sm_smugdlc_interior_placement_interior_0_smugdlc_int_01_milo_" },
                 new InteriorSet("set_tint_shell", 1), new InteriorSet("set_crane_tint", 1), new InteriorSet("set_floor_2"), new InteriorSet("set_floor_decal_1", 1), new InteriorSet("set_lighting_hangar_a"), new InteriorSet("set_lighting_wall_neutral"), new InteriorSet("set_lighting_tint_props", 2), new InteriorSet("set_modarea", 1), new InteriorSet("set_office_basic"), new InteriorSet("set_bedroom_modern"), new InteriorSet("set_bedroom_tint", 1), new InteriorSet("set_bedroom_blinds_open")))
-            // ангары 83-87: два в аэропорту, три в Форт-Занкудо
+            // Hangars 83-87: two at the airport, three at Fort Zancudo.
             .AlsoAt("Ангар", new Vector3(-1397.425f, -3269.178f, 12.945f), new Vector3(-2019.963f, 3159.768f, 31.815f),
                 new Vector3(-1876.317f, 3111.579f, 31.815f), new Vector3(-2468.584f, 3278.519f, 31.830f)),
         new InteriorBuilding("facility", "База Судного дня", "Бизнесы", 590, 2.430f, 6831.906f, 11.473f,
@@ -309,14 +308,14 @@ internal static class OnlineInteriors
                 .Outside(null, "xm_hatch_01_cutscene", "xm_hatch_02_cutscene", "xm_hatch_03_cutscene", "xm_hatch_04_cutscene", "xm_hatch_06_cutscene",
                     "xm_hatch_07_cutscene", "xm_hatch_08_cutscene", "xm_hatch_09_cutscene", "xm_hatch_10_cutscene", "xm_hatch_closed", "xm_siloentranceclosed_x17",
                     "xm_bunkerentrance_door", "xm_hatches_terrain", "xm_hatches_terrain_lod"))
-            // люки баз 89-97
+            // Facility hatches 89-97.
             .AlsoAt("База Судного дня", new Vector3(1287.413f, 2846.593f, 45.050f), new Vector3(19.022f, 2611.234f, 81.656f),
                 new Vector3(2769.089f, 3920.189f, 41.474f), new Vector3(3407.521f, 5504.718f, 21.934f), new Vector3(-2231.284f, 2417.664f, 7.837f),
                 new Vector3(-7.025f, 3326.452f, 37.287f), new Vector3(2073.153f, 1748.262f, 100.170f), new Vector3(1874.689f, 284.791f, 159.961f)),
         new InteriorBuilding("nightclub", "Ночной клуб", "Бизнесы", 614, 331.212f, -994.074f, 28.424f,
             new OnlineInterior("nightclub_inside", "Клуб", -1604.664f, -3012.583f, -78.000f, new[] { "ba_int_placement_ba_interior_0_dlc_int_01_ba_milo_", "ba_barriers_case0", "ba_case0_solomun", "ba_case0_dixon", "ba_case0_madonna", "ba_case0_taleofus", "ba_barriers_case1", "ba_case1_solomun", "ba_case1_dixon", "ba_case1_madonna", "ba_case1_taleofus", "ba_barriers_case2", "ba_case2_solomun", "ba_case2_dixon", "ba_case2_madonna", "ba_case2_taleofus", "ba_barriers_case3", "ba_case3_solomun", "ba_case3_dixon", "ba_case3_madonna", "ba_case3_taleofus", "ba_barriers_case4", "ba_case4_solomun", "ba_case4_dixon", "ba_case4_madonna", "ba_case4_taleofus", "ba_barriers_case5", "ba_case5_solomun", "ba_case5_dixon", "ba_case5_madonna", "ba_case5_taleofus", "ba_barriers_case6", "ba_case6_solomun", "ba_case6_dixon", "ba_case6_madonna", "ba_case6_taleofus", "ba_barriers_case7", "ba_case7_solomun", "ba_case7_dixon", "ba_case7_madonna", "ba_case7_taleofus", "ba_barriers_case8", "ba_case8_solomun", "ba_case8_dixon", "ba_case8_madonna", "ba_case8_taleofus", "ba_barriers_case9", "ba_case9_solomun", "ba_case9_dixon", "ba_case9_madonna", "ba_case9_taleofus" },
                 new InteriorSet("Int01_ba_clubname_01"), new InteriorSet("Int01_ba_Style02"), new InteriorSet("Int01_ba_style02_podium"), new InteriorSet("Int01_ba_equipment_setup"), new InteriorSet("Int01_ba_equipment_upgrade"), new InteriorSet("Int01_ba_security_upgrade"), new InteriorSet("Int01_ba_dj01"), new InteriorSet("DJ_04_Lights_03"), new InteriorSet("Int01_ba_bar_content"), new InteriorSet("Int01_ba_booze_02"), new InteriorSet("Int01_ba_booze_01"), new InteriorSet("Int01_ba_booze_03"), new InteriorSet("Int01_ba_trophy01", 2)))
-            // клубы 1-10 (am_mp_nightclub func_4981)
+            // Nightclubs 1-10 (am_mp_nightclub func_4981).
             .AlsoAt("Ночной клуб", new Vector3(734.321f, -1289.082f, 25.308f), new Vector3(-166.638f, -1292.334f, 30.342f),
                 new Vector3(-23.351f, 220.098f, 105.753f), new Vector3(910.878f, -2097.885f, 29.561f), new Vector3(-668.879f, -2389.805f, 12.954f),
                 new Vector3(230.887f, -3137.272f, 4.874f), new Vector3(376.349f, 225.427f, 102.089f), new Vector3(-1236.351f, -695.968f, 22.635f),
@@ -324,23 +323,23 @@ internal static class OnlineInteriors
         new InteriorBuilding("arcade", "Аркада", "Бизнесы", 740, -1270.591f, -305.000f, 36.074f,
             new OnlineInterior("arcade_inside", "Аркада", 2732.000f, -380.000f, -50.000f, None,
                 new InteriorSet("entity_set_constant_geometry"), new InteriorSet("entity_set_arcade_set_ceiling_flat"), new InteriorSet("entity_set_mural_option_05"), new InteriorSet("entity_set_floor_option_01"), new InteriorSet("entity_set_arcade_set_trophy_claw"), new InteriorSet("entity_set_arcade_set_trophy_teller"), new InteriorSet("entity_set_arcade_set_trophy_gunner"), new InteriorSet("entity_set_arcade_set_trophy_brawler"), new InteriorSet("entity_set_arcade_set_trophy_cabs"), new InteriorSet("entity_set_plushie_01"), new InteriorSet("entity_set_plushie_07"), new InteriorSet("entity_set_plushie_08"), new InteriorSet("entity_set_plushie_09"), new InteriorSet("entity_set_big_screen"), new InteriorSet("entity_set_screens")),
-            // подвал для планов ограбления казино, место из точек возрождения main.c, обстановка bob74_ipl DiamondArcadeBasement
+            // The casino heist planning basement: point from main.c's respawn points, furnishing bob74_ipl DiamondArcadeBasement.
             new OnlineInterior("arcade_basement", "Подвал", 2713.297f, -369.500f, -56.000f, None,
                 new InteriorSet("set_plan_setup"), new InteriorSet("set_plan_scribbles"), new InteriorSet("set_plan_garage"), new InteriorSet("set_plan_bed"),
                 new InteriorSet("set_plan_computer"), new InteriorSet("set_plan_plans"), new InteriorSet("set_plan_mechanic"), new InteriorSet("set_plan_cockroaches")))
-            // аркады 128-133
+            // Arcades 128-133.
             .AlsoAt("Аркада", new Vector3(-247.330f, 6213.446f, 30.944f), new Vector3(1696.231f, 4785.183f, 41.026f),
                 new Vector3(-115.982f, -1772.695f, 28.826f), new Vector3(-599.494f, 280.406f, 81.074f), new Vector3(758.356f, -815.944f, 25.291f)),
         new InteriorBuilding("auto_shop", "Автомастерская", "Бизнесы", 779, 758.523f, -679.632f, 27.979f,
             new OnlineInterior("auto_shop_inside", "Мастерская", -1350.000f, 160.000f, -100.000f, new[] { "tr_tuner_shop_burton", "tr_tuner_shop_mesa", "tr_tuner_shop_mission", "tr_tuner_shop_rancho", "tr_tuner_shop_strawberry" },
                 new InteriorSet("entity_set_car_lift_cutscene"), new InteriorSet("entity_set_train"), new InteriorSet("entity_set_scope"), new InteriorSet("entity_set_virus"), new InteriorSet("entity_set_lightbox"), new InteriorSet("entity_set_bedroom"), new InteriorSet("entity_set_style_9"), new InteriorSet("entity_set_laptop"), new InteriorSet("entity_set_plate"), new InteriorSet("entity_set_tints"), new InteriorSet("entity_set_jammers"), new InteriorSet("entity_set_IAA"), new InteriorSet("entity_set_car_lift_purchase"), new InteriorSet("entity_set_ecu"), new InteriorSet("entity_set_drive"), new InteriorSet("entity_set_thermal"), new InteriorSet("entity_set_car_lift_default"), new InteriorSet("entity_set_bombs")))
-            // мастерские 149-153
+            // Auto shops 149-153.
             .AlsoAt("Автомастерская", new Vector3(-149.618f, -1341.022f, 28.907f), new Vector3(-173.468f, -35.728f, 51.213f),
                 new Vector3(231.436f, -1874.801f, 25.551f), new Vector3(488.302f, -896.900f, 24.853f)),
         new InteriorBuilding("car_meet", "LS Car Meet", "Бизнесы", 777, 778.460f, -1870.152f, 28.295f,
             new OnlineInterior("car_meet_inside", "LS Car Meet", -2000.000f, 1113.211f, -25.362f, new[] { "tr_tuner_meetup", "tr_tuner_race_line" },
                 new InteriorSet("entity_set_meet_crew"), new InteriorSet("entity_set_meet_lights"), new InteriorSet("entity_set_test_lights"), new InteriorSet("entity_set_player"), new InteriorSet("entity_set_time_trial")),
-            // тестовая трасса: второй такой же интерьер на 53 м выше (am_mp_car_meet_sandbox func_3412), место у старта
+            // The test track is a second copy of the interior 53 m higher (am_mp_car_meet_sandbox func_3412), point at the start.
             new OnlineInterior("car_meet_track", "Тестовая трасса", -2121.070f, 1103.783f, 24.664f, new[] { "tr_tuner_meetup", "tr_tuner_race_line" },
                 new InteriorSet("entity_set_test_crew"), new InteriorSet("entity_set_test_lights"), new InteriorSet("entity_set_time_trial")).Drivable()),
         new InteriorBuilding("bail_office", "Офис поручителя", "Бизнесы", 893, -1415.176f, -656.989f, 27.673f,
@@ -348,7 +347,7 @@ internal static class OnlineInteriors
                 new InteriorSet("set_style_03"), new InteriorSet("set_no_staff"), new InteriorSet("set_gunsafe_off"), new InteriorSet("set_trophy_10x"), new InteriorSet("set_trophy_24x"), new InteriorSet("set_trophy_100x"), new InteriorSet("set_new_plant"))
                 .Outside(null, "m24_1_bailoffice_davis", "m24_1_bailoffice_delperro", "m24_1_bailoffice_missionrow", "m24_1_bailoffice_paletobay", "m24_1_bailoffice_vinewood",
                     "m24_1_legacyfixes", "m24_1_pizzasigns"))
-            // офисы 167-171
+            // Bail offices 167-171.
             .AlsoAt("Офис поручителя", new Vector3(489.294f, -934.858f, 25.776f), new Vector3(82.223f, 23.278f, 68.055f),
                 new Vector3(139.111f, -1697.505f, 28.301f), new Vector3(-59.827f, 6503.449f, 30.556f)),
         new InteriorBuilding("salvage_yard", "Свалка", "Бизнесы", 867, -12.710f, -1311.688f, 28.304f,
@@ -357,14 +356,14 @@ internal static class OnlineInteriors
                 .Outside(null, "m23_2_sp1_03_reds", "m23_2_sc1_03_reds", "m23_2_id2_04_reds", "m23_2_cs1_05_reds", "m23_2_cs4_11_reds",
                     "m23_2_acp_collision_fixes_01", "m23_2_acp_collision_fixes_02", "m23_2_tug_collision", "m23_2_hei_yacht_collision_fixes",
                     "m23_2_vinewood_garage", "m23_2_lifeguard_access"))
-            // свалки 162-166
+            // Salvage yards 162-166.
             .AlsoAt("Свалка", new Vector3(-191.130f, 6268.015f, 30.489f), new Vector3(2514.075f, 4109.898f, 37.611f),
                 new Vector3(-511.032f, -1740.551f, 18.345f), new Vector3(1191.276f, -1263.920f, 34.334f)),
         new InteriorBuilding("car_wash", "Автомойка Hands On", "Бизнесы", 931, 25.635f, -1409.308f, 28.333f,
             new OnlineInterior("car_wash_inside", "Автомойка", 26.074f, -1398.979f, -75.000f, None,
                 new InteriorSet("set_carwash_tints")).Outside(null, "m25_1_carwash")).RequiresDlc("mp2025_01"),
-        // интерьер 175: дверь из am_mp_smpl_interior_ext func_1364, место внутри из am_mp_sb_weed_shop func_1464,
-        // офис общий с Higgins Helitours (176), у каждого своя отделка; дальше части карты обновления (bob74_ipl dlc_money/base)
+        // Interior 175: door from am_mp_smpl_interior_ext func_1364, inside point from am_mp_sb_weed_shop func_1464.
+        // The office is shared with Higgins Helitours (176), each with its own finish. Map parts: bob74_ipl dlc_money/base.
         new InteriorBuilding("smoke_on_the_water", "Smoke on the Water", "Бизнесы", 925, -1163.663f, -1566.461f, 4.950f,
             new OnlineInterior("smoke_on_the_water_office", "Офис", -1164.213f, -1541.167f, -50.000f, None,
                 new InteriorSet("set_smoke"), new InteriorSet("set_smoke_tint"))
@@ -372,15 +371,15 @@ internal static class OnlineInteriors
         new InteriorBuilding("helitours", "Higgins Helitours", "Бизнесы", 928, -758.732f, -1515.335f, 5.363f,
             new OnlineInterior("helitours_office", "Офис", -1164.213f, -1541.167f, -50.000f, None,
                 new InteriorSet("set_heli"), new InteriorSet("set_heli_tint")).Outside(null, "m25_1_helitours")).RequiresDlc("mp2025_01"),
-        // интерьер 172 (Agents of Sabotage): двери из func_1770, место внутри из am_mp_hacker_den func_2053,
-        // части карты обновления: аэродром в холмах и ворота ангара (bob74_ipl dlc_agents)
+        // Interior 172 (Agents of Sabotage): doors from func_1770, inside point from am_mp_hacker_den func_2053.
+        // Map parts: the airfield in the hills and the hangar gates (bob74_ipl dlc_agents).
         new InteriorBuilding("agents_factory", "Швейная фабрика", "Бизнесы", 900, 738.468f, -954.586f, 24.375f,
             new OnlineInterior("agents_factory_inside", "Фабрика", 745.796f, -993.119f, -47.377f, None,
                 new InteriorSet("set_pent_rob_idol_01"), new InteriorSet("set_pent_rob_idol_02"), new InteriorSet("set_zanc_armor"),
                 new InteriorSet("set_sonar"), new InteriorSet("set_malware_drive"))
                 .Outside(null, "m24_2_garment_factory", "m24_2_legacy_fixes", "m24_2_mp2024_02_additions", "m24_2_airstrip", "m24_2_prop_m42_hangerdoor_02a"))
             .AlsoAt("Швейная фабрика", new Vector3(739.597f, -970.088f, 23.457f)).RequiresDlc("mp2024_02"),
-        // интерьер 173: дверь офиса из func_1510 (вторая в 7 м от неё не нужна), место внутри из am_mp_business_hub
+        // Interior 173: office door from func_1510 (the second one 7 m away is not needed), inside point from am_mp_business_hub.
         new InteriorBuilding("mckenzie_hangar", "Ангар McKenzie Field", "Бизнесы", 903, 2149.800f, 4789.330f, 41.490f,
             new OnlineInterior("mckenzie_hangar_office", "Офис", 2151.220f, 4785.887f, -47.375f, None,
                 new InteriorSet("set_bed"), new InteriorSet("set_laptop"), new InteriorSet("set_24_2"))).RequiresDlc("mp2024_02"),
@@ -395,7 +394,7 @@ internal static class OnlineInteriors
             new OnlineInterior("freakshop_inside", "Freakshop", 570.971f, -420.073f, -70.000f, None,
                 new InteriorSet("entity_set_roller_door_closed"))
                 .Outside(null, "xm3_warehouse", "xm3_warehouse_grnd", "xm3_collision_fixes", "xm3_sum2_fix", "xm3_security_fix", "xm3_train_crash")),
-        // склады особых грузов по размерам из am_mp_warehouse (func_159) и входам 1-22
+        // Special cargo warehouses by am_mp_warehouse's sizes (func_159) and entrances 1-22.
         new InteriorBuilding("ceo_warehouse_small", "Малый склад", "Склады", 473, -424.828f, 185.825f, 79.775f,
             new OnlineInterior("ceo_warehouse_small_inside", "Малый склад", 1094.988f, -3101.776f, -39.000f, None))
             .AlsoAt("Склад особых грузов", new Vector3(54.191f, -2569.248f, 5.005f), new Vector3(-1083.054f, -1261.893f, 4.534f),
@@ -415,7 +414,7 @@ internal static class OnlineInteriors
                 new InteriorSet("branded_style_set"), new InteriorSet("car_floor_hatch")),
             new OnlineInterior("vehicle_warehouse_lower", "Мастерская внизу", 969.538f, -3000.411f, -48.647f, new[] { "imp_impexp_interior_placement_interior_3_impexp_int_02_milo_" },
                 new InteriorSet("pump_01"), new InteriorSet("pump_02"), new InteriorSet("pump_03"), new InteriorSet("pump_04"), new InteriorSet("pump_05"), new InteriorSet("pump_06"), new InteriorSet("pump_07"), new InteriorSet("pump_08")))
-            // склады машин 60-69
+            // Vehicle warehouses 60-69.
             .AlsoAt("Склад машин", new Vector3(-631.975f, -1779.181f, 22.980f), new Vector3(1007.510f, -1855.032f, 30.040f),
                 new Vector3(-72.339f, -1820.984f, 25.942f), new Vector3(1213.233f, -1251.249f, 35.326f), new Vector3(808.800f, -2222.500f, 28.624f),
                 new Vector3(1754.546f, -1649.167f, 111.656f), new Vector3(144.316f, -3005.919f, 6.031f), new Vector3(-521.275f, -2196.688f, 5.394f),
@@ -454,8 +453,8 @@ internal static class OnlineInteriors
                 new InteriorSet("set_style_cali"), new InteriorSet("set_elev_cali"), new InteriorSet("set_art_coastal"), new InteriorSet("set_trophy_planter"), new InteriorSet("set_shelving_planter"), new InteriorSet("set_wallpaper_deco"), new InteriorSet("set_style_cali_tint", 0), new InteriorSet("set_ai_tablets_03"), new InteriorSet("set_pet_cat"), new InteriorSet("set_pet_dog"))
                 .Outside("hei_ch1_09_mansion_generic", "hei_ch1_09_mansion_shared", "m25_2_ch1_09_mansion_interior_a", "m25_2_ch1_09_mansion_interior_b", "m25_2_ch1_09_mansion_interior_c", "hei_ch1_09_mansion_private", "hei_ch1_09_mansion_furniture", "hei_ch1_09_mansion_firepit", "hei_ch1_09_mansion_railings_p", "m25_2_tongva_mansion_gym", "m25_2_tongva_dog_house", "m25_2_mansion_props", "hei_ch1_roads_mansion", "hei_ch1_09_mansion_shared_distantlights", "hei_ch1_09_mansion_shared_lodlights"),
             ArtWorkshop("mansion_tongva_workshop")).RequiresDlc("mp2025_02"),
-        // залы ограбления Kortz Center (fm_content_kortz_entry): дверь у места закладки заряда, места внутри func_9196,
-        // обстановка bob74_ipl dlc_kortz, наружные части музея и обновления там же
+        // Kortz Center heist halls (fm_content_kortz_entry): door at the charge spot, inside points func_9196,
+        // furnishing, the museum outside and the update's map parts from bob74_ipl dlc_kortz.
         new InteriorBuilding("kortz_center", "Kortz Center", "Ограбления", 959, -2193.900f, 248.200f, 174.800f,
             new OnlineInterior("kortz_exhibition", "Выставочный зал", 2618.028f, 5906.564f, -50.000f, None,
                 new InteriorSet("set_background_art"), new InteriorSet("set_exhibit_walls"), new InteriorSet("set_exhibit_robbable"), new InteriorSet("set_exhibit_dressing"),
@@ -468,8 +467,8 @@ internal static class OnlineInteriors
                 new InteriorSet("set_cameras_03"), new InteriorSet("set_lazer_switches"), new InteriorSet("collision_8p4piob")),
             new OnlineInterior("kortz_loading_bay", "Погрузка", 2693.671f, 5877.493f, -62.000f, None,
                 new InteriorSet("set_mule_cargo"), new InteriorSet("set_keypads_loading_bay"), new InteriorSet("set_cameras_04"))).RequiresDlc("mp2026_01"),
-        // комплекс на Кайо-Перико (fm_content_island_heist): дверь у западного входа в особняк (func_9317),
-        // кабинет с сейфом и хранилище в интерьере h4_dlc_island_vault (func_10890), он есть, пока загружен остров
+        // The Cayo Perico compound (fm_content_island_heist): door at the mansion's west entrance (func_9317),
+        // the office with the safe and the vault in h4_dlc_island_vault (func_10890), present while the island is loaded.
         new InteriorBuilding("el_rubio", "Особняк Эль Рубио", "Кайо-Перико", 428, 4995.553f, -5748.032f, 15.002f,
             new OnlineInterior("el_rubio_mansion", "Особняк", 5008.749f, -5760.614f, 14.500f, None,
                 new InteriorSet("panther_set"))).OnPlace(SpecialPlaces.CayoPerico),
@@ -477,7 +476,7 @@ internal static class OnlineInteriors
 
     internal static readonly OnlineInterior[] All = Buildings.SelectMany(building => building.Interiors).ToArray();
     internal static readonly InteriorDoor[] Doors = Buildings.SelectMany(building => building.Doors).ToArray();
-    // жильё, которое игрок делает своим: апартаменты, дома, особняки без мастерской и пентхаус казино
+    // Homes a player can own: apartments, houses, mansions (not their workshop) and the casino penthouse.
     internal static readonly OnlineInterior[] Homes = All.Where(interior =>
         (interior.Building.Group is "Апартаменты" or "Дома" or "Особняки" && !interior.Key.EndsWith("_workshop", StringComparison.Ordinal)) ||
         interior.Key == "casino_penthouse").ToArray();
@@ -494,7 +493,7 @@ internal sealed class DoorTrigger
 {
     internal const float Radius = 1.2f;
     internal const float ArmDistance = 2.5f;
-    // круг для машины шире, в пеший не попасть колёсами
+    // Wider for cars: the wheels cannot reach the walking circle.
     internal const float CarScale = 3f;
     private bool _armed;
 
@@ -544,8 +543,8 @@ internal sealed class InteriorRuntime
     private int _target = -1;
     private long _targetUntil;
     private bool _worldShown;
-    // одну комнату делят несколько входов (гараж агентств, мастерская Kortz, офис Smoke on the Water и Helitours):
-    // у каждого первый вход с той же точкой, комнату обставляет только её хозяин, последний, куда переносились
+    // Several entries share one room (the agency garage, the Kortz workshop, the Smoke on the Water and Helitours office).
+    // Each maps to the first entry at that point, and only the owner, the last one teleported to, furnishes the room.
     private readonly int[] _room;
     private readonly Dictionary<int, int> _roomOwner = new Dictionary<int, int>();
 
@@ -564,14 +563,12 @@ internal sealed class InteriorRuntime
     private static bool SamePlace(OnlineInterior first, OnlineInterior second) =>
         first.X == second.X && first.Y == second.Y && first.Z == second.Z;
 
-    // хозяин комнаты по умолчанию её первый вход
     internal bool OwnsRoom(int index) =>
         (_roomOwner.TryGetValue(_room[index], out int owner) ? owner : _room[index]) == index;
 
     internal bool IsLoaded(int index) => _loaded[index];
     internal bool IsFurnished(int index) => _furnished[index];
 
-    // The interior is streamed in, so a player can be put inside.
     internal bool IsReady(int index)
     {
         OnlineInterior interior = _interiors[index];
@@ -629,7 +626,7 @@ internal sealed class InteriorRuntime
     private bool InGame(OnlineInterior interior) =>
         (interior.Building.Dlc == null || _dlcPresent(interior.Building.Dlc)) && (interior.Dlc == null || _dlcPresent(interior.Dlc));
 
-    // наши интерьеры в этой комнате игры (у общего гаража агентств их четыре), по ним ищут выход
+    // Our interiors in this game room (four for the shared agency garage), used to find the exit.
     internal int[] Find(int room) =>
         room == 0 ? Array.Empty<int>() : Enumerable.Range(0, _opened.Length).Where(index => _opened[index] == room).ToArray();
 
@@ -693,7 +690,7 @@ internal sealed class InteriorRuntime
         else SpecialPlaceNatives.RemoveIpl(generic);
     }
 
-    // The interior exists once its map parts are in; it is opened and pinned
+    // The interior exists once its map parts are in. It is opened and pinned
     // then, retried each tick until it exists.
     private void OpenInterior(int index)
     {
@@ -704,7 +701,7 @@ internal sealed class InteriorRuntime
         _opened[index] = id;
     }
 
-    // Furnishing needs the interior streamed in; retried each tick until it is.
+    // Furnishing needs the interior streamed in, retried each tick until it is.
     private void Furnish(int index)
     {
         OnlineInterior interior = _interiors[index];
@@ -720,11 +717,10 @@ internal sealed class InteriorRuntime
         _furnished[index] = true;
     }
 
-    // The rooms go: unpinned, without their furnishing and their map parts.
     private void Unload(int index)
     {
         OnlineInterior interior = _interiors[index];
-        // общую комнату держит другой вход, пока он загружен, снимается только чужая для него обстановка
+        // Another loaded entry keeps the shared room, so only the furnishing it does not use goes.
         OnlineInterior[] others = _interiors.Where((other, i) => i != index && _loaded[i] && SamePlace(other, interior)).ToArray();
         if (_opened[index] != 0 && others.Length == 0) InteriorNatives.Release(_opened[index]);
         _opened[index] = 0;
@@ -735,7 +731,7 @@ internal sealed class InteriorRuntime
             {
                 InteriorSet[] gone = interior.Sets.Where(set => !others.Any(other => other.Sets.Any(kept => kept.Name == set.Name))).ToArray();
                 foreach (InteriorSet set in gone) InteriorNatives.Deactivate(id, set.Name);
-                // оставшийся вход обставлен раньше, без обновления комната осталась бы со старой отделкой
+                // The remaining entry was furnished earlier, without a refresh the room keeps the old finish.
                 if (others.Length > 0 && gone.Length > 0) InteriorNatives.Refresh(id);
             }
         }
@@ -747,7 +743,6 @@ internal sealed class InteriorRuntime
     }
 }
 
-// GTA boundary; isolated checks replace these calls.
 internal static class InteriorNatives
 {
     [MethodImpl(MethodImplOptions.NoInlining)]

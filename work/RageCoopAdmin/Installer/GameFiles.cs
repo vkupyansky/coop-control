@@ -18,8 +18,8 @@ internal sealed class CopyResult
     internal bool AnyChange => Added + Updated + Settings + Removed > 0;
 }
 
-// Copies the package folder next to GTA5.exe. Files already identical are left
-// alone; settings files keep the player's own lines and only get our keys.
+// Files already identical are left alone. Settings files keep the player's own
+// lines and only get our keys.
 internal static class GameFiles
 {
     // Files an earlier version put next to GTA5.exe under another name. The
@@ -48,8 +48,8 @@ internal static class GameFiles
             string target = Path.Combine(game, relative);
             if (relative.EndsWith(".ini", StringComparison.OrdinalIgnoreCase) && File.Exists(target))
             {
-                string existing = ReadText(target);
-                string merged = IniMerge.Merge(existing, ReadText(source));
+                string existing = ReadPlayerText(target, out Encoding encoding);
+                string merged = IniMerge.Merge(existing, ReadText(source), PlayerKeys(relative));
                 // Line endings alone are not a change: a file copied earlier keeps its own.
                 if (Normalize(merged) == Normalize(existing))
                 {
@@ -59,7 +59,7 @@ internal static class GameFiles
 
                 result.Settings++;
                 result.Changed.Add(relative);
-                if (apply) WriteAtomic(target, Encoding.UTF8.GetBytes(merged));
+                if (apply) WriteAtomic(target, encoding.GetBytes(merged));
                 continue;
             }
 
@@ -120,14 +120,42 @@ internal static class GameFiles
 
     private static string ReadText(string path) => Encoding.UTF8.GetString(File.ReadAllBytes(path)).TrimStart('﻿');
 
+    private static readonly UTF8Encoding StrictUtf8 = new UTF8Encoding(false, throwOnInvalidBytes: true);
+
+    // A player's file may use the Windows code page. Read as UTF-8 it would lose its
+    // non-Latin comments, so it is written back in the same encoding.
+    private static string ReadPlayerText(string path, out Encoding encoding)
+    {
+        byte[] bytes = File.ReadAllBytes(path);
+        try
+        {
+            encoding = StrictUtf8;
+            return StrictUtf8.GetString(bytes).TrimStart('﻿');
+        }
+        catch (DecoderFallbackException)
+        {
+            encoding = Encoding.Default;
+            return encoding.GetString(bytes);
+        }
+    }
+
+    // The player's console key and SHVDN hang threshold affect nothing of ours, so they stay.
+    // ReloadKeyBinding, ScriptsLocation and AutoLoadScripts are ours: reloading scripts
+    // breaks RageCoop, and our files live in scripts.
+    internal static readonly string[] ShvdnPlayerKeys = { "ConsoleKeyBinding", "ScriptTimeoutThreshold" };
+
+    private static IReadOnlyCollection<string> PlayerKeys(string relative) =>
+        Path.GetFileName(relative).Equals("ScriptHookVDotNet.ini", StringComparison.OrdinalIgnoreCase) ? ShvdnPlayerKeys : Array.Empty<string>();
+
     private static string Normalize(string text) => text.Replace("\r\n", "\n").TrimEnd();
 }
 
 // Settings files without a full parser: our keys replace the same keys, every
 // other line (comments, the player's own keys, other sections) stays as it was.
+// A key listed in keepExisting keeps the player's value when the player has one.
 internal static class IniMerge
 {
-    internal static string Merge(string existing, string wanted)
+    internal static string Merge(string existing, string wanted, IReadOnlyCollection<string>? keepExisting = null)
     {
         var lines = Split(existing);
         var pending = new List<(string Section, string Key, string Line)>();
@@ -150,7 +178,7 @@ internal static class IniMerge
             if (!TryKey(lines[index], out string key)) continue;
             int match = pending.FindIndex(item => Same(item.Section, section) && Same(item.Key, key));
             if (match < 0) continue;
-            lines[index] = pending[match].Line;
+            if (keepExisting == null || !keepExisting.Any(kept => Same(kept, key))) lines[index] = pending[match].Line;
             pending.RemoveAt(match);
         }
 

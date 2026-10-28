@@ -11,7 +11,7 @@ for %%F in (RageCoop.Server.dll Bootstrap\CoopAdmin.Startup.dll Bootstrap\0Harmo
 )
 if exist server.pid (
   set /p PID=<server.pid
-  tasklist /FI "PID eq !PID!" /NH 2>nul | find /I "dotnet" >nul && (
+  call :is_server "!PID!" && (
     echo The server is already running. To stop it, run "Stop server".
     pause
     exit /b 0
@@ -36,3 +36,16 @@ set "DOTNET_CLI_TELEMETRY_OPTOUT=1"
 echo.
 echo The server has stopped.
 pause
+exit /b 0
+
+rem A stale server.pid may now belong to another program: only a process
+rem running RageCoop.Server.dll counts as the server.
+rem Without PowerShell the process name is checked as before.
+:is_server
+set "SERVER_CHECK="
+for /f %%R in ('powershell -NoProfile -NonInteractive -Command "$p = Get-CimInstance Win32_Process -Filter 'ProcessId=%~1'; if (-not $p) { 'none' } elseif ($p.CommandLine -like '*RageCoop.Server.dll*') { 'server' } else { 'other' }" 2^>nul') do set "SERVER_CHECK=%%R"
+if "%SERVER_CHECK%"=="server" exit /b 0
+if "%SERVER_CHECK%"=="other" exit /b 1
+if "%SERVER_CHECK%"=="none" exit /b 1
+tasklist /FI "PID eq %~1" /NH 2>nul | find /I "dotnet" >nul
+exit /b %errorlevel%

@@ -17,20 +17,16 @@ internal static class RepairSync
     private const int RepairOwnerAckEvent = 20774141;
     private static readonly RepairSyncQueue Pending = new(Stopwatch.Frequency);
     private static readonly RepairSyncQueue PendingOwners = new(Stopwatch.Frequency, 5);
-    private static bool _registered;
     private static bool _active;
     private static Action<string>? _warning;
     private static long _lastWarningTick;
 
-    internal static void Start(Action<string> warning)
+    // Resource subscriptions are removed on stop, so a new build in the same GTA
+    // process leaves no handlers of the previous one.
+    internal static void Start(Action<string> warning, Action<int, Action<CustomEventReceivedArgs>> register)
     {
-        if (!_registered)
-        {
-            API.RegisterCustomEventHandler(RepairStateEvent, OnRepairReceived);
-            API.RegisterCustomEventHandler(RepairOwnerRequestEvent, OnOwnerRepairReceived);
-            _registered = true;
-        }
-
+        register(RepairStateEvent, OnRepairReceived);
+        register(RepairOwnerRequestEvent, OnOwnerRepairReceived);
         Pending.Clear();
         PendingOwners.Clear();
         _warning = warning;

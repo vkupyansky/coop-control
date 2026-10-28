@@ -10,10 +10,8 @@ using RageCoop.Client.Scripting;
 
 namespace RageCoopAdmin.Client;
 
-// The player's own GTA Online yacht: Teleports → Моя яхта gets one on a free
-// berth, moves it (the captain takes it there) and changes how it looks; the
-// server keeps it per RageCoop name and everyone on the server sees it. Next
-// to the captain on the bridge E opens the berths.
+// The server keeps the yacht per RageCoop name and everyone on the server sees
+// it. Next to the captain on the bridge E opens the berths.
 public sealed partial class AdminMenuScript
 {
     private const long YachtSaveSpacing = 1_100;
@@ -51,6 +49,7 @@ public sealed partial class AdminMenuScript
         _yachtRuntime = new YachtRuntime(message => Logger.Info(message));
         _yachtRuntime.Moved += OnYachtMoved;
         _yachts.Request();
+        _answers.Await("yacht", () => _yachts?.Request(), () => _yachts?.OwnKnown == true, NowMilliseconds());
     }
 
     private void QueueYachtEvent(CustomEventReceivedArgs e, int kind)

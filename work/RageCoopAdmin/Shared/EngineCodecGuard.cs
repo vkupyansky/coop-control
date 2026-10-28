@@ -264,7 +264,7 @@ internal static class EngineCodecGuard
             throw Unsupported();
         // Only full packets reach Clothes and the following presence bit. The
         // shared receive packet must forget the prior ped's components when
-        // this full packet explicitly has none; short packets retain their cache.
+        // this full packet explicitly has none. Short packets retain their cache.
         var reset = new CodeInstruction(OpCodes.Ldarg_0);
         reset.labels.AddRange(codes[at].labels); reset.blocks.AddRange(codes[at].blocks);
         codes[at].labels.Clear(); codes[at].blocks.Clear();
@@ -295,7 +295,7 @@ internal static class EngineCodecGuard
             throw Unsupported();
         // Only full packets reach the damage presence bit. Pack writes false
         // exactly for the default (undamaged) model, so the shared receive
-        // packet must forget the prior vehicle's damage; short packets keep it.
+        // packet must forget the prior vehicle's damage. Short packets keep it.
         object local = codes[at + 4].operand;
         var reset = new CodeInstruction(OpCodes.Ldarg_0);
         reset.labels.AddRange(codes[at].labels); reset.blocks.AddRange(codes[at].blocks);

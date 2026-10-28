@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GTA;
 using GTA.Math;
 using RageCoop.Server;
@@ -7,9 +8,6 @@ using RageCoop.Server.Scripting;
 
 namespace CoopAdmin.Server;
 
-/// <summary>
-/// Validates menu requests and applies shared changes through RageCoop's entity API.
-/// </summary>
 public sealed partial class CoopAdminServer : ServerScript
 {
     private const int SpawnVehicleEvent = 20774111;
@@ -38,6 +36,10 @@ public sealed partial class CoopAdminServer : ServerScript
     private readonly Dictionary<Client, long> lastTeleport = new();
     private readonly Dictionary<Client, long> lastRecall = new();
     private readonly Dictionary<Client, ServerVehicle> spawnedVehicles = new();
+    // Player data requests read files from disk and broadcast, so each kind runs at most once per pause.
+    private readonly Dictionary<(Client Client, int Kind), long> lastDataRequests = new();
+    internal const long DataRequestCooldownMs = 1000;
+    internal const long GarageChangeCooldownMs = 100;
     private long repairRevision;
     private (int X, int Y)? sharedWaypoint;
 
@@ -250,7 +252,7 @@ public sealed partial class CoopAdminServer : ServerScript
         int modelHash = knownModelHash != 0 ? knownModelHash : reportedModelHash;
         pendingRepairs[vehicle.ID] = new PendingRepair(vehicle, owner, e.Client, revision, modelHash,
             Environment.TickCount64);
-        // Repair the simulation owner first; a passenger's local repair is otherwise
+        // Repair the simulation owner first, since a passenger's local repair is otherwise
         // overwritten by the owner's next ordinary vehicle snapshot.
         API.SendCustomEventQueued(new List<Client> { owner }, RepairOwnerRequestEvent,
             vehicle.ID, revision, modelHash);
@@ -375,6 +377,7 @@ public sealed partial class CoopAdminServer : ServerScript
         lastTeleport.Remove(client);
         lastRecall.Remove(client);
         lastPlaceInvite.Remove(client);
+        ForgetDataRequests(client);
         RemovePendingRepairs(client);
         OnVehicleToolsPlayerDisconnected(client);
         RemoveWorldStateClient(client);
@@ -384,7 +387,7 @@ public sealed partial class CoopAdminServer : ServerScript
         OnHomePlayerDisconnected(client);
         if (spawnedVehicles.Remove(client, out ServerVehicle? vehicle))
         {
-            if (ReferenceEquals(API.Entities.GetVehicleByID(vehicle.ID), vehicle))
+            if (DeleteOnLeave(client, vehicle, API.Entities.GetVehicleByID(vehicle.ID)))
             {
                 vehicle.Delete();
             }
@@ -392,6 +395,11 @@ public sealed partial class CoopAdminServer : ServerScript
             ForgetVehicleAppearance(vehicle);
         }
     }
+
+    // RageCoop removes the leaving player's own cars before this event. What stays in the
+    // pool is a car a partner now drives, and it must not vanish under him.
+    internal static bool DeleteOnLeave(Client leaving, ServerVehicle spawned, ServerVehicle? pooled) =>
+        ReferenceEquals(pooled, spawned) && ReferenceEquals(spawned.Owner, leaving);
 
     private static bool HasReadyPlayer(CustomEventReceivedArgs e) =>
         e.Client is not null && e.Client.IsReady && e.Client.Player is not null;
@@ -436,6 +444,20 @@ public sealed partial class CoopAdminServer : ServerScript
     private static bool IsCurrentReadyClient(Client? client, Dictionary<int, Client> clients) => client != null && client.IsReady &&
         client.Player != null && clients.TryGetValue(client.Player.ID, out Client? current) &&
         ReferenceEquals(current, client);
+
+    internal bool CanRequestData(Client client, int kind, long cooldownMs = DataRequestCooldownMs)
+    {
+        long now = Environment.TickCount64;
+        if (lastDataRequests.TryGetValue((client, kind), out long last) && now - last < cooldownMs) return false;
+        lastDataRequests[(client, kind)] = now;
+        return true;
+    }
+
+    internal void ForgetDataRequests(Client client)
+    {
+        foreach ((Client, int) key in lastDataRequests.Keys.Where(key => ReferenceEquals(key.Client, client)).ToList())
+            lastDataRequests.Remove(key);
+    }
 
     private static bool CanRun(Client client, Dictionary<Client, long> requests, long cooldownMs)
     {

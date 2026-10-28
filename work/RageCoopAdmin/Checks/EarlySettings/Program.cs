@@ -70,6 +70,10 @@ internal static partial class Program
         Assert(!EarlySettingsGuard.CreateInitialFile(path) && File.ReadAllBytes(path).SequenceEqual(bytes),
             "initial setup cannot replace a pre-existing read-only Settings file");
         File.SetAttributes(path, FileAttributes.Normal);
+        // exFAT and FAT32 have no hard links, and the server failed its first start there.
+        Assert(new[] { 1, 18, 31, 45, 95, 102 }.All(EarlySettingsGuard.LinkUnsupported) &&
+            !EarlySettingsGuard.LinkUnsupported(17) && !EarlySettingsGuard.LinkUnsupported(13) && !EarlySettingsGuard.LinkUnsupported(28),
+            "a disk without hard links (exFAT, FAT32, some network shares) creates the first Settings file by a plain move; a taken name, no access or a full disk still stop the start");
     }
 
     private static void CheckInvalid(string directory)
@@ -96,7 +100,7 @@ internal static partial class Program
         }
     }
 
-    // папка сервера v0.3.0, скопированная под новой
+    // A v0.3.0 server folder with the new one copied over it.
     private static void CheckRetiredResources(string directory)
     {
         string server = Path.Combine(directory, "server");

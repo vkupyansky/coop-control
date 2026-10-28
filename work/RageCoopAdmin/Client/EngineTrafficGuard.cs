@@ -133,7 +133,7 @@ internal static class EngineTrafficGuard
         FindCullGate(instructions, target, "WorldVehicleSoftLimit", typeof(Vehicle), out _) >= 0 &&
         FindPedList(instructions) >= 0;
 
-    // DoSync один раз кладёт World.GetAllPeds() в EntityPool.allPeds и ищет в нём новых NPC для отправки
+    // DoSync stores World.GetAllPeds() in EntityPool.allPeds once and looks there for new NPCs to send.
     internal static int FindPedList(IList<CodeInstruction> instructions)
     {
         int[] matches = Enumerable.Range(0, Math.Max(0, instructions.Count - 1)).Where(index =>
@@ -175,7 +175,7 @@ internal static class EngineTrafficGuard
         {
             instructions.InsertRange(gate.Index + 1, new[] { CodeInstruction.LoadLocal(gate.Local), CodeInstruction.Call(typeof(EngineTrafficGuard), gate.Method) });
         }
-        // список стоит раньше обеих проверок, вставки его не сдвинули
+        // The list comes before both gates and the insertions did not move it.
         if (list > Math.Min(ped, vehicle)) { throw new InvalidOperationException("Unsupported RageCoop sync order."); }
         instructions.Insert(list + 1, CodeInstruction.Call(typeof(LocalPeds), nameof(LocalPeds.Without)));
         return instructions;
@@ -223,7 +223,7 @@ internal static class EngineTrafficGuard
     }
 
     // Network thread, after EngineNetworkGuard took the pool monitors. A record
-    // that already exists keeps RageCoop's own path; a missing one near this
+    // that already exists keeps RageCoop's own path. A missing one near this
     // player is added so the original skips its per-owner limit.
     private static void BeforeReceiveVehicle(object __0, bool __runOriginal)
     {
@@ -334,7 +334,7 @@ internal static class EngineTrafficGuard
     }
 
     // Runs inside the sync pass: deleting this game's own copy also removes it
-    // from RageCoop and tells the server; the pass works on a snapshot.
+    // from RageCoop and tells the server. The pass works on a snapshot.
     private static void ReplaceLocalVehicle(Vehicle twin)
     {
         SyncedVehicle? record = RuntimeEntityLookup.GetVehicleByHandle(twin.Handle);

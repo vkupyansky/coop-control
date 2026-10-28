@@ -118,7 +118,6 @@ public sealed partial class AdminMenuScript
         settings.Add(voice);
         var extraRefresh = new List<Action>();
         AddExtraSettings(settings, extraRefresh);
-        // Who made the add-on and how to reach them; selecting it does nothing.
         string version = typeof(AdminMenuScript).Assembly.GetName().Version?.ToString() ?? "?";
         settings.Add(UiMenu.Item(() => UiText.Get("О дополнении"),
             () => UiText.Get("OG Coop — дополнение для RageCoop. Автор: Vladislav Kupyansky (vkupyansky). Связь: Telegram @skibidessa, github.com/vkupyansky. Версия ") +
@@ -229,7 +228,7 @@ public sealed partial class AdminMenuScript
         {
             if (QuickShortcutKeys.Contains(e.KeyCode)) _shortcutLatch.TryPress((int)e.KeyCode);
             // Mac Delete can arrive as Backspace or forward Delete. Either
-            // may also emit a native cancel edge; consume the complete press.
+            // may also emit a native cancel edge, so the whole press is consumed.
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete || e.KeyCode == Keys.Enter)
                 _textInputActivationPending = true;
             _textInput?.UpdateInputMode(controller: false);
@@ -238,8 +237,8 @@ public sealed partial class AdminMenuScript
         }
         if (e.KeyCode == Keys.Escape && _pool?.AreAnyVisible == true)
         {
-            // The host guard prevents the earlier pause branch; process one Back
-            // on Tick so keyboard and controller cancellation share one path.
+            // The host guard prevents the earlier pause branch, so one Back is
+            // processed on Tick and keyboard and controller cancel share one path.
             if (_shortcutLatch.TryPress((int)Keys.Escape)) _menuCancelRequested = true;
             e.Handled = true;
             e.SuppressKeyPress = true;
@@ -291,7 +290,7 @@ public sealed partial class AdminMenuScript
             return;
         }
 
-        // The character editor keeps its own menu; Back leaves it.
+        // The character editor keeps its own menu, and Back leaves it.
         if (_pool == null || _mainMenu == null || _creator != null)
         {
             return;
@@ -350,8 +349,8 @@ public sealed partial class AdminMenuScript
         }
 
         // Driving is the game authority for this local physics action. The
-        // engine can publish its vehicle record later or transfer it separately;
-        // neither is a prerequisite for accelerating the actual driver vehicle.
+        // engine can publish its vehicle record later or transfer it separately.
+        // Neither is needed to accelerate the actual driver vehicle.
         Model model = new Model(Function.Call<int>(Hash.GET_ENTITY_MODEL, vehicle));
         if (!model.IsCar)
         {
@@ -406,7 +405,7 @@ public sealed partial class AdminMenuScript
         _lastBoostFrame = now;
         bool gamepad = _interfaceSettings.GamepadShortcuts && !Function.Call<bool>(Hash.IS_USING_KEYBOARD_AND_MOUSE, 0);
         // Xbox A (PlayStation cross) is GTA's duck in a car. It keeps that
-        // meaning and also boosts; in our menu it selects instead.
+        // meaning and also boosts, in our menu it selects instead.
         bool boostHeld = boostKeyHeld || (gamepad && Pressed(ControlAction.VehicleDuck));
         if (!boostHeld) _boostDiagnosticReasons?.Clear();
         // Only O itself counts: on Mac a Ctrl/Alt release lost during an app

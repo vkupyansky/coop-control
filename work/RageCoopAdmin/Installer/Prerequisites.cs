@@ -15,7 +15,7 @@ internal static class Prerequisites
     internal const string VcRedistUrl = "https://aka.ms/vs/17/release/vc_redist.x64.exe";
     internal const string NetFrameworkUrl = "https://dotnet.microsoft.com/download/dotnet-framework/net48";
     internal const string ScriptHookVPage = "https://www.dev-c.com/gtav/scripthookv/";
-    // .NET Framework 4.8 release key; SHVDN 3 and RageCoop need it.
+    // .NET Framework 4.8 release key, SHVDN 3 and RageCoop need it.
     private const int NetFramework48 = 528040;
 
     internal static bool VcRedistInstalled()
@@ -53,7 +53,7 @@ internal static class Prerequisites
             say(Text.Get("Устанавливаю Visual C++ (подтвердите запрос Windows)…", "Installing Visual C++ (confirm the Windows prompt)…"));
             using Process process = Process.Start(new ProcessStartInfo(file, "/install /passive /norestart") { UseShellExecute = true })!;
             process.WaitForExit();
-            // 1638: a newer version is already installed; 3010: needs a restart.
+            // 1638: a newer version is already installed. 3010: needs a restart.
             if (process.ExitCode is not (0 or 1638 or 3010))
                 throw new InstallerException(Text.Get("Visual C++ не установился, код ", "Visual C++ setup failed, code ") + process.ExitCode,
                     Text.Get("Установите его вручную: ", "Install it manually: ") + VcRedistUrl);
@@ -81,7 +81,17 @@ internal static class ScriptHookV
         ("dinput8.dll", 131072, "9fd9e02353b7d39fe07b9667f7ea2697229a7f2d0e7d389eb79eb212b1bb181d"),
     };
 
-    internal static bool Installed(string game) => Files.All(file => File.Exists(Path.Combine(game, file.Name)));
+    // ScriptHookV.dll is tied to the game build. Old mods may have left one for another
+    // build, and RageCoop then fails to load although the installer said done. Other mods
+    // (OpenIV) install the dinput8.dll loader too, so its presence is enough.
+    internal static bool Installed(string game, (string Name, long Size, string Sha256)[]? expected = null)
+    {
+        expected ??= Files;
+        (string name, long size, string sha256) = expected[0];
+        string hook = Path.Combine(game, name);
+        if (!File.Exists(hook) || new FileInfo(hook).Length != size || !File.Exists(Path.Combine(game, expected[1].Name))) return false;
+        return string.Equals(BitConverter.ToString(GameFiles.Sha256(hook)).Replace("-", string.Empty), sha256, StringComparison.OrdinalIgnoreCase);
+    }
 
     // Returns the ZIP used, or null when no matching download was found.
     internal static string? TryImport(string game, string[] folders, bool apply, (string Name, long Size, string Sha256)[]? expected = null)

@@ -184,9 +184,9 @@ internal static class Program
             Assert(!(bool)EngineTrafficGuard.FindCreateVehicle()!.Invoke(incoming, null)! && _modelRequests == 1 && ReferenceEquals(ids[incoming.ID], incoming),
                 "An unloaded valid model is requested without deleting the incoming record or native vehicles.");
 
-            // A loaded copy would reach native creation; only the twin path may run here.
+            // A loaded copy would reach native creation, only the twin path may run here.
             _modelLoaded = true;
-            // SHVDN's pool scan needs the game; the guard's own lookup boundary is replaced.
+            // SHVDN's pool scan needs the game, so the guard's own lookup boundary is replaced.
             modelPatch.Patch(typeof(EngineTrafficGuard).GetMethod("NearbyVehicles", Static)!, prefix: new HarmonyMethod(typeof(Program), nameof(NearbyTwinVehicles)));
             modelPatch.Patch(typeof(EngineTrafficGuard).GetMethod("NearbyPeds", Static)!, prefix: new HarmonyMethod(typeof(Program), nameof(NearbyTwinPeds)));
             modelPatch.Patch(typeof(EngineTrafficGuard).GetMethod("HasPlayerOccupant", Static)!, prefix: new HarmonyMethod(typeof(Program), nameof(NoOccupants)));
@@ -316,7 +316,7 @@ internal static class Program
             return packet;
         }
         // RageCoop's handlers resolve the owner through its roster, which needs the
-        // game; the installed prefix runs here against the real entity pool.
+        // game. The installed prefix runs here against the real entity pool.
         void Prefix(string name, object packet) => typeof(EngineTrafficGuard).GetMethod(name, Static)!.Invoke(null, new[] { packet, (object)true });
         try
         {

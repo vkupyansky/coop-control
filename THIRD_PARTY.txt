@@ -21,8 +21,8 @@ ScriptHookVDotNet3.dll unchanged, with its licence files in
 licenses/ScriptHookVDotNet. Applicable notices from that exact distribution are
 reproduced in full below.
 
-The server folder contains the official Microsoft .NET Runtime 10.0.13 for
-Windows x64 (dotnet-runtime-10.0.13-win-x64.zip) unchanged in server/dotnet,
+The server folder contains the official Microsoft .NET Runtime 10.0.14 for
+Windows x64 (dotnet-runtime-10.0.14-win-x64.zip) unchanged in server/dotnet,
 including its own LICENSE.txt (MIT) and ThirdPartyNotices.txt.
 
 reshade/OGCoop.ini is this project's own ReShade preset (MIT). ReShade and
@@ -40,7 +40,7 @@ separately. No endorsement by any upstream author or publisher is implied.
 
 Собственный код OG Coop распространяется по MIT. В комплекте есть
 сторонние библиотеки по MIT, Apache 2.0 и zlib, официальный SHVDN
-3.7.0-nightly.188 и среда .NET 10.0.13 для Windows-сервера со своими файлами
+3.7.0-nightly.188 и среда .NET 10.0.14 для Windows-сервера со своими файлами
 лицензий; полные условия и авторство сохранены ниже и рядом с этими файлами. Лицензия нашего кода не заменяет эти условия. Состав и хеши
 совместимой основы перечислены в manifest.json.
 

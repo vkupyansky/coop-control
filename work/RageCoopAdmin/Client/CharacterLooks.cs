@@ -15,7 +15,7 @@ internal sealed class CharacterLooks
 
     internal CharacterLooks(Action<int, object[]> send) => _send = send;
 
-    // The server has answered; until then nothing is offered or applied.
+    // Until the server answers nothing is offered or applied.
     internal bool OwnKnown { get; private set; }
     // Null while the player has not made a character yet.
     internal CharacterLook? Own { get; private set; }

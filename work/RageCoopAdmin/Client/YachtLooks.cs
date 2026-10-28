@@ -6,9 +6,7 @@ using OGCoop.Shared;
 
 namespace RageCoopAdmin.Client;
 
-// What this game knows about yachts: the player's own one, as the server keeps
-// it, and those of the other players on the server by RageCoop name. Game
-// thread only.
+// Game thread only.
 internal sealed class YachtLooks
 {
     private readonly Dictionary<string, YachtLook> _others = new Dictionary<string, YachtLook>(StringComparer.OrdinalIgnoreCase);
@@ -37,7 +35,7 @@ internal sealed class YachtLooks
         return true;
     }
 
-    // Another player's yacht; an empty one means it left with its owner.
+    // An empty one means it left with its owner.
     internal bool ApplyLook(object[] args)
     {
         if (args is not { Length: 2 } || args[0] is not string name || name.Length == 0 || args[1] is not string xml) return false;
@@ -66,7 +64,6 @@ internal sealed class YachtLooks
             yield return (other.Key, other.Value);
     }
 
-    // A berth another player's yacht stands at.
     internal bool TakenByOther(int berth) => _others.Values.Any(look => look.Berth == berth);
 
     internal void Clear()

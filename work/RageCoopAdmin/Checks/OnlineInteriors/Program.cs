@@ -174,7 +174,7 @@ internal static class Program
         Ready = false;
     }
 
-    // карта по максимуму: тестовая трасса, особняк на острове, жильё и выход из комнаты без двери
+    // The full map: the test track, the island mansion, homes and leaving a room without a door.
     private static void CheckNewPlaces()
     {
         OnlineInterior[] all = OnlineInteriors.All;
@@ -198,7 +198,7 @@ internal static class Program
         Check(runtime.Find(77).Length == 0 && runtime.Find(0).Length == 0, "no room is ours before it opens");
         runtime.Tick(1_000, new Vector3(workshop.X, workshop.Y, workshop.Z));
         int[] found = runtime.Find(77);
-        // залы Kortz Center рядом и тоже открыты, у подменённой игры у всех комнат один номер
+        // The Kortz Center halls are near and open too, and the stand-in game gives every room one id.
         Check(found.Where(index => all[index].Name == "Мастерская").Select(index => all[index].Key).SequenceEqual(new[] { "mansion_vinewood_workshop" }) &&
             runtime.Find(0).Length == 0,
             "standing in the Kortz workshop after a teleport to a partner, the room is found through its first mansion, so the exit is shown");
@@ -210,7 +210,7 @@ internal static class Program
         Ready = false;
     }
 
-    // в холмах над Вайнвудом, вдали от всех дверей
+    // In the hills above Vinewood, far from every door.
     private static readonly Vector3 Far = new Vector3(-1000f, 1800f, 300f);
 
     private static float Flat(InteriorBuilding building, OnlineInterior interior) =>

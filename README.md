@@ -70,12 +70,12 @@ You need **GTA V Legacy 1.0.3889** on Windows. Enhanced is not supported. RageCo
 
 **Updating:** download the new `OGCoop-Addon.zip` and run its **Install.exe**. It replaces only what changed and keeps your settings. Then start GTA again.
 
-On VK Play, do all of this inside the cloud PC, on its persistent game drive. If the installer cannot run there, copy everything from the `client` folder next to `GTA5.exe`, together with `ScriptHookV.dll` and `dinput8.dll` from ScriptHookV.
+On VK Play, do all of this inside the cloud PC, on its persistent game drive. If the installer cannot run there, copy everything from the `client` folder next to `GTA5.exe`, together with `ScriptHookV.dll` and `dinput8.dll` from ScriptHookV. When updating from Coop Control this way, delete `scripts\CoopControl.EarlyClient.dll` if it is there.
 
 ## Host a server
 
 1. Extract `OGCoop-Addon.zip` and put its `server` folder anywhere you can write to. GTA is not needed on that PC.
-2. Windows: double-click **Start server**, .NET is included. Linux or macOS: run `sh start-server.sh` with the x64 [.NET 10 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed.
+2. Windows: double-click **Start server**, .NET is included. Linux or macOS: run `sh start-server.sh` with the x64 [.NET 10 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed. On a Mac with Apple silicon take the macOS x64 installer: it needs Rosetta, and the script finds it on its own.
 3. The first start creates `Settings.xml` and listens on UDP **4499**. The window shows the addresses to give friends, see [connecting players](#connecting-players). The server is not listed publicly. Play with people you trust: everyone connected can use the shared tools.
 4. To stop it, use **Stop server**, `sh stop-server.sh` or Ctrl+C in its window. Garages, characters, yachts and homes are saved on every change.
 
@@ -142,14 +142,14 @@ The installer and the server tell you when a newer version is out: the host sees
 <details>
 <summary>Build from source</summary>
 
-Unzip both the source and the add-on ZIPs. Install the .NET SDK pinned in `work/RageCoopAdmin/global.json` (**10.0.402**). In that folder, copy `References.example.props` to `References.props` and point `RageCoopClientDir` to the add-on's `client/scripts/RageCoop`, `RageCoopServerDir` to `server`, and `LemonUiDll` to `lib/net48/LemonUI.SHVDN3.dll` from [LemonUI.SHVDN3 2.2.0](https://www.nuget.org/packages/LemonUI.SHVDN3/2.2.0). Then, from `work/RageCoopAdmin`:
+Unzip both the source and the add-on ZIPs. Install the .NET SDK pinned in `work/RageCoopAdmin/global.json` (**10.0.403**). In that folder, copy `References.example.props` to `References.props` and point `RageCoopClientDir` to the add-on's `client/scripts/RageCoop`, `RageCoopServerDir` to `server`, and `LemonUiDll` to `lib/net48/LemonUI.SHVDN3.dll` from [LemonUI.SHVDN3 2.2.0](https://www.nuget.org/packages/LemonUI.SHVDN3/2.2.0). Then, from `work/RageCoopAdmin`:
 
 ```sh
 dotnet restore Client/RageCoopAdmin.Client.csproj --locked-mode -p:PublicRelease=true -warnaserror
 dotnet build Client/RageCoopAdmin.Client.csproj -c Release --no-restore -p:PublicRelease=true -warnaserror
 ```
 
-Build Server, Bootstrap, EarlyClient and Installer the same way. Packaging the add-on also needs the official SHVDN 3.7.0-nightly.188 and .NET Runtime 10.0.13 (win-x64) ZIPs in `outputs/public-deps`. Their URLs and pinned digests are in `tools/prepare_public_release.py`. From the source root, `bash tools/check.sh --public-release` runs the public builds and checks (Windows with Git Bash, or macOS with CrossOver and .NET Framework 4.8).
+Build Server, Bootstrap, EarlyClient and Installer the same way. The release archives are packed from the maintainer's working copy: `tools/prepare_public_release.py` does not run from this source archive. Its pinned SHVDN 3.7.0-nightly.188 and .NET Runtime 10.0.14 (win-x64) downloads and their digests are listed there. From the source root, `bash tools/check.sh --public-release` runs the public builds and checks (Windows with Git Bash, or macOS with CrossOver and .NET Framework 4.8).
 
 </details>
 

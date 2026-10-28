@@ -8,8 +8,8 @@ namespace RageCoopAdmin.Client;
 // so an Online character (or a partner playing another hero) was shut inside
 // or outside. While on the server these doors stay unlocked for every player.
 // The script sets a door only when its own decision changes, so it does not
-// lock it again each frame; the doors are checked once a second. Door system
-// names and owners are from building_controller (doors 38–53): Michael's
+// lock it again each frame. The doors are checked once a second. Door system
+// names and owners are from building_controller (doors 38-53): Michael's
 // house without its bathroom window, Franklin's two houses, Trevor's trailer
 // and Floyd's flat. Game thread only.
 internal sealed class SafehouseDoors
@@ -52,7 +52,6 @@ internal sealed class SafehouseDoors
     }
 }
 
-// GTA boundary; isolated checks replace these calls.
 internal static class SafehouseDoorNatives
 {
     internal const int Unlocked = 0;

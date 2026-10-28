@@ -10,7 +10,7 @@ internal static class EngineTrafficPolicy
 
     // GTA creates traffic out of its own player's view. A new car that is
     // clearly closer to another player can be right in front of him, where
-    // it would pop in; his own game fills his surroundings instead.
+    // it would pop in. His own game fills his surroundings instead.
     internal const float PopInDistance = 150f;
     internal const float PopInMargin = 20f;
 
@@ -30,11 +30,11 @@ internal static class EngineTrafficPolicy
 
     // Nearby NPCs in cars are always copied: their cars need drivers. Nearby
     // pedestrians only of the player whose car this player rides in (see
-    // PassengerPopulation); others keep RageCoop's limit.
+    // PassengerPopulation). Others keep RageCoop's limit.
     internal static bool CopyNearbyPed(byte speed, int owner, int ridingWith) =>
         speed >= 4 || (ridingWith != 0 && owner == ridingWith);
 
-    // A copy that went silent is the owner's removal; riding with the owner,
+    // A copy that went silent is the owner's removal. Riding with the owner,
     // it left this player's view too, so it is not kept as this game's own.
     internal static bool MayAdopt(int owner, int ridingWith) => ridingWith == 0 || owner != ridingWith;
 
@@ -45,7 +45,7 @@ internal static class EngineTrafficPolicy
     internal const float PedTwinDistance = 2f;
 
     // Ties go to the lower RageCoop player number. Only GTA's own random
-    // vehicles are replaced; a persistent or script vehicle stays per game.
+    // vehicles are replaced, a persistent or script vehicle stays per game.
     internal static bool TheirCopyWins(int owner, int local, bool replaceable) =>
         replaceable && owner != 0 && local != 0 && owner < local;
 

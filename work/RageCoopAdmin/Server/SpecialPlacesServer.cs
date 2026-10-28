@@ -13,7 +13,7 @@ public sealed partial class CoopAdminServer
     private void RegisterSpecialPlaceEvents() =>
         API.RegisterCustomEventHandler(SpecialPlaceProtocol.Invite, OnSpecialPlaceInvite);
 
-    // Relays an invitation to a hidden place; each game loads the place itself.
+    // Each game loads the place itself.
     private void OnSpecialPlaceInvite(CustomEventReceivedArgs e)
     {
         if (!HasReadyPlayer(e) || !IsCurrentReadyClient(e.Client) ||

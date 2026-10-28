@@ -228,6 +228,12 @@ internal static class Program
         MustReject(() => YachtCodec.Decode("<!DOCTYPE Yacht [<!ENTITY x \"y\">]><Yacht version=\"1\"><Berth>0</Berth></Yacht>"), "a document type is refused");
         Assert(YachtCodec.FreeBerth(3, berth => berth == 3) == 5 && YachtCodec.FreeBerth(35, berth => berth == 35) == 0 &&
             YachtCodec.FreeBerth(0, berth => true) == -1, "the next free berth skips taken ones and the carrier's");
+        // On a failed move the server answered "no yacht" and the menu offered a new one over the saved yacht.
+        var moved = new YachtLook { Berth = 3 };
+        Assert(!YachtCodec.MoveToFreeBerth(moved, -1, _ => true) && moved.Berth == 3 &&
+            !YachtCodec.MoveToFreeBerth(moved, 5, _ => false) && moved.Berth == 3 &&
+            YachtCodec.MoveToFreeBerth(moved, 5, look => look.Berth == 5) && moved.Berth == 5,
+            "a yacht moves to a free berth only when one exists and the move is saved; otherwise it keeps its berth and the server does not answer");
 
         var store = new YachtStore(folder);
         Assert(store.Load("Rider") == null, "a player without a yacht has none");
@@ -363,15 +369,6 @@ internal static class Program
         MustReject(() => GarageCodec.Encode(new GarageData { Vehicles = { Preset("~r~Красная") } }), "GTA markup cannot enter a car name");
         MustReject(() => GarageCodec.Encode(new GarageData { Favorites = { 5, 5 } }), "a favourite model is stored once");
         MustReject(() => GarageCodec.Encode(new GarageData { Vehicles = Enumerable.Range(0, 65).Select(i => Preset("Машина " + i)).ToList() }), "the garage holds at most 64 cars");
-
-        string legacyPresets = "<SavedVehicles version=\"1\"><Vehicles><Vehicle><Name>Старая</Name>" +
-            VehicleAppearanceCodec.Encode(Appearance()).Substring(VehicleAppearanceCodec.Encode(Appearance()).IndexOf("<VehicleAppearance", StringComparison.Ordinal))
-            .Replace("<VehicleAppearance", "<Appearance").Replace("</VehicleAppearance>", "</Appearance>") + "</Vehicle></Vehicles></SavedVehicles>";
-        string legacyFavorites = "<FavoriteVehicles version=\"1\"><Models><Model>7</Model></Models></FavoriteVehicles>";
-        GarageData legacy = GarageCodec.ReadLegacy(new StringReader(legacyPresets), new StringReader(legacyFavorites));
-        Assert(legacy.Vehicles.Single().Name == "Старая" && legacy.Vehicles[0].Appearance.Plate == "FRIENDS" && legacy.Favorites.SequenceEqual(new[] { 7 }),
-            "the former computer files of the garage and favourites are read for moving");
-        Assert(GarageCodec.ReadLegacy(null, null).Vehicles.Count == 0, "an absent former file is an empty part");
     }
 
     private static void CheckChanges()
@@ -400,16 +397,9 @@ internal static class Program
             "a malformed request is ignored without a reply");
         GarageCodec.TryApply(garage, Change(10, 99, "x"), out token, out result);
         Assert(token == 10 && result == GarageResult.Invalid, "an unknown operation is answered as invalid");
-
-        var target = new GarageData { Vehicles = { Preset("Общая") }, Favorites = { 1 } };
-        var source = new GarageData { Vehicles = { Preset("общая", 5), Preset("Новая") }, Favorites = { 1, 2 } };
-        GarageCodec.TryApply(target, Change(11, GarageProtocol.Import, GarageCodec.Encode(source)), out _, out result);
-        Assert(result == GarageResult.Saved && target.Vehicles.Select(preset => preset.Name).SequenceEqual(new[] { "Общая", "Новая" }) &&
-            target.Vehicles[0].Appearance.ModelHash != 5 && target.Favorites.SequenceEqual(new[] { 1, 2 }),
-            "moving a computer's garage adds new names and favourites and keeps the server's own cars");
-        var full = new GarageData { Vehicles = Enumerable.Range(0, GarageCodec.MaximumPresets).Select(i => Preset("Есть " + i)).ToList() };
-        Assert(!GarageCodec.Merge(full, source) && full.Vehicles.Count == GarageCodec.MaximumPresets && full.Favorites.SequenceEqual(new[] { 1, 2 }),
-            "a merge that does not fit reports it and keeps what fitted");
+        GarageCodec.TryApply(garage, Change(11, 5, "<Garage version=\"1\" />"), out token, out result);
+        Assert(token == 11 && result == GarageResult.Invalid && garage.Vehicles.Count == GarageCodec.MaximumPresets,
+            "moving a former computer garage is gone: the garage lives on the server only");
     }
 
     private static void CheckServerStore(string folder)
@@ -422,15 +412,11 @@ internal static class Program
         Assert(store.Load("Pilot").Vehicles.Count == 0, "another player's garage is separate");
         Assert(PlayerFiles.Key("Rider") == "rider" && PlayerFiles.Key("../x").StartsWith("user-", StringComparison.Ordinal) &&
             PlayerFiles.Key(new string('a', 40)).StartsWith("user-", StringComparison.Ordinal), "unusual names become a safe file name");
+        Assert(new[] { "con", "NUL", "aux.x", "com1", "lpt9", "abc." }.All(name => PlayerFiles.Key(name, windows: true).StartsWith("user-", StringComparison.Ordinal)) &&
+            PlayerFiles.Key("com0", windows: true) == "com0" && PlayerFiles.Key("console", windows: true) == "console" &&
+            PlayerFiles.Key("con", windows: false) == "con",
+            "on a Windows server device names like con or com1 become a hash, so the player's files can be saved; other systems keep their names");
         Assert(!Directory.EnumerateFiles(Path.Combine(folder, "garages"), "*.tmp").Any(), "saving leaves no temporary files");
-
-        string import = Path.Combine(folder, "garages", "import");
-        Directory.CreateDirectory(import);
-        File.WriteAllText(Path.Combine(import, "friend.vehicle-presets.xml"),
-            "<SavedVehicles version=\"1\"><Vehicles><Vehicle><Name>Урус</Name><Appearance><ModelHash>77</ModelHash></Appearance></Vehicle></Vehicles></SavedVehicles>");
-        Assert(store.Load("Friend").Vehicles.Single().Name == "Урус" && File.Exists(Path.Combine(import, "friend.vehicle-presets.xml.imported")) &&
-            !File.Exists(Path.Combine(import, "friend.vehicle-presets.xml")), "a former garage placed for import becomes the player's garage once");
-        Assert(store.Load("friend").Vehicles.Count == 1, "the imported garage is then read from the server file");
 
         string broken = Path.Combine(folder, "garages", "broken.xml");
         File.WriteAllText(broken, "<Garage");
@@ -468,27 +454,33 @@ internal static class Program
         client.SavePreset("раптик", Appearance(), result => outcome = result);
         Assert(outcome == GarageResult.DuplicateName && client.Current!.Vehicles.Count == 1, "the server's refusal reaches the caller");
         Assert(!client.ApplyResult(new object[] { 999, 0 }) && !client.ApplyResult(new object[] { 1, 77 }), "unknown answers are ignored");
-
-        File.WriteAllText(Path.Combine(folder, GarageClient.LegacyPresetsFile),
-            "<SavedVehicles version=\"1\"><Vehicles><Vehicle><Name>Старая</Name><Appearance><ModelHash>9</ModelHash></Appearance></Vehicle></Vehicles></SavedVehicles>");
-        File.WriteAllText(Path.Combine(folder, GarageClient.LegacyFavoritesFile), "<FavoriteVehicles version=\"1\"><Models><Model>9</Model></Models></FavoriteVehicles>");
-        bool? moved = null;
-        Assert(client.ImportLocal(folder, value => moved = value) && moved == true &&
-            server.Vehicles.Select(preset => preset.Name).SequenceEqual(new[] { "Раптик", "Старая" }) && server.Favorites.SequenceEqual(new[] { 9 }) &&
-            !File.Exists(Path.Combine(folder, GarageClient.LegacyPresetsFile)) && !File.Exists(Path.Combine(folder, GarageClient.LegacyFavoritesFile)),
-            "this computer's former garage moves to the server and its files are removed only afterwards");
-        Assert(!client.ImportLocal(folder, _ => { }), "with nothing left on the computer there is nothing to move");
-
-        for (int i = server.Vehicles.Count; i < GarageCodec.MaximumPresets; i++) server.Vehicles.Add(Preset("Полный " + i));
-        File.WriteAllText(Path.Combine(folder, GarageClient.LegacyPresetsFile),
-            "<SavedVehicles version=\"1\"><Vehicles><Vehicle><Name>Не влезла</Name><Appearance><ModelHash>9</ModelHash></Appearance></Vehicle></Vehicles></SavedVehicles>");
-        moved = null;
-        client.ImportLocal(folder, value => moved = value);
-        Assert(moved == false && File.Exists(Path.Combine(folder, GarageClient.LegacyPresetsFile)),
-            "a garage that does not fit on the server keeps its files on the computer");
+        CheckAnswerRetry();
     }
 
-    // своё жильё: ключ каталога по имени RageCoop рядом с гаражом
+    // A request that reached the server before it marked the player ready was lost for the whole session.
+    private static void CheckAnswerRetry()
+    {
+        var retry = new AnswerRetry();
+        int sent = 0;
+        bool answered = false;
+        var gaveUp = new List<string>();
+        retry.Await("garage", () => sent++, () => answered, 0);
+        retry.Tick(AnswerRetry.RetryMilliseconds - 1, gaveUp.Add);
+        Assert(sent == 0, "a request is not repeated before the pause");
+        retry.Tick(AnswerRetry.RetryMilliseconds, gaveUp.Add);
+        Assert(sent == 1 && retry.Count == 1, "a request the server dropped is sent again after the pause");
+        answered = true;
+        retry.Tick(AnswerRetry.RetryMilliseconds * 5, gaveUp.Add);
+        Assert(sent == 1 && retry.Count == 0 && gaveUp.Count == 0, "once the answer arrives the request is no longer repeated");
+
+        var silent = new AnswerRetry();
+        int attempts = 1;
+        silent.Await("home", () => attempts++, () => false, 0);
+        for (long now = 0; now <= AnswerRetry.RetryMilliseconds * 10; now += AnswerRetry.RetryMilliseconds) silent.Tick(now, gaveUp.Add);
+        Assert(attempts == AnswerRetry.MaximumAttempts && silent.Count == 0 && gaveUp.SequenceEqual(new[] { "home" }),
+            "a request without any answer (an unreadable file) stops after a few attempts and is reported");
+    }
+
     private static void CheckHomes(string folder)
     {
         Assert(HomeCodec.IsKey(string.Empty) && HomeCodec.IsKey("eclipse_penthouse_1") && !HomeCodec.IsKey("Eclipse") && !HomeCodec.IsKey("a/b") &&

@@ -5,7 +5,7 @@ using System.Reflection;
 using GTA.Math;
 using HarmonyLib;
 
-// Arriving in an Online interior: the real arrival search runs; only the
+// Arriving in an Online interior: the real arrival search runs, only the
 // game's collision probe is replaced by a list of floor and roof heights.
 internal static partial class Program
 {
@@ -39,7 +39,7 @@ internal static partial class Program
             Assert(Arrive(924.021f, 45.981f, 81.1f, 86.5f, 80.1f) == 80.1f,
                 "Leaving through a covered door lands on the street, not on the awning above it.");
 
-            // полосы: самолёт ставится в саму точку, поиск дороги рядом не вызывается
+            // Runways: the plane is put on the point itself and no road search runs.
             Type locationType = script.GetNestedType("TeleportLocation", BindingFlags.NonPublic)!;
             object?[] runways = ((Array)script.GetField("InterestingLocations", Static)!.GetValue(null)!).Cast<object?>()
                 .Where(location => locationType.GetProperty("Heading", Instance)!.GetValue(location) != null).ToArray();

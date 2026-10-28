@@ -158,7 +158,7 @@ namespace LemonUI.Menus
 
 namespace LemonUI.Elements
 {
-    // Deliberately proportional boundary metrics; actual SDK geometry is checked
+    // Deliberately proportional boundary metrics, actual SDK geometry is checked
     // separately by EngineComposition. These are not measurements from GTA.
     internal sealed class ScaledText
     {
@@ -221,7 +221,7 @@ namespace RageCoopAdmin.Client
         internal void ClosePreload() => ReleaseSpawnModelPreload();
         internal void Toggle(int hash) => ToggleFavorite(hash);
         internal void RefreshFavorites() => RefreshFavoritesMenu();
-        // One simulated server garage per check directory; reopening a menu
+        // One simulated server garage per check directory, reopening a menu
         // for the same directory sees what the previous one stored.
         private static readonly Dictionary<string, OGCoop.Shared.GarageData> Servers = new Dictionary<string, OGCoop.Shared.GarageData>();
         private GarageClient? _garage;
